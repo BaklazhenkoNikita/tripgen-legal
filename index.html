@@ -3,129 +3,874 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Periplo — AI Travel Planning</title>
-  <meta name="description" content="Periplo is an AI-powered travel planning app that helps you discover activities and generate personalized itineraries.">
+  <meta name="theme-color" content="#C4603A">
+  <title>Periplo — AI travel planning that gets you</title>
+  <meta name="description" content="Periplo plans a day-by-day itinerary around what you actually love. Tell it the city, the vibe, and the days — it builds the trip. An AI travel-planning iPhone app.">
+  <link rel="canonical" href="https://periploapp.com/">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://periploapp.com/">
+  <meta property="og:title" content="Periplo — AI travel planning that gets you">
+  <meta property="og:description" content="Tell Periplo the city, the vibe, and the days. It drafts an itinerary built around what you actually love.">
+  <meta property="og:image" content="https://periploapp.com/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Periplo — AI travel planning that gets you">
+  <meta name="twitter:description" content="Tell Periplo the city, the vibe, and the days. It drafts an itinerary built around what you actually love.">
+  <meta name="twitter:image" content="https://periploapp.com/assets/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --bg:             #FDFCF9;
+      --bg-soft:        #F5F2ED;
+      --bg-dark:        #1A1612;
+      --surface:        #FFFFFF;
+      --text:           #1A1612;
+      --text-secondary: #3A3330;
+      --text-tertiary:  #8C7E74;
+      --border:         #F0EDE8;
+      --border-dark:    #2F2924;
+      --accent:         #C4603A;
+      --accent-hover:   #A94E2C;
+      --accent-soft:    #F5E2D8;
+      --radius:         12px;
+      --radius-lg:      20px;
+      --max-w:          1040px;
+      --max-w-read:     720px;
+      --font-display:   'DM Serif Display', ui-serif, Georgia, serif;
+      --font-body:      'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #FDFCF9;
-      color: #1A1612;
-      line-height: 1.7;
-      padding: 60px 20px;
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .container { max-width: 720px; margin: 0 auto; }
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 12px;
-      color: #C4603A;
-    }
-    .tagline {
-      color: #3A3330;
-      font-size: 1.15rem;
-      margin-bottom: 40px;
-    }
-    h2 {
-      font-size: 1.25rem;
-      margin-top: 40px;
-      margin-bottom: 16px;
-      color: #1A1612;
-    }
-    p { color: #3A3330; margin-bottom: 12px; }
-    ul { list-style: none; padding: 0; }
-    li { margin-bottom: 10px; }
-    a { color: #C4603A; text-decoration: none; font-weight: 500; }
+
+    a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    .links-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-      margin-top: 16px;
+    img { display: block; max-width: 100%; height: auto; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px;
     }
-    .link-card {
-      background: #FFFFFF;
-      border: 1px solid #F0EDE8;
-      border-radius: 12px;
-      padding: 16px 20px;
-      transition: border-color 0.15s;
+
+    /* ── Nav ───────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(253, 252, 249, 0.92);
+      backdrop-filter: saturate(1.2) blur(12px);
+      -webkit-backdrop-filter: saturate(1.2) blur(12px);
+      border-bottom: 1px solid var(--border);
     }
-    .link-card:hover { border-color: #C4603A; }
-    .link-card a { display: block; font-weight: 600; }
-    .link-card p {
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+    }
+    .logo:hover { text-decoration: none; }
+    .logo img { width: 28px; height: 28px; border-radius: 6px; }
+    .nav-links {
+      display: none;
+      gap: 28px;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: var(--accent); text-decoration: none; }
+    .nav-cta {
+      background: var(--accent);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 999px;
       font-size: 0.9rem;
-      color: #8C7E74;
-      margin: 4px 0 0 0;
+      font-weight: 600;
     }
-    .contact-box {
-      background: #F5F2ED;
+    .nav-cta:hover { background: var(--accent-hover); color: #fff; text-decoration: none; }
+    @media (min-width: 720px) {
+      .nav-links { display: flex; }
+    }
+
+    /* ── Hero ──────────────────────────────────────────── */
+    .hero {
+      padding: 72px 0 48px;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .hero-copy h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .hero-copy p.lead {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin-bottom: 32px;
+    }
+    .hero-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 22px;
+      background: var(--bg-dark);
+      color: #fff;
       border-radius: 12px;
-      padding: 20px;
+      font-weight: 500;
+      transition: transform 0.15s ease, background 0.15s ease;
+      text-decoration: none;
+    }
+    .badge:hover { background: #000; color: #fff; text-decoration: none; transform: translateY(-1px); }
+    .badge svg { width: 28px; height: 28px; flex-shrink: 0; }
+    .badge .badge-label { display: flex; flex-direction: column; line-height: 1.1; }
+    .badge .small { font-size: 0.7rem; opacity: 0.82; font-weight: 400; }
+    .badge .big { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.2px; }
+    .hero-image {
+      justify-self: center;
+      max-width: 340px;
+    }
+    .hero-image img { border-radius: 32px; }
+    @media (min-width: 1024px) {
+      .hero-inner { grid-template-columns: 1.1fr 1fr; }
+      .hero-image { max-width: 420px; }
+    }
+
+    /* ── Generic section ──────────────────────────────── */
+    .section {
+      padding: 64px 0;
+    }
+    .section--soft { background: var(--bg-soft); }
+    .section--dark {
+      background: var(--bg-dark);
+      color: #EEE7DE;
+    }
+    .section--dark h2, .section--dark h3 { color: #FFF9F2; }
+    .section--dark .section-kicker { color: var(--accent-soft); }
+    .section-kicker {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      line-height: 1.15;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .section-lead {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 560px;
+    }
+
+    /* ── How it works ─────────────────────────────────── */
+    .steps {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
       margin-top: 40px;
     }
-    .contact-box p:last-child { margin-bottom: 0; }
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 16px;
+      font-variant-numeric: tabular-nums;
+    }
+    .step h3 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .step p { color: var(--text-secondary); font-size: 0.98rem; }
+    @media (min-width: 720px) {
+      .steps { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* ── Feature row ──────────────────────────────────── */
+    .feature-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .feature-row + .feature-row { margin-top: 96px; }
+    .feature-img {
+      justify-self: center;
+      max-width: 320px;
+    }
+    .feature-img img { border-radius: 32px; }
+    .feature-copy h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .feature-copy p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      max-width: 480px;
+    }
+    .feature-copy p + p { margin-top: 12px; }
+    @media (min-width: 1024px) {
+      .feature-row { grid-template-columns: 1fr 1fr; }
+      .feature-row--reverse .feature-img { order: 2; }
+      .feature-img { max-width: 380px; }
+    }
+
+    /* ── Secondary grid (2x2) ─────────────────────────── */
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .mini-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .mini-card img {
+      width: 100px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+    .mini-card h4 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+    }
+    .mini-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    @media (min-width: 720px) {
+      .mini-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── About / etymology ────────────────────────────── */
+    .about {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .about-mark {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 20px;
+      border-radius: 12px;
+    }
+    .about p {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      line-height: 1.5;
+      color: var(--text);
+      font-style: italic;
+    }
+    .about .byline {
+      font-family: var(--font-body);
+      font-style: normal;
+      font-size: 0.95rem;
+      color: var(--text-tertiary);
+      margin-top: 18px;
+    }
+
+    /* ── Pricing ──────────────────────────────────────── */
+    .price-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .price-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+    }
+    .price-card.pro {
+      border-color: var(--accent);
+      border-width: 1.5px;
+    }
+    .price-tier {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+    }
+    .price-card.pro .price-tier { color: var(--accent); }
+    .price-name {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      margin-bottom: 4px;
+    }
+    .price-sub {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+    .price-amount {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      color: var(--text);
+    }
+    .price-amount .per {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--text-tertiary);
+      font-weight: 400;
+    }
+    .price-card ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 24px;
+    }
+    .price-card li {
+      padding: 10px 0;
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .price-card li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 999px;
+      margin-top: 10px;
+      flex-shrink: 0;
+    }
+    @media (min-width: 720px) {
+      .price-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── FAQ ──────────────────────────────────────────── */
+    .faq {
+      max-width: var(--max-w-read);
+      margin: 40px auto 0;
+    }
+    .faq details {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+    .faq details[open] summary { color: var(--accent); }
+    .faq summary {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      cursor: pointer;
+      list-style: none;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after {
+      content: '+';
+      font-size: 1.5rem;
+      font-family: var(--font-body);
+      color: var(--text-tertiary);
+      transition: transform 0.2s ease;
+    }
+    .faq details[open] summary::after {
+      transform: rotate(45deg);
+      color: var(--accent);
+    }
+    .faq details p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-top: 12px;
+      padding-right: 40px;
+    }
+    .faq-more {
+      text-align: center;
+      margin-top: 32px;
+      color: var(--text-tertiary);
+      font-size: 0.95rem;
+    }
+
+    /* ── Final CTA ────────────────────────────────────── */
+    .final-cta {
+      text-align: center;
+    }
+    .final-cta h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      line-height: 1.15;
+      margin-bottom: 14px;
+      color: #FFF9F2;
+    }
+    .final-cta p {
+      color: #C9BFB3;
+      margin-bottom: 32px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .final-cta .hero-ctas {
+      justify-content: center;
+    }
+    .final-cta .badge {
+      background: var(--accent);
+    }
+    .final-cta .badge:hover { background: var(--accent-hover); }
+
+    /* ── Footer ───────────────────────────────────────── */
     footer {
+      background: var(--bg-soft);
+      padding: 64px 0 32px;
+      color: var(--text-secondary);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .footer-col h5 {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-tertiary);
+      margin-bottom: 14px;
+    }
+    .footer-col ul { list-style: none; padding: 0; }
+    .footer-col li { margin-bottom: 10px; }
+    .footer-col a {
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+      font-weight: 500;
+    }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-brand p {
+      color: var(--text-tertiary);
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+    .footer-bottom {
       margin-top: 48px;
       padding-top: 24px;
-      border-top: 1px solid #F0EDE8;
-      color: #8C7E74;
+      border-top: 1px solid var(--border);
       font-size: 0.85rem;
+      color: var(--text-tertiary);
+      text-align: center;
+    }
+    @media (min-width: 720px) {
+      .footer-grid { grid-template-columns: 1.2fr 1fr 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .badge { transition: none; }
     }
   </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Periplo",
+    "description": "AI travel-planning app that drafts personalized day-by-day itineraries. Tell it the city, the vibe, and the days; it builds the trip.",
+    "applicationCategory": "TravelApplication",
+    "operatingSystem": "iOS",
+    "url": "https://periploapp.com/",
+    "screenshot": "https://periploapp.com/assets/og-image.png",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Nikita Baklazhenko"
+    }
+  }
+  </script>
 </head>
 <body>
-  <div class="container">
-    <h1>Periplo</h1>
-    <p class="tagline">AI-powered travel planning. Describe what you love — get a trip you actually want.</p>
 
-    <h2>Legal &amp; policies</h2>
-    <div class="links-grid">
-      <div class="link-card">
-        <a href="/privacy">Privacy Policy</a>
-        <p>What we collect, how we use it, your rights.</p>
+  <nav>
+    <div class="nav-inner">
+      <a class="logo" href="/" aria-label="Periplo home">
+        <img src="/assets/logo-terra.png" alt="" width="28" height="28">
+        <span>Periplo</span>
+      </a>
+      <div class="nav-links" role="navigation" aria-label="Main">
+        <a href="#how">How it works</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
       </div>
-      <div class="link-card">
-        <a href="/terms">Terms of Service</a>
-        <p>Subscription terms, AI disclaimer, acceptable use.</p>
-      </div>
-      <div class="link-card">
-        <a href="/ai-disclosure">AI Disclosure</a>
-        <p>How Periplo uses generative AI and its limitations.</p>
-      </div>
-      <div class="link-card">
-        <a href="/affiliate-disclosure">Affiliate Disclosure</a>
-        <p>Our booking partners and how we earn commissions.</p>
-      </div>
-      <div class="link-card">
-        <a href="/delete-account">Delete Your Account</a>
-        <p>Remove your account and personal data.</p>
-      </div>
-      <div class="link-card">
-        <a href="/dsa">EU DSA Contact</a>
-        <p>Contact points for EU authorities and users.</p>
+      <a class="nav-cta" href="#download">Download</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <h1>Travel like you know the place.</h1>
+          <p class="lead">Tell Periplo the city, the vibe, and how long you have. It drafts a day-by-day itinerary built around what you actually love — then hands you the map, the times, and the bookings.</p>
+          <div class="hero-ctas">
+            <a class="badge" href="https://apps.apple.com/app/periplo" aria-label="Download Periplo on the App Store">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span class="badge-label"><span class="small">Download on the</span><span class="big">App Store</span></span>
+            </a>
+            <a class="badge" href="https://play.google.com/store/apps/details?id=com.tripgen.app" aria-label="Get Periplo on Google Play">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.61 1.81A1.5 1.5 0 0 0 3 3v18a1.5 1.5 0 0 0 .61 1.19L13.83 12 3.61 1.81zm11.4 10.19L6.08 21.29l9.86-5.69-.93-3.6zm-.93-.01.93-3.59-9.86-5.69 8.93 9.28zm5.78-1.68-2.77-1.6-2.33 2.29 2.33 2.29 2.77-1.6a1.5 1.5 0 0 0 0-2.38z"/></svg>
+              <span class="badge-label"><span class="small">Get it on</span><span class="big">Google Play</span></span>
+            </a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="/assets/screenshots/hero-home.webp" alt="Periplo home screen in Barcelona — 'Plan my trip with AI' button, curated Must-See and For You activity cards, categories for City Info, Hotels, Flights, Trains, eSIM." width="600">
+        </div>
       </div>
     </div>
+  </header>
 
-    <h2>Support</h2>
-    <div class="links-grid">
-      <div class="link-card">
-        <a href="/help">Help Center</a>
-        <p>FAQs about trips, credits, and subscriptions.</p>
+  <main>
+
+    <section class="section section--soft" id="how">
+      <div class="container">
+        <p class="section-kicker">How it works</p>
+        <h2 class="section-heading">Three steps, a real trip.</h2>
+        <p class="section-lead">No endless tabs. No spreadsheet. Tell Periplo what you want, review what it drafts, and go.</p>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <h3>Tell it where and what.</h3>
+            <p>Pick the city, your dates, a vibe (chill, foodie, culture, active, nightlife). A few taps.</p>
+          </div>
+          <div class="step">
+            <span class="step-num">2</span>
+            <h3>AI drafts your days.</h3>
+            <p>Hour-by-hour itinerary with activities, restaurants, and a walkable route. Every stop briefed.</p>
+          </div>
+          <div class="step">
+            <span class="step-num">3</span>
+            <h3>Walk it, book it, share it.</h3>
+            <p>Open it on the ground, book hotels and tickets inline, share with the people you're going with.</p>
+          </div>
+        </div>
       </div>
-      <div class="link-card">
-        <a href="mailto:support@periploapp.com">Email Support</a>
-        <p>Reach us directly at support@periploapp.com.</p>
+    </section>
+
+    <section class="section" id="features">
+      <div class="container">
+
+        <div class="feature-row">
+          <div class="feature-img">
+            <img src="/assets/screenshots/plan-config.webp" alt="Plan Your Trip screen in Barcelona with Start Date (Tomorrow), Duration (3 days), Who's Going (Couple), Vibe (Steady — 4–6/day), and 'Generate Plan' button." width="600" loading="lazy">
+          </div>
+          <div class="feature-copy">
+            <p class="section-kicker">Planning</p>
+            <h3>Plan by vibe, not by checklist.</h3>
+            <p>Describe the trip you want — relaxed, foodie, active, cultural — and who's coming along. Periplo shapes pacing, neighborhood mix, and activity density to match. Nothing generic.</p>
+            <p>No sign-up wall, no survey fatigue. A few taps and you're planning.</p>
+          </div>
+        </div>
+
+        <div class="feature-row feature-row--reverse">
+          <div class="feature-img">
+            <img src="/assets/screenshots/trip-detail.webp" alt="Barcelona trip detail showing Day 1–3 tabs, Top Activities including Casa Milà and Passeig de Gràcia, and a full day-by-day itinerary." width="600" loading="lazy">
+          </div>
+          <div class="feature-copy">
+            <p class="section-kicker">Itinerary</p>
+            <h3>An itinerary, not a list.</h3>
+            <p>Day by day, hour by hour. Landmarks, restaurants, and hidden spots blended with realistic pacing — so you're not sprinting between stops or killing time between reservations.</p>
+            <p>Reorganize a day, swap an activity, or regenerate just one block. The rest adjusts around it.</p>
+          </div>
+        </div>
+
+        <div class="feature-row">
+          <div class="feature-img">
+            <img src="/assets/screenshots/route-map.webp" alt="Day-by-day map of Barcelona's Ciutat Vella with a dashed walking route connecting activities, an Antic Teatre card with distance and time from center." width="600" loading="lazy">
+          </div>
+          <div class="feature-copy">
+            <p class="section-kicker">On the ground</p>
+            <h3>Built for walking, not for tabs.</h3>
+            <p>Every day gets a map with a clean route between stops. Neighborhoods stay grouped. Distances, opening windows, and travel times come built in — so the plan survives contact with the sidewalk.</p>
+          </div>
+        </div>
+
+        <div class="feature-row feature-row--reverse">
+          <div class="feature-img">
+            <img src="/assets/screenshots/activity-detail.webp" alt="Basilica de la Sagrada Família detail screen with hours, ticket price, duration, distance from center, a tip to book tickets weeks in advance, Navigate and Saved buttons." width="600" loading="lazy">
+          </div>
+          <div class="feature-copy">
+            <p class="section-kicker">Context</p>
+            <h3>Context for every pin.</h3>
+            <p>Hours, price, typical duration, distance from your base, address, and a local tip. Not boilerplate — specific notes about when to go, what to skip, and what's easy to miss.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section section--soft">
+      <div class="container">
+        <p class="section-kicker">Everything else</p>
+        <h2 class="section-heading">More than just an itinerary.</h2>
+        <p class="section-lead">Small features that make a trip actually feel planned, not just listed.</p>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <img src="/assets/screenshots/ai-chat.webp" alt="AI Chat asking about events in Barcelona, with curated Top Events, Must-See Exhibitions, and quick-ask chips." width="200" loading="lazy">
+            <div>
+              <h4>A local expert, always on.</h4>
+              <p>Ask anything mid-trip — events tonight, a vegetarian lunch near you, what to do if it rains.</p>
+            </div>
+          </div>
+          <div class="mini-card">
+            <img src="/assets/screenshots/profile-taste.webp" alt="Travel Fingerprint screen showing a user's taste profile — Culture, Food, Music, Nightlife, Outdoor, Shopping, Wellness, Entertainment percentages — with AI insights and default vibes." width="200" loading="lazy">
+            <div>
+              <h4>Tuned to your taste.</h4>
+              <p>The more you use Periplo, the better it gets. A taste profile that shapes every future suggestion.</p>
+            </div>
+          </div>
+          <div class="mini-card">
+            <img src="/assets/screenshots/live-events.webp" alt="Live events map of Barcelona with music, food, and culture filters and an event card for a Rosalía LUX Tour 2026 concert." width="200" loading="lazy">
+            <div>
+              <h4>Live around you.</h4>
+              <p>Concerts, exhibitions, pop-ups, food markets — what's actually happening where you are, right now.</p>
+            </div>
+          </div>
+          <div class="mini-card">
+            <img src="/assets/screenshots/book-inline.webp" alt="Book Travel panel with Hotels, Flights, Trains, eSIM cards; a mini-map; Food Picks with Cal Pairano, Mercat de la Boqueria, Rasoterra." width="200" loading="lazy">
+            <div>
+              <h4>Handpicked, never generic.</h4>
+              <p>Hotels, flights, trains, eSIM — book directly from the plan. No ten-tab shuffle.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="feature-row">
+          <div class="feature-img">
+            <img src="/assets/screenshots/share-export.webp" alt="People & Sharing section with an 'Invite a travel buddy' link, owner Alex, and Export buttons for PDF, Apple Calendar, Google Calendar, and Template link." width="600" loading="lazy">
+          </div>
+          <div class="feature-copy">
+            <p class="section-kicker">Share</p>
+            <h3>Share the trip. Export the plan.</h3>
+            <p>Invite the people you're going with — everyone edits the same itinerary. Or export to PDF, Apple / Google Calendar, or Notion, and share a public template link with anyone who asks.</p>
+            <p>Works offline once downloaded, so the day doesn't die in a spotty subway.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--soft" id="about">
+      <div class="container">
+        <div class="about">
+          <img class="about-mark" src="/assets/logo-terra.png" alt="Periplo mark" width="56" height="56">
+          <p>In ancient Greek, a <em>periplus</em> was a coastal voyage log — a record of ports, tides, and what to expect between them. Periplo picks up the same idea: a plan that sails with you.</p>
+          <p class="byline">Built by a solo developer. Shipped because good travel planning shouldn't take a weekend.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="container">
+        <p class="section-kicker">Pricing</p>
+        <h2 class="section-heading">Free to try. Pro when you're planning more.</h2>
+        <p class="section-lead">Every core feature works free. Upgrade to Pro when you're planning multiple trips a month.</p>
+        <div class="price-grid">
+          <div class="price-card">
+            <p class="price-tier">Free</p>
+            <h3 class="price-name">Free</h3>
+            <p class="price-sub">No account needed.</p>
+            <div class="price-amount">$0 <span class="per">/ forever</span></div>
+            <ul>
+              <li>3 trip-generation credits, 1 regenerates every 4 hours</li>
+              <li>All of the AI itinerary, maps, chat, and booking</li>
+              <li>Offline access for downloaded trips</li>
+              <li>PDF, Calendar, and Notion exports</li>
+              <li>Share via public template link</li>
+            </ul>
+          </div>
+          <div class="price-card pro">
+            <p class="price-tier">Pro</p>
+            <h3 class="price-name">Periplo Pro</h3>
+            <p class="price-sub">For travelers planning often.</p>
+            <div class="price-amount">$4.99 <span class="per">/ month</span></div>
+            <ul>
+              <li>Unlimited trip generation</li>
+              <li>Priority on new features</li>
+              <li>No credit cooldown</li>
+              <li>Cancel anytime in your App Store subscription settings</li>
+              <li>$29.99 / year — ≈ 50% off monthly</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--soft" id="faq">
+      <div class="container">
+        <p class="section-kicker">FAQ</p>
+        <h2 class="section-heading">The short version.</h2>
+        <div class="faq">
+          <details>
+            <summary>Do I need an account?</summary>
+            <p>No. Periplo works in guest mode — everything local on your device. Sign in later if you want to sync across devices or collaborate.</p>
+          </details>
+          <details>
+            <summary>Which cities are supported?</summary>
+            <p>Any city you can name. Periplo isn't a curated list — it plans trips to anywhere with enough information online. Tokyo, Lisbon, Oaxaca, or your neighbor over.</p>
+          </details>
+          <details>
+            <summary>Will the itinerary actually be accurate?</summary>
+            <p>AI-generated, so always confirm opening hours, ticket availability, and reservations before you go. Periplo links to booking sites for anything that matters, and tells you when tickets sell out fast. See our <a href="/ai-disclosure">AI disclosure</a>.</p>
+          </details>
+          <details>
+            <summary>Can I use it offline?</summary>
+            <p>Yes. Download a trip and the full itinerary — maps, activity details, restaurants — works without signal. Perfect for the subway and for places with spotty data.</p>
+          </details>
+          <details>
+            <summary>How do I cancel Pro?</summary>
+            <p>iPhone Settings → Apple ID → Subscriptions → Periplo → Cancel. You keep Pro until the end of the billing period. No refund questions, no friction.</p>
+          </details>
+          <details>
+            <summary>Is my data sold or shared?</summary>
+            <p>Never. No advertising identifiers, no cross-site tracking, no data sales. See the full <a href="/privacy">privacy policy</a>.</p>
+          </details>
+        </div>
+        <p class="faq-more">More questions? The <a href="/help">help center</a> has the longer list.</p>
+      </div>
+    </section>
+
+    <section class="section section--dark final-cta" id="download">
+      <div class="container">
+        <h2>Your next trip is a few taps away.</h2>
+        <p>Available on iPhone. Android coming soon.</p>
+        <div class="hero-ctas">
+          <a class="badge" href="https://apps.apple.com/app/periplo" aria-label="Download Periplo on the App Store">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+            <span class="badge-label"><span class="small">Download on the</span><span class="big">App Store</span></span>
+          </a>
+          <a class="badge" href="https://play.google.com/store/apps/details?id=com.tripgen.app" aria-label="Get Periplo on Google Play">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.61 1.81A1.5 1.5 0 0 0 3 3v18a1.5 1.5 0 0 0 .61 1.19L13.83 12 3.61 1.81zm11.4 10.19L6.08 21.29l9.86-5.69-.93-3.6zm-.93-.01.93-3.59-9.86-5.69 8.93 9.28zm5.78-1.68-2.77-1.6-2.33 2.29 2.33 2.29 2.77-1.6a1.5 1.5 0 0 0 0-2.38z"/></svg>
+            <span class="badge-label"><span class="small">Get it on</span><span class="big">Google Play</span></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <a class="logo" href="/" aria-label="Periplo home">
+            <img src="/assets/logo-terra.png" alt="" width="28" height="28">
+            <span>Periplo</span>
+          </a>
+          <p>AI travel-planning app. Operated by Nikita Baklazhenko.</p>
+          <p>&copy; 2026 Periplo. All rights reserved.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="/privacy">Privacy Policy</a></li>
+            <li><a href="/terms">Terms of Service</a></li>
+            <li><a href="/ai-disclosure">AI Disclosure</a></li>
+            <li><a href="/affiliate-disclosure">Affiliate Disclosure</a></li>
+            <li><a href="/dsa">EU DSA Notice</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Support</h5>
+          <ul>
+            <li><a href="/help">Help Center</a></li>
+            <li><a href="mailto:support@periploapp.com">Email Support</a></li>
+            <li><a href="/delete-account">Delete Account</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Questions or feedback: <a href="mailto:support@periploapp.com">support@periploapp.com</a></p>
       </div>
     </div>
+  </footer>
 
-    <div class="contact-box">
-      <p><strong>Contact</strong></p>
-      <p>Periplo is operated by Nikita Baklazhenko.</p>
-      <p>For questions, data requests, or support: <a href="mailto:support@periploapp.com">support@periploapp.com</a></p>
-    </div>
-
-    <footer>
-      <p>&copy; 2026 Periplo. All rights reserved.</p>
-    </footer>
-  </div>
 </body>
 </html>
