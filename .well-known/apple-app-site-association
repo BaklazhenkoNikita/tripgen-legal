@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "3LRF5283H2.com.tripgen.app",
+        "paths": [
+          "/activity/*",
+          "/template/*",
+          "/join/*"
+        ]
+      }
+    ]
+  }
+}

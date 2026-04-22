@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#C4603A">
+  <title>Open in Periplo</title>
+  <meta name="description" content="Open this page in the Periplo app — AI-powered travel planning.">
+  <link rel="canonical" href="https://periploapp.com/">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Periplo — AI travel planning">
+  <meta property="og:description" content="Plan a day-by-day itinerary around what you actually love. Open this in the Periplo app.">
+  <meta property="og:image" content="https://periploapp.com/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Periplo — AI travel planning">
+  <meta name="twitter:description" content="Open this shared place in the Periplo app.">
+  <meta name="twitter:image" content="https://periploapp.com/assets/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #FDFCF9;
+      --surface: #FFFFFF;
+      --text: #1A1612;
+      --text-secondary: #3A3330;
+      --accent: #C4603A;
+      --accent-soft: #F5E2D8;
+      --border: #F0EDE8;
+      --radius: 14px;
+      --font-display: 'DM Serif Display', ui-serif, Georgia, serif;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+    .card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      text-align: center;
+    }
+    .emoji {
+      font-size: 44px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: 26px;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    p {
+      color: var(--text-secondary);
+      font-size: 15px;
+      margin-bottom: 22px;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 22px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      min-width: 240px;
+    }
+    .cta:hover { background: #A94E2C; }
+    .sub {
+      margin-top: 18px;
+      font-size: 13px;
+      color: #8C7E74;
+    }
+    .sub a { color: var(--accent); text-decoration: none; }
+    .sub a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="emoji" id="emoji">📍</div>
+    <h1 id="title">Open this in Periplo</h1>
+    <p id="subtitle">Get the app to view this place and plan your trip around it.</p>
+    <a class="cta" id="store-link" href="https://apps.apple.com/app/id6761609896">Download on the App Store</a>
+    <p class="sub"><a href="/">Go to periploapp.com</a></p>
+  </div>
+  <script>
+    // GitHub Pages serves this file for any unmatched path. Tailor the
+    // messaging when the user came in via /activity/{id}, /template/{slug},
+    // or /join/{token} — the three Universal Link prefixes. For everything
+    // else it's a generic 404 with the App Store CTA.
+    (function () {
+      var path = window.location.pathname || '';
+      var el = {
+        emoji: document.getElementById('emoji'),
+        title: document.getElementById('title'),
+        subtitle: document.getElementById('subtitle'),
+      };
+      if (/^\/activity\/[^/]+/.test(path)) {
+        el.emoji.textContent = '📍';
+        el.title.textContent = 'View this place in Periplo';
+        el.subtitle.textContent = 'Get the app to explore this activity and add it to a trip.';
+      } else if (/^\/template\/[^/]+/.test(path)) {
+        el.emoji.textContent = '🗺️';
+        el.title.textContent = 'View this trip in Periplo';
+        el.subtitle.textContent = 'Open the shared itinerary in the app.';
+      } else if (/^\/join\/[^/]+/.test(path)) {
+        el.emoji.textContent = '✈️';
+        el.title.textContent = 'Join this trip';
+        el.subtitle.textContent = 'Get Periplo to accept the invite and collaborate.';
+      } else {
+        el.emoji.textContent = '🧭';
+        el.title.textContent = "This page wasn't found";
+        el.subtitle.textContent = "Try the app for AI-powered travel planning.";
+      }
+    })();
+  </script>
+</body>
+</html>
