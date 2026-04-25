@@ -136,7 +136,19 @@
     <h2>12. Changes to This Policy</h2>
     <p>We may update this Privacy Policy from time to time. We will notify you of significant changes through the app or by updating the "Last updated" date above. Your continued use of Periplo after changes are posted constitutes acceptance of the updated policy.</p>
 
-    <h2>13. Contact Us</h2>
+    <h2>13. Connector Access via AI Hosts</h2>
+    <p>When you connect Periplo to an AI host like Claude, ChatGPT, or any other Model Context Protocol (MCP) compatible client, your trip queries and the resulting itineraries flow through that host's infrastructure subject to the host's own privacy policy.</p>
+    <p>Periplo only receives:</p>
+    <ul>
+      <li>The query text you type into the host (e.g. "Plan a 5-day trip to Cappadocia"), parameters the host extracts (destination, duration, travel style), and your authenticated Periplo user identifier so we can apply your subscription tier and credit balance.</li>
+      <li>The User-Agent header your host sends, which we use to attribute MCP traffic separately from web and mobile.</li>
+    </ul>
+    <p>Periplo does <strong>not</strong> receive: your conversation history with the host, any other tool calls in the same session, your host account email, or any data the host collects about you.</p>
+    <p>Trips you generate via a connector are saved to the same Periplo account you authenticated with — they appear in the "Connector trips" section of the mobile app and can be opened, edited, or shared from there.</p>
+    <p>You can revoke a connector's access at any time from the host's Settings → Connectors page; revocation takes effect immediately and Periplo will no longer accept tool calls authenticated with the revoked token.</p>
+    <p>Authentication is handled by Clerk (our identity provider) using OAuth 2.1 with PKCE. Periplo's MCP endpoint is a pure resource server and never sees your password.</p>
+
+    <h2>14. Contact Us</h2>
     <div class="contact-box">
       <p>If you have questions about this Privacy Policy or your personal data, contact us at:</p>
       <p><a href="mailto:support@periploapp.com">support@periploapp.com</a></p>
