@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#C4603A">
+  <title>Periplo — Unlock unlimited trips</title>
+  <meta name="description" content="You've used your free trips this cycle. Install Periplo to unlock unlimited AI travel planning, offline maps, and collaborative itineraries.">
+  <link rel="canonical" href="https://periploapp.com/mcp-upgrade">
+  <meta name="robots" content="noindex">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://periploapp.com/mcp-upgrade">
+  <meta property="og:title" content="Periplo — Unlock unlimited trips">
+  <meta property="og:description" content="Install Periplo to unlock unlimited AI travel planning.">
+  <meta property="og:image" content="https://periploapp.com/assets/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:             #FDFCF9;
+      --bg-soft:        #F5F2ED;
+      --surface:        #FFFFFF;
+      --text:           #1A1612;
+      --text-secondary: #3A3330;
+      --text-tertiary:  #8C7E74;
+      --border:         #F0EDE8;
+      --accent:         #C4603A;
+      --accent-hover:   #A94E2C;
+      --accent-soft:    #FBF3EF;
+      --accent-100:     #F5E2D8;
+      --gold:           #E8A030;
+      --radius:         12px;
+      --radius-lg:      20px;
+      --max-w:          640px;
+      --font-display:   'DM Serif Display', ui-serif, Georgia, serif;
+      --font-body:      'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { color: var(--accent); }
+    a:hover { color: var(--accent-hover); }
+
+    main {
+      flex: 1;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+      width: 100%;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent-100);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 44px);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+    }
+
+    .lede {
+      font-size: 17px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+
+    .card-accent {
+      background: linear-gradient(135deg, var(--accent-soft) 0%, var(--surface) 100%);
+      border-color: var(--accent-100);
+    }
+
+    .benefits {
+      list-style: none;
+      display: grid;
+      gap: 16px;
+      margin: 8px 0 24px;
+    }
+    .benefits li {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .benefits .check {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .benefits strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .benefits span {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .badges {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      background: var(--text);
+      color: var(--surface);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      min-height: 56px;
+      flex: 1;
+      min-width: 220px;
+      justify-content: center;
+      transition: transform 120ms ease;
+    }
+    .badge:hover {
+      transform: translateY(-1px);
+      color: var(--surface);
+    }
+    .badge .icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+    .badge small {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.75;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: 24px;
+    }
+
+    .why-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .why-list dt {
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 8px;
+    }
+    .why-list dd {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-left: 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+    footer a {
+      color: var(--text-tertiary);
+      margin: 0 8px;
+    }
+
+    @media (max-width: 480px) {
+      main { padding: 32px 16px 48px; }
+      .card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">
+      <span>★</span> Periplo Premium
+    </div>
+
+    <h1>Unlock unlimited Periplo trips</h1>
+    <p class="lede">
+      You've used your free trip credits this cycle. Install the Periplo app
+      to keep planning, take your itineraries offline, and share them with
+      travel partners.
+    </p>
+
+    <section class="card card-accent">
+      <ul class="benefits">
+        <li>
+          <span class="check">✓</span>
+          <div>
+            <strong>Unlimited trip generation</strong>
+            <span>Plan as many trips as you want — no daily caps.</span>
+          </div>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <div>
+            <strong>Offline maps and details</strong>
+            <span>Download your trips before you fly so they work without data.</span>
+          </div>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <div>
+            <strong>Collaborative planning</strong>
+            <span>Share a live trip with travel partners; everyone edits together.</span>
+          </div>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <div>
+            <strong>Priority support</strong>
+            <span>Reach a real human in under 24 hours.</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="badges">
+        <a class="badge"
+           href="https://apps.apple.com/app/id6761609896"
+           data-utm="ios">
+          <span class="icon">🍎</span>
+          <span>
+            <small>Download on</small>
+            App Store
+          </span>
+        </a>
+        <a class="badge"
+           href="https://play.google.com/store/apps/details?id=com.tripgen.app"
+           data-utm="android">
+          <span class="icon">▶</span>
+          <span>
+            <small>Get it on</small>
+            Google Play
+          </span>
+        </a>
+      </div>
+
+      <p class="small">
+        Subscriptions are managed in-app via the App Store / Google Play.
+        Free credits regenerate every 4 hours — feel free to come back.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2 style="font-family: var(--font-display); font-size: 22px; margin-bottom: 12px;">
+        Why Periplo, instead of just chatting?
+      </h2>
+      <dl class="why-list">
+        <dt>Curated by humans, not just AI</dt>
+        <dd>
+          Periplo blends Gemini-generated structure with thousands of
+          human-vetted attractions and restaurants — the spots locals would
+          actually send you to.
+        </dd>
+
+        <dt>Goes with you</dt>
+        <dd>
+          Your trips sync between this chat and the iPhone / Android app.
+          Open in Periplo for live maps, walking directions, hours, and
+          on-the-ground edits.
+        </dd>
+
+        <dt>One subscription, every channel</dt>
+        <dd>
+          Premium unlocks unlimited trips here in chat AND in the app —
+          there's no "MCP-only" or "mobile-only" tier.
+        </dd>
+      </dl>
+    </section>
+
+    <p class="small" style="text-align: center;">
+      Need help? <a href="/help">Visit the help center</a> or email
+      <a href="mailto:hello@periploapp.com">hello@periploapp.com</a>.
+    </p>
+  </main>
+
+  <footer>
+    <a href="/">Home</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="/help">Help</a>
+  </footer>
+
+  <script>
+    // Forward the UTM/utm_source params from the MCP host onto the App
+    // Store and Play Store deep links so we can attribute installs to the
+    // Claude / ChatGPT cohort separately from organic.
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const source = params.get('utm_source') || 'mcp';
+      const medium = params.get('utm_medium') || 'paywall';
+      const campaign = params.get('utm_campaign') || 'plan_trip_429';
+      document.querySelectorAll('.badge').forEach((a) => {
+        try {
+          const u = new URL(a.href);
+          // App Store accepts pt/ct campaign params; Play Store uses
+          // referrer. We send both for simplicity — each store ignores
+          // what it doesn't recognize.
+          u.searchParams.set('pt', '125112343');  // Apple "Provider Token"
+          u.searchParams.set('ct', `${source}_${medium}_${campaign}`);
+          u.searchParams.set('referrer', `utm_source=${source}&utm_medium=${medium}&utm_campaign=${campaign}`);
+          a.href = u.toString();
+        } catch (_) { /* leave plain href on parse failure */ }
+      });
+    })();
+  </script>
+</body>
+</html>
