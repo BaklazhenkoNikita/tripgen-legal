@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.periploapp.android",
+      "sha256_cert_fingerprints": [
+        "3A:EC:F0:75:7F:CC:3D:08:9F:E3:E4:69:D1:77:0F:A2:49:03:C3:CB:98:28:E5:8F:C1:84:E0:5B:19:C6:E2:E0",
+        "2B:0C:10:39:91:2D:55:E3:98:8E:46:05:D4:8F:15:CC:E8:3D:A8:59:97:1C:A0:27:05:3F:E5:3F:7D:EC:4F:B7"
+      ]
+    }
+  }
+]

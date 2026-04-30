@@ -21,20 +21,27 @@ Serve requirements (GitHub Pages handles these automatically with the
 Apple's CDN caches the file for 24h after first fetch; test changes on a
 throwaway path first or use `swcutil dsc` on macOS to inspect the cache.
 
-## assetlinks.json — not yet shipped
+## assetlinks.json
 
-Android App Links will need `.well-known/assetlinks.json` with the Play
-Store release key SHA256 fingerprint. Skipped for now because the app is
-not yet on Play Store (see `mobile/src/config/appStore.ts`). When Android
-ships, add the file with content:
+Enables Android App Links: `https://periploapp.com/{activity,template,join}/*`
+URLs open the Periplo Android app directly when installed (matches the
+intent filters in `mobile/app.config.ts`).
 
-```json
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "com.tripgen.app",
-    "sha256_cert_fingerprints": ["<get from `eas credentials -p android`>"]
-  }
-}]
+Package: `com.periploapp.android` (the Periplo-rebrand Android package —
+NOT `com.tripgen.app`, which is only used as the iOS bundle identifier).
+
+Fingerprints listed:
+- App signing key (Google Play-managed) — from Play Console → Test and
+  release → App integrity → Play app signing → SHA-256. This is the cert
+  that signs APKs Google actually serves to users from Play Store.
+- Upload key (EAS-managed) — from the same page. Covers non-Play
+  installs (direct APK builds from EAS).
+
+To rotate: copy the new SHA-256 from Play Console (or
+`eas credentials -p android`) and add it to the array; keep old
+fingerprints until all old installs are upgraded. Verify after deploy
+with Google's official API:
+
+```
+curl "https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://periploapp.com&relation=delegate_permission/common.handle_all_urls"
 ```
