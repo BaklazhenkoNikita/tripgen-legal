@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Periplo MCP Connector - Travel tools for Claude and ChatGPT</title>
+  <meta name="description" content="Periplo's MCP connector lets Claude, ChatGPT, and other MCP-compatible hosts call our travel tools — curated attractions, day-by-day itineraries, and destination overviews — directly inside the chat.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #FDFCF9;
+      color: #1A1612;
+      line-height: 1.7;
+      padding: 40px 20px;
+    }
+    .container { max-width: 760px; margin: 0 auto; }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      color: #C4603A;
+    }
+    .subtitle {
+      color: #8C7E74;
+      font-size: 1.05rem;
+      margin-bottom: 36px;
+    }
+    h2 {
+      font-size: 1.25rem;
+      margin-top: 36px;
+      margin-bottom: 16px;
+      color: #1A1612;
+    }
+    h3 {
+      font-size: 1.05rem;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      color: #1A1612;
+    }
+    p, li { margin-bottom: 12px; color: #3A3330; }
+    ul { padding-left: 24px; }
+    a { color: #C4603A; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .tool-card {
+      background: #FFFFFF;
+      border: 1px solid #F0EDE8;
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin-bottom: 14px;
+    }
+    .tool-card code {
+      display: inline-block;
+      background: #F5F2ED;
+      color: #1A1612;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+    .tool-card p { margin-top: 8px; margin-bottom: 0; }
+    pre {
+      background: #1A1612;
+      color: #F5F2ED;
+      padding: 16px 18px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 0.92rem;
+      margin: 12px 0 20px;
+    }
+    pre code { color: inherit; background: transparent; padding: 0; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .pill {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #F5F2ED;
+      color: #8C7E74;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .pill.read { background: #E8F0E9; color: #4A6B4D; }
+    .pill.write { background: #F5E8E0; color: #A04E2C; }
+    .contact-box {
+      background: #F5F2ED;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 32px;
+    }
+    .note {
+      background: #F0F5F0;
+      border-left: 3px solid #5B7B5E;
+      border-radius: 0 12px 12px 0;
+      padding: 14px 18px;
+      margin: 18px 0;
+    }
+    .note p { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Periplo MCP</h1>
+    <p class="subtitle">Travel tools for Claude, ChatGPT, and any MCP-compatible host. Ask about a destination — get a curated map, an itinerary, or a magazine-style overview rendered inline.</p>
+
+    <h2>What it does</h2>
+    <p>Periplo MCP exposes Periplo's curated travel database — human-edited highlights, ranked activities, restaurants, and bookable tours — over the <a href="https://modelcontextprotocol.io">Model Context Protocol</a>. Your AI host calls the right tool for each question, and the response renders as an interactive widget (map, photo cards, day-by-day plan) right in the chat.</p>
+
+    <h2>Tools</h2>
+
+    <div class="tool-card">
+      <code>explore_destination</code><span class="pill read">Read-only</span>
+      <p>Top sights, neighborhoods, restaurants, and bookable tours for a city, region, or country. Renders as an interactive map with photo cards. The default for any travel question about a place.</p>
+    </div>
+
+    <div class="tool-card">
+      <code>build_itinerary</code><span class="pill write">Generates content</span>
+      <p>Multi-day day-by-day schedule with activities, restaurants, and a recommended split across days. Use when you want a structured itinerary, not just exploration.</p>
+    </div>
+
+    <div class="tool-card">
+      <code>destination_info</code><span class="pill read">Read-only</span>
+      <p>Magazine-style overview of a place — description, history, culture, currency, language, climate, hero photos. Use when you want to <em>understand</em> a place rather than visit it.</p>
+    </div>
+
+    <div class="tool-card">
+      <code>search</code> + <code>fetch</code><span class="pill read">Read-only</span>
+      <p>OpenAI deep-research compatibility shims. <code>search(query)</code> returns flat citations; <code>fetch(id)</code> dereferences a single entity into its full record. For normal travel questions, hosts should prefer the three tools above.</p>
+    </div>
+
+    <h2>Connecting</h2>
+
+    <h3>Claude (web, desktop, mobile)</h3>
+    <p>Settings → Connectors → Add custom connector. Paste this URL:</p>
+    <pre><code>https://api.periploapp.com/mcp</code></pre>
+    <p>Claude walks you through the Periplo (Clerk) sign-in once, then keeps the connector available across conversations.</p>
+
+    <h3>ChatGPT (Apps SDK / Developer Mode)</h3>
+    <p>Settings → Connectors (or Developer Mode → Connectors) → Add. Same URL:</p>
+    <pre><code>https://api.periploapp.com/mcp</code></pre>
+
+    <h3>Other MCP hosts</h3>
+    <p>Any host that speaks the MCP <em>Streamable HTTP</em> transport with OAuth 2.1 + Dynamic Client Registration can connect. There are no API keys to manage on either end — Clerk handles registration and tokens.</p>
+
+    <h2>Authentication</h2>
+    <p>Periplo MCP is a pure OAuth 2.1 resource server. Identity is provided by <a href="https://clerk.com">Clerk</a>; the resource-discovery doc lives at <a href="https://api.periploapp.com/.well-known/oauth-protected-resource"><code>/.well-known/oauth-protected-resource</code></a> per RFC 9728. Hosts auto-register via Dynamic Client Registration on first use — no manual setup required.</p>
+    <p>Sign-in supports Google, Apple, and email magic links — the same options as the Periplo mobile app.</p>
+
+    <h2>Rate limits</h2>
+    <ul>
+      <li><strong>Free</strong>: 1,000 destination lookups per day. <code>build_itinerary</code> only debits the counter on a cache miss; warm cities are free.</li>
+      <li><strong>Pro</strong>: a much higher cap, plus priority on long-tail city generation. <a href="https://periploapp.com/mcp-upgrade">Upgrade →</a></li>
+    </ul>
+    <p>When you hit the cap, the tool returns a structured <code>rate_limited</code> response with an upgrade link rather than failing — your host can render that gracefully.</p>
+
+    <h2>Privacy</h2>
+    <p>We capture the bare minimum needed to keep the connector reliable: which tool was called, the destination string, your Periplo user ID, and request timing — no chat content, no personal context the host might pass alongside. Logs roll off after 90 days. See our <a href="privacy.html">Privacy Policy</a> for the full picture.</p>
+
+    <div class="note">
+      <p><strong>For developers:</strong> the connector implements the MCP 2025-06-18 spec including <code>readOnlyHint</code> / <code>destructiveHint</code> annotations, embedded UI resources for in-chat widgets, and Origin-header validation. Source-of-truth descriptions and JSON schemas come from the live <code>/mcp</code> endpoint.</p>
+    </div>
+
+    <h2>Support</h2>
+    <div class="contact-box">
+      <p>Questions, feedback, or a destination we should add to the curated set?</p>
+      <p><a href="mailto:support@periploapp.com">support@periploapp.com</a></p>
+    </div>
+  </div>
+</body>
+</html>
