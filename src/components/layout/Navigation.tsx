@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { SignedIn, SignedOut, UserButton, useClerk } from '@clerk/nextjs';
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, Menu as MenuIcon, X } from 'lucide-react';
+import { ChevronDown, Menu as MenuIcon, Sparkles, X } from 'lucide-react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
@@ -19,6 +19,7 @@ import { CreditBadge } from '@/components/credits/CreditBadge';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { tgShadow } from '@/theme/shadows';
 import { useActiveTrip, useCityOptional } from '@/contexts';
+import { useSubscriptionOptional } from '@/contexts/SubscriptionContext';
 import { destinationSlug } from '@/lib/destinationSlug';
 import { readLastChatId } from '@/components/chat/lastChatStorage';
 
@@ -50,6 +51,7 @@ export function Navigation() {
   // work as fallbacks for fresh sessions and deep links.
   const { activeTripId, hydrated: activeTripHydrated } = useActiveTrip();
   const city = useCityOptional()?.city ?? null;
+  const isPro = useSubscriptionOptional()?.credits?.isPro ?? false;
   const [lastChatId, setLastChatId] = useState<string | null>(null);
   useEffect(() => {
     setLastChatId(readLastChatId());
@@ -223,7 +225,36 @@ export function Navigation() {
             </Button>
           </SignedOut>
           <SignedIn>
-            <UserButton afterSignOutUrl="/" />
+            {!isPro ? (
+              <Button
+                component={Link}
+                href="/pricing"
+                variant="contained"
+                color="primary"
+                size="small"
+                startIcon={<Sparkles size={14} />}
+                sx={{ display: { xs: 'none', md: 'inline-flex' }, fontWeight: 600 }}
+              >
+                Get Pro
+              </Button>
+            ) : null}
+            <UserButton afterSignOutUrl="/">
+              <UserButton.MenuItems>
+                {!isPro ? (
+                  <UserButton.Link
+                    label="Get Pro"
+                    labelIcon={<Sparkles size={14} />}
+                    href="/pricing"
+                  />
+                ) : (
+                  <UserButton.Link
+                    label="Manage subscription"
+                    labelIcon={<Sparkles size={14} />}
+                    href="/profile"
+                  />
+                )}
+              </UserButton.MenuItems>
+            </UserButton>
           </SignedIn>
 
           <IconButton
@@ -271,6 +302,35 @@ export function Navigation() {
               ))}
             </SignedOut>
             <SignedIn>
+              {!isPro ? (
+                <Box
+                  component={Link}
+                  href="/pricing"
+                  onClick={() => {
+                    setPendingHref('/pricing');
+                    closeMobile();
+                  }}
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 0.75,
+                    alignSelf: 'flex-start',
+                    borderRadius: 1.5,
+                    px: 1.5,
+                    py: 1,
+                    mb: 0.5,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    color: 'primary.contrastText',
+                    bgcolor: 'primary.main',
+                    '&:hover': { bgcolor: 'primary.dark' },
+                  }}
+                >
+                  <Sparkles size={14} />
+                  Get Pro
+                </Box>
+              ) : null}
               <Box
                 component="button"
                 type="button"
