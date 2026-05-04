@@ -95,19 +95,19 @@ export default function DiscoverPage() {
       {tripGenDisabled ? (
         <Box
           role="status"
-          sx={{
+          sx={(t) => ({
             mb: 3,
             display: 'flex',
             alignItems: 'center',
             gap: 1,
             borderRadius: 1.5,
             border: '1px solid',
-            borderColor: (t) => alpha('#FF9500', 0.3),
-            bgcolor: (t) => alpha('#FF9500', 0.1),
+            borderColor: alpha(t.palette.warning.main, 0.3),
+            bgcolor: alpha(t.palette.warning.main, 0.1),
             p: 2,
             fontSize: 14,
-            color: '#FF9500',
-          }}
+            color: t.palette.warning.dark,
+          })}
         >
           <AlertTriangle className="size-4 shrink-0" aria-hidden />
           Discovery is paused for maintenance. Try again shortly.
@@ -186,19 +186,19 @@ export default function DiscoverPage() {
 
       {phase === 'error' && error ? (
         <Box
-          sx={{
+          sx={(t) => ({
             mt: 2.5,
             display: 'flex',
             alignItems: 'flex-start',
             gap: 1,
             borderRadius: 1.5,
             border: '1px solid',
-            borderColor: (t) => alpha('#dc2626', 0.3),
-            bgcolor: (t) => alpha('#dc2626', 0.1),
+            borderColor: alpha(t.palette.error.main, 0.3),
+            bgcolor: alpha(t.palette.error.main, 0.1),
             p: 2,
             fontSize: 14,
-            color: '#dc2626',
-          }}
+            color: t.palette.error.dark,
+          })}
         >
           <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
           {error}

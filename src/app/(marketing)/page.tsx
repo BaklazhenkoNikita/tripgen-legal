@@ -1,16 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Sparkles, Users, Search, ArrowRight, Compass, Apple, Play } from 'lucide-react';
+import { Sparkles, Users, Search, ArrowRight } from 'lucide-react';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import { destinations } from '@/data/destinations';
 import { blogPosts } from '@/data/blogPosts';
 import { Photo } from '@/components/ui/Photo';
 import { Badge } from '@/components/ui/Badge';
-import { surfaceBackgroundSx } from '@/theme/backgrounds';
+import { Hero } from '@/components/marketing/Hero';
 
 export const metadata: Metadata = {
   title: 'Periplo — AI Travel Planner',
@@ -51,137 +49,7 @@ const features = [
 export default function LandingPage() {
   return (
     <>
-      {/* Hero */}
-      <Box
-        component="section"
-        sx={{
-          ...surfaceBackgroundSx,
-          position: 'relative',
-          overflow: 'hidden',
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-        }}
-      >
-        <Box
-          sx={{
-            position: 'relative',
-            mx: 'auto',
-            maxWidth: 1024,
-            px: { xs: 2, sm: 3 },
-            py: { xs: 8, sm: 10 },
-            textAlign: 'center',
-          }}
-        >
-          <Box sx={{ mb: 3, display: 'inline-flex' }}>
-            <Badge tone="accent" size="md" iconLeft={<Sparkles size={14} />}>
-              AI-powered travel planning
-            </Badge>
-          </Box>
-          <Typography
-            component="h1"
-            sx={{
-              fontWeight: 700,
-              fontSize: 'clamp(2.75rem, 4vw, 4.25rem)',
-              lineHeight: 1.05,
-              letterSpacing: '-0.02em',
-              color: 'text.primary',
-            }}
-          >
-            Plan your perfect trip,
-            <br />
-            <Box
-              component="span"
-              sx={{
-                backgroundImage:
-                  'linear-gradient(120deg, var(--tg-palette-primary-main) 0%, var(--tg-palette-primary-dark) 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              day by day.
-            </Box>
-          </Typography>
-          <Typography
-            sx={{
-              mx: 'auto',
-              mt: 3.5,
-              maxWidth: 620,
-              fontSize: 17,
-              lineHeight: 1.6,
-              color: 'text.secondary',
-            }}
-          >
-            Get personalized itineraries, hand-picked activities, and real-time collaboration —
-            all in minutes. No spreadsheets, no second-guessing.
-          </Typography>
-          <Stack
-            direction="row"
-            spacing={1.5}
-            sx={{ mt: 4.5, flexWrap: 'wrap', justifyContent: 'center', rowGap: 1.5 }}
-          >
-            <Button
-              component={Link}
-              href="/trip"
-              variant="contained"
-              color="primary"
-              size="large"
-              endIcon={<ArrowRight size={16} />}
-              sx={{ borderRadius: 999, px: 3, py: 1.25, fontSize: 16 }}
-            >
-              Start planning
-            </Button>
-            <Button
-              component={Link}
-              href="/explore"
-              variant="outlined"
-              size="large"
-              startIcon={<Compass size={16} />}
-              sx={{
-                borderRadius: 999,
-                px: 3,
-                py: 1.25,
-                fontSize: 16,
-                borderColor: 'divider',
-                color: 'text.primary',
-                '&:hover': { bgcolor: 'action.hover', borderColor: 'text.disabled' },
-              }}
-            >
-              Explore destinations
-            </Button>
-            <IconButton
-              disabled
-              aria-label="iOS app — coming soon"
-              title="Coming soon"
-              sx={{
-                width: 44,
-                height: 44,
-                border: '1px solid',
-                borderColor: 'divider',
-                color: 'text.primary',
-                '&.Mui-disabled': { color: 'text.secondary', opacity: 0.7 },
-              }}
-            >
-              <Apple size={18} />
-            </IconButton>
-            <IconButton
-              disabled
-              aria-label="Android app — coming soon"
-              title="Coming soon"
-              sx={{
-                width: 44,
-                height: 44,
-                border: '1px solid',
-                borderColor: 'divider',
-                color: 'text.primary',
-                '&.Mui-disabled': { color: 'text.secondary', opacity: 0.7 },
-              }}
-            >
-              <Play size={18} />
-            </IconButton>
-          </Stack>
-        </Box>
-      </Box>
+      <Hero />
 
       {/* Features */}
       <Box component="section" sx={{ px: { xs: 2, sm: 3 }, py: { xs: 7, md: 9 } }}>
@@ -226,10 +94,7 @@ export default function LandingPage() {
                   transition: 'all 0.2s',
                   '&:hover': {
                     borderColor: 'text.disabled',
-                    boxShadow: '0 8px 24px rgba(34, 34, 34, 0.10)',
-                    '[data-tg-color-scheme="dark"] &': {
-                      boxShadow: '0 0 0 1px rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.55)',
-                    },
+                    boxShadow: 'var(--tg-shadow-card-hover)',
                   },
                 }}
               >
@@ -340,10 +205,7 @@ export default function LandingPage() {
                   '&:hover': {
                     transform: 'translateY(-2px)',
                     borderColor: 'text.disabled',
-                    boxShadow: '0 8px 24px rgba(34, 34, 34, 0.10)',
-                    '[data-tg-color-scheme="dark"] &': {
-                      boxShadow: '0 0 0 1px rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.55)',
-                    },
+                    boxShadow: 'var(--tg-shadow-card-hover)',
                     '& h3': { color: 'primary.main' },
                   },
                 }}
@@ -532,10 +394,7 @@ export default function LandingPage() {
             py: 7,
             textAlign: 'center',
             color: '#fff',
-            boxShadow: '0 24px 48px rgba(196, 96, 58, 0.22)',
-            '[data-tg-color-scheme="dark"] &': {
-              boxShadow: '0 24px 48px rgba(196, 96, 58, 0.42)',
-            },
+            boxShadow: 'var(--tg-shadow-primary-button-hover)',
           }}
         >
           <Typography

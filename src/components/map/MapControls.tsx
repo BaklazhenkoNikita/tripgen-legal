@@ -1,14 +1,16 @@
 'use client';
 
-import { useMap } from 'react-leaflet';
-import type { LatLngBoundsLiteral } from 'leaflet';
+import type maplibregl from 'maplibre-gl';
 import { Plus, Minus, Maximize2, Layers, Maximize, Minimize } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import { alpha } from '@mui/material/styles';
 
+type LngLatBounds = [[number, number], [number, number]] | null;
+
 interface Props {
-  bounds: LatLngBoundsLiteral | null;
+  map: maplibregl.Map | null;
+  bounds: LngLatBounds;
   onLayersToggle?: () => void;
   layersActive?: boolean;
   onFullscreenToggle?: () => void;
@@ -16,14 +18,13 @@ interface Props {
 }
 
 export function MapControls({
+  map,
   bounds,
   onLayersToggle,
   layersActive,
   onFullscreenToggle,
   fullscreen,
 }: Props) {
-  const map = useMap();
-
   return (
     <Box
       sx={{
@@ -52,20 +53,27 @@ export function MapControls({
       <ControlButton
         label="Zoom in"
         icon={<Plus size={18} aria-hidden />}
-        onClick={() => map.zoomIn()}
+        onClick={() => map?.zoomIn()}
+        disabled={!map}
       />
       <ControlButton
         label="Zoom out"
         icon={<Minus size={18} aria-hidden />}
-        onClick={() => map.zoomOut()}
+        onClick={() => map?.zoomOut()}
+        disabled={!map}
       />
       {bounds ? (
         <ControlButton
           label="Fit to pins"
           icon={<Maximize2 size={16} aria-hidden />}
           onClick={() =>
-            map.fitBounds(bounds, { padding: [60, 80], animate: true })
+            map?.fitBounds(bounds, {
+              padding: { top: 60, right: 80, bottom: 60, left: 80 },
+              maxZoom: 15,
+              duration: 400,
+            })
           }
+          disabled={!map}
         />
       ) : null}
       {onFullscreenToggle ? (
@@ -99,11 +107,13 @@ function ControlButton({
   icon,
   onClick,
   active,
+  disabled,
 }: {
   label: string;
   icon: React.ReactNode;
   onClick: () => void;
   active?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <Tooltip title={label} placement="left" arrow>
@@ -111,6 +121,7 @@ function ControlButton({
         component="button"
         type="button"
         aria-label={label}
+        disabled={disabled}
         onClick={(e) => {
           e.stopPropagation();
           onClick();
@@ -124,16 +135,21 @@ function ControlButton({
           justifyContent: 'center',
           background: 'transparent',
           border: 0,
-          cursor: 'pointer',
+          cursor: disabled ? 'default' : 'pointer',
           color: active ? 'primary.main' : 'text.secondary',
+          opacity: disabled ? 0.5 : 1,
           transition: 'background-color 160ms ease, color 160ms ease',
-          '&:hover': {
-            backgroundColor: (t) => alpha(t.palette.text.primary, 0.06),
-            color: 'text.primary',
-          },
-          '&:active': {
-            backgroundColor: (t) => alpha(t.palette.text.primary, 0.1),
-          },
+          '&:hover': disabled
+            ? undefined
+            : {
+                backgroundColor: (t) => alpha(t.palette.text.primary, 0.06),
+                color: 'text.primary',
+              },
+          '&:active': disabled
+            ? undefined
+            : {
+                backgroundColor: (t) => alpha(t.palette.text.primary, 0.1),
+              },
           '&:focus-visible': {
             outline: '2px solid',
             outlineColor: 'primary.main',

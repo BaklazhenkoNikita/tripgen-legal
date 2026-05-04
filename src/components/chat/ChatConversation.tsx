@@ -244,18 +244,18 @@ export function ChatConversation({ chatId, embed = false }: Props) {
       {error ? (
         <Box
           component="p"
-          sx={{
+          sx={(t) => ({
             mt: 1,
             mb: 0,
             borderRadius: 1.5,
             border: 1,
-            borderColor: alpha('#dc2626', 0.3),
-            bgcolor: alpha('#dc2626', 0.08),
+            borderColor: alpha(t.palette.error.main, 0.3),
+            bgcolor: alpha(t.palette.error.main, 0.08),
             px: 1.5,
             py: 0.75,
             fontSize: 14,
-            color: '#b91c1c',
-          }}
+            color: t.palette.error.dark,
+          })}
         >
           {error}
         </Box>
@@ -276,18 +276,18 @@ export function ChatConversation({ chatId, embed = false }: Props) {
       {!chatEnabled ? (
         <Box
           component="p"
-          sx={{
+          sx={(t) => ({
             mt: 1,
             mb: 0,
             borderRadius: 1.5,
             border: 1,
-            borderColor: alpha('#FF9500', 0.3),
-            bgcolor: alpha('#FF9500', 0.1),
+            borderColor: alpha(t.palette.warning.main, 0.3),
+            bgcolor: alpha(t.palette.warning.main, 0.1),
             px: 1.5,
             py: 0.75,
             fontSize: 14,
-            color: '#92400e',
-          }}
+            color: t.palette.warning.dark,
+          })}
         >
           Chat is paused for maintenance. Try again shortly.
         </Box>

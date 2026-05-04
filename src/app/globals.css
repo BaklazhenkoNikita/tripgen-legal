@@ -1,8 +1,15 @@
 /* Global styles outside MUI's CssBaseline.
  * MUI handles palette, fonts, body bg, selection. We keep here:
  *   - viewport / scroll niceties from the legacy Vite app
- *   - Leaflet z-index normalisation
+ *   - MapLibre GL z-index normalisation
  *   - shared keyframes (gradientShift, skeletonWave) used by sx blocks
+ *
+ * Dark-mode strategy: prefer auto-switching MUI palette vars
+ * (`--tg-palette-*` and `*Channel` for alpha composition) and the
+ * shadow vars emitted from MuiCssBaseline (`--tg-shadow-popup` etc.)
+ * over per-scheme rule duplication. Scheme-scoped selectors remain
+ * only where a property genuinely needs different values per mode
+ * (border tints, marker label background, attribution chrome).
  */
 
 * { box-sizing: border-box; }
@@ -35,22 +42,18 @@ body {
   .app-footer { padding-bottom: max(0px, env(safe-area-inset-bottom)); }
 }
 
-/* Leaflet sits below MUI Drawer/Modal */
-.leaflet-container,
-.leaflet-pane,
-.leaflet-top,
-.leaflet-bottom { z-index: 1 !important; }
+/* MapLibre GL sits below MUI Drawer/Modal */
+.maplibregl-map,
+.maplibregl-canvas-container,
+.maplibregl-control-container,
+.maplibregl-marker { z-index: 1 !important; }
+.maplibregl-popup { z-index: 2 !important; }
 
-/* Tile polish — nudge Stadia Alidade toward Google's warm roadmap tone. */
-.leaflet-tile {
-  filter: saturate(0.92) contrast(1.04) brightness(1.02);
-}
-[data-tg-color-scheme="dark"] .leaflet-tile {
-  filter: saturate(0.95) brightness(0.94);
-}
+/* No tile filter — the Periplo style ships pre-tuned. */
 
 /* ------------------------------------------------------------------ */
-/* Custom pin (divIcon) — driven by Map.tsx buildPinHtml.             */
+/* Custom pin DOM — driven by Map.tsx buildPinEl. Library-agnostic;   */
+/* attached to the map via maplibregl.Marker({ element }).            */
 /* ------------------------------------------------------------------ */
 .tg-pin {
   position: relative;
@@ -68,7 +71,7 @@ body {
   position: absolute;
   inset: 0 0 4px 0;
   border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
-  background: var(--tg-palette-background-paper, #fff);
+  background: var(--tg-palette-background-paper);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.10),
     0 4px 10px rgba(0, 0, 0, 0.12);
@@ -89,6 +92,8 @@ body {
   width: 28px;
   height: 28px;
   border-radius: 50%;
+  /* --tg-pin-color is set per-pin by Map.tsx as inline style; keep a
+   * neutral fallback so a half-loaded pin doesn't render blank. */
   background: var(--tg-pin-color, #6b7280);
   color: #fff;
   display: inline-flex;
@@ -148,7 +153,7 @@ body {
   z-index: 1000;
 }
 .tg-pin--selected .tg-pin__halo {
-  background: var(--tg-palette-background-paper, #fff);
+  background: var(--tg-palette-background-paper);
   box-shadow:
     0 0 0 2px var(--tg-pin-color, #6b7280),
     0 6px 16px rgba(0, 0, 0, 0.16);
@@ -180,99 +185,108 @@ body {
   100% { transform: translateX(-50%) scale(1.9); opacity: 0;    }
 }
 
-/* Cluster bubble (divIcon from createClusterIcon). */
+/* Cluster bubble — emitted by Map.tsx buildClusterEl.
+ * background/color use auto-switching palette vars; only the border
+ * tint and shadow differ per mode. Shadow is centralised through
+ * --tg-shadow-cluster (emitted from theme/MuiCssBaseline). */
 .tg-cluster {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: var(--tg-palette-background-paper, #fff);
-  color: var(--tg-palette-text-primary, #222);
+  background: var(--tg-palette-background-paper);
+  color: var(--tg-palette-text-primary);
   font-weight: 700;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   border: 2px solid rgba(255, 255, 255, 0.95);
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.06),
-    0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--tg-shadow-cluster);
   transition: transform 160ms ease-out;
   cursor: pointer;
 }
 .tg-cluster:hover { transform: scale(1.06); }
 .tg-cluster[data-tg-cluster-theme="dark"],
 [data-tg-color-scheme="dark"] .tg-cluster {
-  background: #2b2724;
-  color: #f3efe9;
   border-color: rgba(255, 255, 255, 0.16);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-/* Transit pill at polyline midpoints. */
+/* Cluster contains the currently-hovered card → light it up so the
+ * user sees the affordance even when their target is collapsed. */
+.tg-cluster--active,
+.tg-cluster--active.tg-cluster {
+  transform: scale(1.12);
+  background: #C4603A;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 0 2px #C4603A,
+    0 6px 18px rgba(0, 0, 0, 0.18);
+}
+[data-tg-color-scheme="dark"] .tg-cluster--active,
+[data-tg-color-scheme="dark"] .tg-cluster--active.tg-cluster {
+  box-shadow:
+    0 0 0 2px #C4603A,
+    0 6px 18px rgba(0, 0, 0, 0.6);
+}
+
+/* Transit pill at polyline midpoints. Background uses the paperChannel
+ * var so the alpha composes against whatever paper currently is. */
 .tg-transit-label {
   display: inline-block;
   padding: 2px 6px;
   font-size: 11px;
   font-weight: 500;
   line-height: 1.3;
-  color: var(--tg-palette-text-secondary, #555);
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--tg-palette-text-secondary);
+  background: rgb(var(--tg-palette-background-paperChannel) / 0.92);
+  border: 1px solid var(--tg-palette-divider);
   border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--tg-shadow-transit-label);
   white-space: nowrap;
   pointer-events: none;
   transform: translate(-50%, -50%);
 }
-[data-tg-color-scheme="dark"] .tg-transit-label {
-  background: rgba(24, 21, 19, 0.92);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: var(--tg-palette-text-secondary, #b8afa6);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
 
-/* Popup polish */
-.leaflet-popup-content-wrapper {
+/* MapLibre popup polish (used if/when callers add `new maplibregl.Popup`). */
+.maplibregl-popup-content {
   border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
-  padding: 4px 8px;
-  background: var(--tg-palette-background-paper, #fff);
-  color: var(--tg-palette-text-primary, #222);
-}
-[data-tg-color-scheme="dark"] .leaflet-popup-content-wrapper {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-}
-.leaflet-popup-content {
-  margin: 8px 10px;
+  box-shadow: var(--tg-shadow-popup);
+  padding: 8px 10px;
+  background: var(--tg-palette-background-paper);
+  color: var(--tg-palette-text-primary);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.35;
 }
-.leaflet-popup-tip {
-  background: var(--tg-palette-background-paper, #fff);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+.maplibregl-popup-tip {
+  border-top-color: var(--tg-palette-background-paper) !important;
+  border-bottom-color: var(--tg-palette-background-paper) !important;
 }
-[data-tg-color-scheme="dark"] .leaflet-popup-tip {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+.maplibregl-popup-close-button {
+  color: var(--tg-palette-text-secondary) !important;
+  padding: 2px 6px !important;
 }
-.leaflet-popup-close-button { color: var(--tg-palette-text-secondary, #717171) !important; }
 
-/* Attribution shrink */
-.leaflet-control-attribution {
+/* Attribution shrink (compact mode collapses to an icon at narrow widths). */
+.maplibregl-ctrl-attrib {
   font-size: 10px !important;
   opacity: 0.7;
   padding: 1px 6px !important;
   border-radius: 6px 0 0 0;
-  background: rgba(255, 255, 255, 0.7) !important;
+  background: rgb(var(--tg-palette-background-paperChannel) / 0.7) !important;
+  color: var(--tg-palette-text-secondary) !important;
   backdrop-filter: blur(6px);
 }
-[data-tg-color-scheme="dark"] .leaflet-control-attribution {
-  background: rgba(24, 21, 19, 0.7) !important;
-  color: #b8afa6 !important;
+.maplibregl-ctrl-attrib-button {
+  background-color: rgb(var(--tg-palette-background-paperChannel) / 0.7) !important;
 }
-[data-tg-color-scheme="dark"] .leaflet-control-attribution a { color: #d8c8b8 !important; }
+.maplibregl-ctrl-attrib a {
+  color: var(--tg-palette-text-secondary) !important;
+}
 
-/* Map marker label (preserved from legacy App.css) */
+/* Map marker label (preserved from legacy App.css). Always reads as a
+ * dark chip with light text — it sits over photo or map and needs to
+ * be legible regardless of color scheme; only the shadow tightens
+ * under dark mode via --tg-shadow-marker-label. */
 .marker-label {
   background-color: rgba(0, 0, 0, 0.85);
   color: #fff;
@@ -282,7 +296,7 @@ body {
   font-weight: bold;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--tg-shadow-marker-label);
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -290,7 +304,6 @@ body {
 [data-tg-color-scheme="dark"] .marker-label {
   background-color: rgba(24, 21, 19, 0.92);
   border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 .gm-style-cc, .gmnoprint { z-index: 1 !important; }

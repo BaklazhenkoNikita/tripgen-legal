@@ -42,20 +42,20 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <Box
           role="alert"
-          sx={{
+          sx={(t) => ({
             mx: 'auto',
             my: 5,
             maxWidth: 448,
             borderRadius: 3,
             border: '1px solid',
-            borderColor: alpha('#dc2626', 0.3),
-            bgcolor: alpha('#dc2626', 0.08),
+            borderColor: alpha(t.palette.error.main, 0.3),
+            bgcolor: alpha(t.palette.error.main, 0.08),
             p: 3,
             textAlign: 'center',
-          }}
+          })}
         >
           <Box
-            sx={{
+            sx={(t) => ({
               mx: 'auto',
               display: 'inline-flex',
               height: 48,
@@ -63,9 +63,9 @@ export class ErrorBoundary extends Component<Props, State> {
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: 999,
-              bgcolor: alpha('#dc2626', 0.15),
-              color: '#dc2626',
-            }}
+              bgcolor: alpha(t.palette.error.main, 0.15),
+              color: t.palette.error.main,
+            })}
           >
             <AlertTriangle size={20} aria-hidden />
           </Box>

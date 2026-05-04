@@ -1,169 +1,125 @@
-'use client';
-
-import { use, useEffect, useMemo } from 'react';
-import { notFound, useRouter } from 'next/navigation';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { ChevronLeft } from 'lucide-react';
-import { useCity } from '@/contexts';
-import { destinationSlug, slugToCity } from '@/lib/destinationSlug';
+import type { Metadata } from 'next';
+import Script from 'next/script';
+import { destinations } from '@/data/destinations';
+import { slugToCity } from '@/lib/destinationSlug';
 import { extractPlaceId } from '@/lib/placeSlug';
-import { useActivity } from '@/hooks/useActivity';
-import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { getActivity, firstImageUrl, activityCoords } from '@/lib/server/api';
 import {
-  normalizeFeedItem,
-  type NormalizedFeedDetail,
-} from '@/lib/feed/itemAdapter';
-import type { FeedItem } from '@/hooks/useHomeFeed';
-import type { TravelActivity } from '@/types';
-import { PlaceDetailContent } from '@/components/places/PlaceDetailContent';
+  breadcrumbListJsonLd,
+  touristAttractionJsonLd,
+  stringifyJsonLd,
+} from '@/lib/seo/jsonld';
+import { PlaceFullPageClient } from './PlaceFullPageClient';
 
 interface Props {
   params: Promise<{ slug: string; place: string }>;
 }
 
-/** Fullscreen place page: `/explore/[city]/[slug-id]`. The `[place]` segment
- *  is `slugify(name) + "-" + activityId` — slug is decorative, the trailing
- *  Mongo ObjectId is the lookup key. Reached via map-pin click on the
- *  Explore destination view, or from the "Open full page" button on the
- *  drawer for non-Viator items. */
-export default function PlaceFullPage({ params }: Props) {
-  const { slug, place } = use(params);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug, place } = await params;
+  const placeId = extractPlaceId(place);
   const city = slugToCity(slug);
-  const placeId = useMemo(() => extractPlaceId(place), [place]);
-  const router = useRouter();
-  const { city: activeCity, setCity } = useCity();
+  const url = `/explore/${slug}/${place}`;
 
-  useEffect(() => {
-    if (city && activeCity !== city) setCity(city);
-  }, [city, activeCity, setCity]);
+  if (!placeId) {
+    return {
+      title: `Place — ${city}`,
+      description: `Discover top places to visit in ${city} with Periplo.`,
+      alternates: { canonical: url },
+      robots: { index: false },
+    };
+  }
 
-  if (!placeId) notFound();
+  const activity = await getActivity(placeId);
+  if (!activity) {
+    return {
+      title: `Place — ${city}`,
+      description: `Discover top places to visit in ${city} with Periplo.`,
+      alternates: { canonical: url },
+      robots: { index: false },
+    };
+  }
 
-  const { data: activity, isLoading, isError } = useActivity(placeId);
-
-  const detail = useMemo<NormalizedFeedDetail | null>(
-    () => (activity ? normalizeFeedItem(activityToFeedItem(activity)) : null),
-    [activity],
-  );
-
-  const cityHref = `/explore/${destinationSlug(city)}`;
-
-  return (
-    <Box
-      sx={{
-        position: 'relative',
-        mx: 'auto',
-        maxWidth: 1200,
-        px: { xs: 2, sm: 3, lg: 4 },
-        py: 3,
-      }}
-    >
-      <Box sx={{ mb: 2 }}>
-        <Button
-          variant="ghost"
-          size="sm"
-          iconLeft={<ChevronLeft size={16} />}
-          onClick={() => router.push(cityHref)}
-        >
-          {city ? `Back to ${city}` : 'Back'}
-        </Button>
-      </Box>
-
-      {isLoading ? (
-        <PlaceDetailSkeleton />
-      ) : isError || !detail ? (
-        <NotFoundLite city={city} cityHref={cityHref} />
-      ) : (
-        <PlaceDetailContent detail={detail} city={city} layout="page" />
-      )}
-    </Box>
-  );
-}
-
-/** Convert a TravelActivity (from `/api/activity/{id}`) into the loose
- *  FeedItem envelope expected by `normalizeFeedItem`. The normalizer
- *  reads scalar fields from `item.*`, so we just stuff matching keys in. */
-function activityToFeedItem(activity: TravelActivity): FeedItem {
-  const coords =
-    activity.coordinates ??
-    (activity.latitude != null && activity.longitude != null
-      ? { lat: activity.latitude, lng: activity.longitude }
-      : undefined);
+  const image = firstImageUrl(activity.images);
+  const description =
+    activity.description?.trim() ||
+    `Visit ${activity.name} in ${city}. Plan your day, get tips, and add it to your AI-generated itinerary with Periplo.`;
+  const title = `${activity.name} — ${city}`;
+  const trimmedDescription = description.length > 200 ? `${description.slice(0, 197)}…` : description;
 
   return {
-    item: {
-      _id: activity.id,
-      name: activity.name,
-      title: activity.name,
-      description: activity.description,
-      address: activity.address,
-      images: activity.images,
-      coordinates: coords,
-      primary_categories: activity.primary_categories,
-      category: activity.category?.[0],
-      duration: activity.duration,
-      cost: activity.cost,
-      working_hours: activity.working_hours,
-      rating: activity.rating,
-      vibe_tags: activity.vibe_tags,
-      secondary_tags: activity.secondary_tags,
-      website_url: activity.website_url,
-      insider_tips: activity.insider_tips,
-      interesting_facts: activity.interesting_facts,
+    title,
+    description: trimmedDescription,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${title} | Periplo`,
+      description: trimmedDescription,
+      url,
+      type: 'website',
+      ...(image ? { images: [{ url: image, width: 1200, height: 630, alt: activity.name }] } : {}),
     },
-    score: 0,
-    entity_type: 'activity',
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} | Periplo`,
+      description: trimmedDescription,
+      ...(image ? { images: [image] } : {}),
+    },
   };
 }
 
-function PlaceDetailSkeleton() {
-  return (
-    <Stack spacing={3}>
-      <Skeleton
-        variant="block"
-        width="100%"
-        style={{ aspectRatio: '2 / 1', height: 'auto' }}
-      />
-      <Stack spacing={1.5} sx={{ maxWidth: 720 }}>
-        <Skeleton variant="line" height={16} width="20%" />
-        <Skeleton variant="line" height={36} width="70%" />
-        <Skeleton variant="line" height={14} width="40%" />
-        <Skeleton variant="line" height={14} width="100%" />
-        <Skeleton variant="line" height={14} width="92%" />
-        <Skeleton variant="line" height={14} width="85%" />
-      </Stack>
-    </Stack>
-  );
-}
+export default async function PlaceFullPage({ params }: Props) {
+  const { slug, place } = await params;
+  const city = slugToCity(slug);
+  const placeId = extractPlaceId(place);
+  const dest = destinations.find((d) => d.slug === slug);
 
-function NotFoundLite({
-  city,
-  cityHref,
-}: {
-  city: string;
-  cityHref: string;
-}) {
-  const router = useRouter();
+  const activity = placeId ? await getActivity(placeId) : null;
+
+  const breadcrumbLd = stringifyJsonLd(
+    breadcrumbListJsonLd([
+      { name: 'Home', url: '/' },
+      { name: 'Explore', url: '/explore' },
+      { name: city, url: `/explore/${slug}` },
+      { name: activity?.name ?? 'Place', url: `/explore/${slug}/${place}` },
+    ]),
+  );
+
+  const attractionLd = activity
+    ? stringifyJsonLd(
+        touristAttractionJsonLd({
+          name: activity.name,
+          description: activity.description,
+          image: firstImageUrl(activity.images),
+          url: `/explore/${slug}/${place}`,
+          address: activity.address,
+          city,
+          country: dest?.country,
+          geo: activityCoords(activity),
+          rating: activity.rating ? { value: activity.rating } : undefined,
+          website: activity.website_url,
+        }),
+      )
+    : null;
+
   return (
-    <Box sx={{ py: 8, textAlign: 'center' }}>
-      <Typography
-        component="h1"
-        sx={{ fontSize: 24, fontWeight: 600, color: 'text.primary' }}
-      >
-        Place not found
-      </Typography>
-      <Typography sx={{ mt: 1, fontSize: 14, color: 'text.secondary' }}>
-        We couldn&apos;t find this place. It may have been removed, or the link
-        is incorrect.
-      </Typography>
-      <Box sx={{ mt: 3 }}>
-        <Button variant="primary" size="md" onClick={() => router.push(cityHref)}>
-          Back to {city || 'Explore'}
-        </Button>
-      </Box>
-    </Box>
+    <>
+      {breadcrumbLd && (
+        <Script
+          id={`ld-breadcrumb-${place}`}
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: breadcrumbLd }}
+        />
+      )}
+      {attractionLd && (
+        <Script
+          id={`ld-attraction-${place}`}
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: attractionLd }}
+        />
+      )}
+      <PlaceFullPageClient city={city} place={place} />
+    </>
   );
 }

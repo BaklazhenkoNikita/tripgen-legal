@@ -533,7 +533,7 @@ function RelatedViator({
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '2px',
-                          color: '#FF9500',
+                          color: 'warning.main',
                         }}
                       >
                         <Star size={10} fill="currentColor" aria-hidden />
@@ -587,7 +587,7 @@ function Chip({
         py: 0.5,
         fontSize: 12,
         fontWeight: 500,
-        color: tone === 'warning' ? '#FF9500' : 'text.secondary',
+        color: tone === 'warning' ? 'warning.main' : 'text.secondary',
       }}
     >
       {icon}

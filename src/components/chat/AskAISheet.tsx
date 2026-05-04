@@ -142,7 +142,7 @@ export function AskAISheet({ open, onClose, city }: Props) {
               }}
             >
               {error ? (
-                <Box component="span" sx={{ color: '#dc2626' }}>
+                <Box component="span" sx={{ color: 'error.main' }}>
                   {error}
                 </Box>
               ) : !city ? (

@@ -180,21 +180,21 @@ function TripPageInner() {
 
         {phase === 'error' && error ? (
           <Box
-            sx={{
+            sx={(t) => ({
               mt: 3,
               display: 'flex',
               alignItems: 'flex-start',
               gap: 1.5,
               borderRadius: 1.5,
               border: '1px solid',
-              borderColor: (t) => alpha('#dc2626', 0.3),
-              bgcolor: (t) => alpha('#dc2626', 0.1),
+              borderColor: alpha(t.palette.error.main, 0.3),
+              bgcolor: alpha(t.palette.error.main, 0.1),
               p: 2,
-            }}
+            })}
           >
-            <Box component={AlertTriangle} aria-hidden sx={{ mt: 0.25, width: 16, height: 16, flexShrink: 0, color: '#dc2626' }} />
+            <Box component={AlertTriangle} aria-hidden sx={{ mt: 0.25, width: 16, height: 16, flexShrink: 0, color: 'error.main' }} />
             <Box>
-              <Typography sx={{ fontSize: 14, color: '#dc2626' }}>{error}</Typography>
+              <Typography sx={{ fontSize: 14, color: 'error.dark' }}>{error}</Typography>
               <Button variant="ghost" size="sm" onClick={reset} style={{ marginTop: 8 }}>
                 Try again
               </Button>
@@ -225,7 +225,7 @@ function TripPageInner() {
       <Box sx={{ mx: 'auto', maxWidth: 1320, px: { xs: 2, sm: 3 } }}>
         {phase === 'error' && error ? (
           <Box
-            sx={{
+            sx={(t) => ({
               mx: 'auto',
               mb: 3,
               display: 'flex',
@@ -234,31 +234,31 @@ function TripPageInner() {
               gap: 1.5,
               borderRadius: 1.5,
               border: '1px solid',
-              borderColor: (t) => alpha('#dc2626', 0.3),
-              bgcolor: (t) => alpha('#dc2626', 0.1),
+              borderColor: alpha(t.palette.error.main, 0.3),
+              bgcolor: alpha(t.palette.error.main, 0.1),
               p: 2,
-            }}
+            })}
           >
-            <Box component={AlertTriangle} aria-hidden sx={{ mt: 0.25, width: 16, height: 16, flexShrink: 0, color: '#dc2626' }} />
-            <Typography sx={{ fontSize: 14, color: '#dc2626' }}>{error}</Typography>
+            <Box component={AlertTriangle} aria-hidden sx={{ mt: 0.25, width: 16, height: 16, flexShrink: 0, color: 'error.main' }} />
+            <Typography sx={{ fontSize: 14, color: 'error.dark' }}>{error}</Typography>
           </Box>
         ) : null}
 
         {tripGenDisabled && disabledReason ? (
           <Box
             role="status"
-            sx={{
+            sx={(t) => ({
               mx: 'auto',
               mb: 3,
               maxWidth: 768,
               borderRadius: 1.5,
               border: '1px solid',
-              borderColor: (t) => alpha('#FF9500', 0.3),
-              bgcolor: (t) => alpha('#FF9500', 0.1),
+              borderColor: alpha(t.palette.warning.main, 0.3),
+              bgcolor: alpha(t.palette.warning.main, 0.1),
               p: 2,
               fontSize: 14,
-              color: '#FF9500',
-            }}
+              color: t.palette.warning.dark,
+            })}
           >
             {disabledReason}
           </Box>

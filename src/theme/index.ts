@@ -3,6 +3,10 @@
 import { alpha, extendTheme } from '@mui/material/styles';
 import { textScale } from './standards';
 import { tgShadow } from './shadows';
+import {
+  CATEGORY_COLORS,
+  CATEGORY_COLORS_DARK,
+} from '@/lib/map/categoryColors';
 
 const fontBody = 'var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
 const fontDisplay = 'var(--font-display), Georgia, "Times New Roman", serif';
@@ -21,6 +25,17 @@ const hoodwiseBackground = '#F7F7F7';
 const hoodwiseDivider = '#E0E0E0';
 const hoodwiseHighlight = '#FF9500';
 
+// Light semantic colors — chosen to read on hoodwiseBackground / hoodwiseSurface.
+const lightSuccess = '#16A34A';
+const lightSuccessDark = '#15803D';
+const lightSuccessLight = '#4ADE80';
+const lightWarning = '#F59E0B';
+const lightWarningDark = '#B15300';
+const lightWarningLight = '#FCD34D';
+const lightError = '#DC2626';
+const lightErrorDark = '#B91C1C';
+const lightErrorLight = '#F87171';
+
 // Dark palette — brighter terracotta family for dark surfaces.
 const darkPrimary = '#E58866';
 const darkPrimaryDark = '#C4603A';
@@ -34,6 +49,17 @@ const darkSurface = '#181513';
 const darkBackground = '#0E0C0B';
 const darkDivider = '#2B2724';
 const darkHighlight = '#FFB44C';
+
+// Dark semantic colors — brightened so they stay legible on darkBackground.
+const darkSuccess = '#4ADE80';
+const darkSuccessDark = '#16A34A';
+const darkSuccessLight = '#86EFAC';
+const darkWarning = '#FFB44C';
+const darkWarningDark = '#F59E0B';
+const darkWarningLight = '#FCD34D';
+const darkError = '#EF6B6B';
+const darkErrorDark = '#DC2626';
+const darkErrorLight = '#FCA5A5';
 
 export const theme = extendTheme({
   cssVarPrefix: 'tg',
@@ -53,6 +79,28 @@ export const theme = extendTheme({
           dark: hoodwiseSecondaryDark,
           contrastText: hoodwiseSurface,
         },
+        success: {
+          main: lightSuccess,
+          light: lightSuccessLight,
+          dark: lightSuccessDark,
+          contrastText: hoodwiseSurface,
+        },
+        warning: {
+          main: lightWarning,
+          light: lightWarningLight,
+          dark: lightWarningDark,
+          contrastText: hoodwiseSurface,
+        },
+        error: {
+          main: lightError,
+          light: lightErrorLight,
+          dark: lightErrorDark,
+          contrastText: hoodwiseSurface,
+        },
+        info: {
+          main: hoodwiseHighlight,
+          contrastText: hoodwiseSurface,
+        },
         background: {
           default: hoodwiseBackground,
           paper: hoodwiseSurface,
@@ -62,12 +110,18 @@ export const theme = extendTheme({
           secondary: hoodwiseMuted,
         },
         divider: hoodwiseDivider,
-        info: { main: hoodwiseHighlight },
         action: {
           hover: alpha(hoodwiseCharcoal, 0.08),
           selected: alpha(hoodwisePrimary, 0.18),
           focus: alpha(hoodwisePrimary, 0.24),
           active: hoodwisePrimaryDark,
+        },
+        category: {
+          exploration: CATEGORY_COLORS.exploration,
+          activity: CATEGORY_COLORS.activity,
+          live_event: CATEGORY_COLORS.live_event,
+          restaurant: CATEGORY_COLORS.restaurant,
+          viator: CATEGORY_COLORS.viator,
         },
       },
     },
@@ -86,6 +140,28 @@ export const theme = extendTheme({
           dark: darkSecondaryDark,
           contrastText: hoodwiseSurface,
         },
+        success: {
+          main: darkSuccess,
+          light: darkSuccessLight,
+          dark: darkSuccessDark,
+          contrastText: darkBackground,
+        },
+        warning: {
+          main: darkWarning,
+          light: darkWarningLight,
+          dark: darkWarningDark,
+          contrastText: darkBackground,
+        },
+        error: {
+          main: darkError,
+          light: darkErrorLight,
+          dark: darkErrorDark,
+          contrastText: hoodwiseSurface,
+        },
+        info: {
+          main: darkHighlight,
+          contrastText: darkBackground,
+        },
         background: {
           default: darkBackground,
           paper: darkSurface,
@@ -95,12 +171,18 @@ export const theme = extendTheme({
           secondary: darkMuted,
         },
         divider: darkDivider,
-        info: { main: darkHighlight },
         action: {
           hover: alpha(darkText, 0.08),
           selected: alpha(darkPrimary, 0.22),
           focus: alpha(darkPrimary, 0.28),
           active: darkPrimaryLight,
+        },
+        category: {
+          exploration: CATEGORY_COLORS_DARK.exploration,
+          activity: CATEGORY_COLORS_DARK.activity,
+          live_event: CATEGORY_COLORS_DARK.live_event,
+          restaurant: CATEGORY_COLORS_DARK.restaurant,
+          viator: CATEGORY_COLORS_DARK.viator,
         },
       },
     },
@@ -139,7 +221,9 @@ export const theme = extendTheme({
   shape: { borderRadius: 8 },
   components: {
     MuiCssBaseline: {
-      styleOverrides: {
+      // MuiCssBaseline.styleOverrides receives the theme directly, unlike
+      // component-level overrides which receive `{ theme, ownerState }`.
+      styleOverrides: (t) => ({
         body: {
           backgroundColor: 'var(--tg-palette-background-default)',
           color: 'var(--tg-palette-text-primary)',
@@ -148,7 +232,37 @@ export const theme = extendTheme({
           backgroundColor: 'var(--tg-palette-primary-main)',
           color: '#fff',
         },
-      },
+        // Emit shadow tokens as CSS vars so:
+        // - non-React surfaces (Leaflet div-icons, popups, transit labels in
+        //   globals.css) auto-switch with the color scheme without per-mode rules
+        // - server components can reference shadows as plain strings
+        //   (`var(--tg-shadow-card)`) instead of sx callbacks, which can't be
+        //   serialised across the RSC boundary
+        ':root': {
+          '--tg-shadow-card': tgShadow(t, 'card'),
+          '--tg-shadow-card-hover': tgShadow(t, 'cardHover'),
+          '--tg-shadow-app-bar': tgShadow(t, 'appBar'),
+          '--tg-shadow-dropdown': tgShadow(t, 'dropdown'),
+          '--tg-shadow-sheet': tgShadow(t, 'sheet'),
+          '--tg-shadow-toast': tgShadow(t, 'toast'),
+          '--tg-shadow-tooltip': tgShadow(t, 'tooltip'),
+          '--tg-shadow-primary-button': tgShadow(t, 'primaryButton'),
+          '--tg-shadow-primary-button-hover': tgShadow(t, 'primaryButtonHover'),
+          '--tg-shadow-map-overlay': tgShadow(t, 'mapOverlay'),
+          '--tg-shadow-map-overlay-small': tgShadow(t, 'mapOverlaySmall'),
+          '--tg-shadow-popup': tgShadow(t, 'popup'),
+          '--tg-shadow-cluster': tgShadow(t, 'cluster'),
+          '--tg-shadow-transit-label': tgShadow(t, 'transitLabel'),
+          '--tg-shadow-marker-label': tgShadow(t, 'markerLabel'),
+          // Category pin colors — exposed for divIcon HTML and SVG strokes
+          // that don't inherit MUI's CSS vars by default.
+          '--tg-cat-exploration': t.palette.category.exploration,
+          '--tg-cat-activity': t.palette.category.activity,
+          '--tg-cat-live-event': t.palette.category.live_event,
+          '--tg-cat-restaurant': t.palette.category.restaurant,
+          '--tg-cat-viator': t.palette.category.viator,
+        },
+      }),
     },
     MuiButton: {
       styleOverrides: {
@@ -223,3 +337,25 @@ export const theme = extendTheme({
     },
   },
 });
+
+// ---------------------------------------------------------------------------
+// Module augmentation — exposes our custom `category` palette group to MUI's
+// type system so `theme.palette.category.restaurant` is type-checked in sx
+// callbacks and string-sx (e.g. `bgcolor: 'category.food.main'` is NOT valid;
+// these are flat hex strings, not PaletteColor objects).
+// ---------------------------------------------------------------------------
+declare module '@mui/material/styles' {
+  interface CategoryPalette {
+    exploration: string;
+    activity: string;
+    live_event: string;
+    restaurant: string;
+    viator: string;
+  }
+  interface Palette {
+    category: CategoryPalette;
+  }
+  interface PaletteOptions {
+    category?: CategoryPalette;
+  }
+}

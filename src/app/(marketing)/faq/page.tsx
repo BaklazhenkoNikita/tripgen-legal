@@ -86,10 +86,7 @@ export default function FAQPage() {
               p: 2.5,
               '&[open]': {
                 bgcolor: 'action.hover',
-                boxShadow: '0 2px 8px rgba(34, 34, 34, 0.05)',
-                '[data-tg-color-scheme="dark"] &': {
-                  boxShadow: '0 0 0 1px rgba(255,255,255,0.04), 0 2px 6px rgba(0,0,0,0.45)',
-                },
+                boxShadow: 'var(--tg-shadow-card)',
               },
             }}
           >

@@ -52,21 +52,17 @@ const CONFIRMED_VERB: Record<string, string> = {
   delete_trip: 'Deleting trip',
 };
 
-const SUCCESS = '#16a34a';
-const DANGER = '#dc2626';
-const INFO = '#0284c7';
-
 function toneIconBg(tone: Tone) {
   return (t: Theme) => {
     switch (tone) {
       case 'accent':
         return { bgcolor: alpha(t.palette.primary.main, 0.12), color: t.palette.primary.main };
       case 'success':
-        return { bgcolor: alpha(SUCCESS, 0.12), color: SUCCESS };
+        return { bgcolor: alpha(t.palette.success.main, 0.12), color: t.palette.success.main };
       case 'danger':
-        return { bgcolor: alpha(DANGER, 0.12), color: DANGER };
+        return { bgcolor: alpha(t.palette.error.main, 0.12), color: t.palette.error.main };
       case 'info':
-        return { bgcolor: alpha(INFO, 0.12), color: INFO };
+        return { bgcolor: alpha(t.palette.info.main, 0.12), color: t.palette.info.main };
     }
   };
 }
@@ -77,25 +73,25 @@ function toneBorderColor(tone: Tone) {
       case 'accent':
         return t.palette.primary.main;
       case 'success':
-        return SUCCESS;
+        return t.palette.success.main;
       case 'danger':
-        return DANGER;
+        return t.palette.error.main;
       case 'info':
-        return INFO;
+        return t.palette.info.main;
     }
   };
 }
 
-function toneBtn(tone: Tone) {
+function toneBtn(tone: Tone): { bg: string; hover: string } {
   switch (tone) {
     case 'accent':
       return { bg: 'primary.main', hover: 'primary.dark' };
     case 'success':
-      return { bg: SUCCESS, hover: '#15803d' };
+      return { bg: 'success.main', hover: 'success.dark' };
     case 'danger':
-      return { bg: DANGER, hover: '#b91c1c' };
+      return { bg: 'error.main', hover: 'error.dark' };
     case 'info':
-      return { bg: INFO, hover: '#0369a1' };
+      return { bg: 'info.main', hover: 'primary.main' };
   }
 }
 
@@ -107,7 +103,7 @@ export function ActionCard({ action, onConfirm, onReject }: Props) {
     const StatusIcon =
       action.status === 'executed' ? CheckCircle2 : action.status === 'failed' ? AlertCircle : XCircle;
     const color =
-      action.status === 'executed' ? SUCCESS : action.status === 'failed' ? DANGER : 'text.disabled';
+      action.status === 'executed' ? 'success.main' : action.status === 'failed' ? 'error.main' : 'text.disabled';
     return (
       <Box
         sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 1, py: 0.5, fontSize: 12, color }}

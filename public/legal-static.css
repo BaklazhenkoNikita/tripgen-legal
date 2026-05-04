@@ -1,0 +1,224 @@
+/* Shared stylesheet for the static legal HTML pages served from /public.
+ * The Next.js /legal/[slug] routes are the canonical surface (full nav,
+ * footer, MUI theme); the static .html files exist for mobile-app store
+ * metadata + bookmarks linked to /privacy.html, /terms.html, etc.
+ *
+ * Theme tokens auto-switch via prefers-color-scheme. Each HTML page can
+ * still add its own page-specific rules (e.g. .tip, .pill, .tool-card)
+ * by referencing the same vars. */
+
+:root {
+  --bg:                 #FDFCF9;
+  --text:               #1A1612;
+  --text-secondary:     #3A3330;
+  --text-muted:         #8C7E74;
+  --accent:             #C4603A;
+  --accent-hover:       #A94E2C;
+  --accent-soft:        #FBF3EF;
+  --surface:            #FFFFFF;
+  --surface-tinted:     #F5F2ED;
+  --note-bg:            #FDF4EF;
+  --tip-bg:             #F0F5F0;
+  --tip-border:         #5B7B5E;
+  --code-bg:            #F0EDE8;
+  --border:             #F0EDE8;
+  --pill-read-bg:       #E8F0E9;
+  --pill-read-fg:       #4A6B4D;
+  --pill-write-bg:      #F5E8E0;
+  --pill-write-fg:      #A04E2C;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:               #0E0C0B;
+    --text:             #F3EFE9;
+    --text-secondary:   #D6CEC4;
+    --text-muted:       #B8AFA6;
+    --accent:           #E58866;
+    --accent-hover:     #F0AC8E;
+    --accent-soft:      rgba(229, 136, 102, 0.10);
+    --surface:          #181513;
+    --surface-tinted:   #221E1B;
+    --note-bg:          rgba(229, 136, 102, 0.08);
+    --tip-bg:           rgba(132, 168, 136, 0.10);
+    --tip-border:       #84A888;
+    --code-bg:          #2B2724;
+    --border:           #2B2724;
+    --pill-read-bg:     rgba(132, 168, 136, 0.18);
+    --pill-read-fg:     #B8D6BB;
+    --pill-write-bg:    rgba(229, 136, 102, 0.18);
+    --pill-write-fg:    #F0AC8E;
+  }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  padding: 40px 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.container { max-width: 720px; margin: 0 auto; }
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+h2 {
+  font-size: 1.25rem;
+  margin-top: 32px;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+h3 {
+  font-size: 1.05rem;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.last-updated, .subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 32px;
+}
+.subtitle { font-size: 1.05rem; margin-bottom: 36px; }
+
+p, li { margin-bottom: 12px; color: var(--text-secondary); }
+ul, ol { padding-left: 24px; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+strong { color: var(--text); }
+
+/* Cards / boxes */
+.contact-box {
+  background: var(--surface-tinted);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 32px;
+}
+.contact-box p:last-child { margin-bottom: 0; }
+
+.faq-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 12px;
+}
+.faq-item h3 {
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.faq-item p {
+  color: var(--text-secondary);
+  margin-bottom: 0;
+}
+
+.note {
+  background: var(--note-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+.note p:last-child { margin-bottom: 0; }
+
+.tip {
+  background: var(--tip-bg);
+  border-left: 3px solid var(--tip-border);
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+.tip p { margin-bottom: 0; }
+
+/* Definition lists (DSA contact entries) */
+dl { margin: 12px 0 16px 0; }
+dt { font-weight: 600; color: var(--text); margin-top: 8px; }
+dd { margin-left: 0; color: var(--text-secondary); }
+
+/* Inline code (delete-account `code` block) */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--text);
+}
+
+/* Tables (affiliate disclosure) */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0 24px 0;
+}
+th, td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+th {
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface-tinted);
+}
+td { color: var(--text-secondary); font-size: 0.95rem; }
+
+/* MCP-page extras (.tool-card, .pill, pre) — stay legible with vars. */
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+.tool-card code {
+  display: inline-block;
+  background: var(--surface-tinted);
+  color: var(--text);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+.tool-card p { margin-top: 8px; margin-bottom: 0; }
+
+pre {
+  background: var(--surface-tinted);
+  color: var(--text);
+  padding: 16px 18px;
+  border-radius: 10px;
+  overflow-x: auto;
+  font-size: 0.92rem;
+  margin: 12px 0 20px;
+}
+pre code {
+  color: inherit;
+  background: transparent;
+  padding: 0;
+}
+
+.pill {
+  display: inline-block;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--surface-tinted);
+  color: var(--text-muted);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.pill.read { background: var(--pill-read-bg); color: var(--pill-read-fg); }
+.pill.write { background: var(--pill-write-bg); color: var(--pill-write-fg); }

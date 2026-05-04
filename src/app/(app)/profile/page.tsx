@@ -388,7 +388,7 @@ function ProfilePageInner() {
             iconLeft={<Trash2 className="size-3.5" />}
             onClick={() => setConfirmingDelete(true)}
             disabled={deleteAccount.isPending}
-            style={{ color: '#dc2626' }}
+            style={{ color: 'var(--tg-palette-error-main)' }}
           >
             Delete account
           </Button>
@@ -401,7 +401,7 @@ function ProfilePageInner() {
           if (!open && !deleteAccount.isPending) setConfirmingDelete(false);
         }}
         title={
-          <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, color: '#dc2626' }}>
+          <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, color: 'error.main' }}>
             <AlertTriangle className="size-4" aria-hidden />
             Delete your account?
           </Box>

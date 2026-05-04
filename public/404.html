@@ -31,12 +31,27 @@
       --surface: #FFFFFF;
       --text: #1A1612;
       --text-secondary: #3A3330;
+      --text-tertiary: #8C7E74;
       --accent: #C4603A;
+      --accent-hover: #A94E2C;
       --accent-soft: #F5E2D8;
       --border: #F0EDE8;
       --radius: 14px;
       --font-display: 'DM Serif Display', ui-serif, Georgia, serif;
       --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0E0C0B;
+        --surface: #181513;
+        --text: #F3EFE9;
+        --text-secondary: #D6CEC4;
+        --text-tertiary: #B8AFA6;
+        --accent: #E58866;
+        --accent-hover: #F0AC8E;
+        --accent-soft: rgba(229, 136, 102, 0.22);
+        --border: #2B2724;
+      }
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
@@ -90,11 +105,11 @@
       text-decoration: none;
       min-width: 240px;
     }
-    .cta:hover { background: #A94E2C; }
+    .cta:hover { background: var(--accent-hover); }
     .sub {
       margin-top: 18px;
       font-size: 13px;
-      color: #8C7E74;
+      color: var(--text-tertiary);
     }
     .sub a { color: var(--accent); text-decoration: none; }
     .sub a:hover { text-decoration: underline; }

@@ -81,18 +81,18 @@ export default function HistoryPage() {
 
       {error ? (
         <Box
-          sx={{
+          sx={(t) => ({
             display: 'flex',
             alignItems: 'flex-start',
             gap: 1,
             borderRadius: 1.5,
             border: '1px solid',
-            borderColor: (t) => alpha('#dc2626', 0.3),
-            bgcolor: (t) => alpha('#dc2626', 0.1),
+            borderColor: alpha(t.palette.error.main, 0.3),
+            bgcolor: alpha(t.palette.error.main, 0.1),
             p: 2,
             fontSize: 14,
-            color: '#dc2626',
-          }}
+            color: t.palette.error.dark,
+          })}
         >
           <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
           Failed to load trips: {(error as Error).message}

@@ -139,7 +139,7 @@ export function ChatDrawer({ open, onClose, tripId, tripDestination }: Props) {
               }}
             >
               {error ? (
-                <Box component="span" sx={{ color: '#dc2626' }}>
+                <Box component="span" sx={{ color: 'error.main' }}>
                   {error}
                 </Box>
               ) : creating ? (

@@ -27,7 +27,7 @@ const PLANS: PlanCard[] = [
   {
     id: 'monthly',
     name: 'Pro Monthly',
-    priceLabel: '$9.99',
+    priceLabel: '$4.99',
     cadence: 'per month',
     bullets: [
       'Unlimited AI trip generations',
@@ -38,12 +38,12 @@ const PLANS: PlanCard[] = [
   {
     id: 'annual',
     name: 'Pro Annual',
-    priceLabel: '$79.99',
+    priceLabel: '$29.99',
     cadence: 'per year',
-    badge: 'Save 33%',
+    badge: 'Save 50%',
     bullets: [
       'Everything in Monthly',
-      'Two months free vs. monthly billing',
+      'Six months free vs. monthly billing',
       'Cancel anytime',
     ],
   },
@@ -143,17 +143,17 @@ function PricingInner() {
             gap: 1.25,
             borderRadius: 1.5,
             border: '1px solid',
-            borderColor: (t) => alpha('#FF9500', 0.3),
-            bgcolor: (t) => alpha('#FF9500', 0.08),
+            borderColor: (t) => alpha(t.palette.warning.main, 0.3),
+            bgcolor: (t) => alpha(t.palette.warning.main, 0.08),
             p: 2,
           }}
         >
           <Box
             component={AlertTriangle}
             aria-hidden
-            sx={{ mt: 0.25, width: 16, height: 16, flexShrink: 0, color: '#B36600' }}
+            sx={{ mt: 0.25, width: 16, height: 16, flexShrink: 0, color: 'warning.dark' }}
           />
-          <Typography sx={{ fontSize: 14, color: '#7A4500' }}>
+          <Typography sx={{ fontSize: 14, color: 'warning.dark' }}>
             No charge — you closed checkout before it completed. Pick a plan below to try again.
           </Typography>
         </Box>

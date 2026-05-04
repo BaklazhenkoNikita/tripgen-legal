@@ -95,18 +95,13 @@ export default async function GuidePage({ params }: Props) {
             gap: 2,
             borderRadius: 2,
             border: '1px solid',
-            borderColor: 'rgba(254, 205, 211, 1)',
-            bgcolor: 'rgba(248, 234, 226, 1)',
+            borderColor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.3)',
+            bgcolor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.1)',
             px: 2.5,
             py: 2,
             textDecoration: 'none',
             transition: 'background-color 200ms',
-            '&:hover': { bgcolor: 'rgba(244, 222, 209, 1)' },
-            '[data-tg-color-scheme="dark"] &': {
-              bgcolor: 'rgba(196, 96, 58, 0.1)',
-              borderColor: 'rgba(196, 96, 58, 0.3)',
-              '&:hover': { bgcolor: 'rgba(196, 96, 58, 0.2)' },
-            },
+            '&:hover': { bgcolor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.2)' },
           }}
         >
           <Box>
@@ -153,11 +148,10 @@ export default async function GuidePage({ params }: Props) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderRadius: 999,
-                    bgcolor: 'rgba(244, 222, 209, 1)',
+                    bgcolor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.15)',
                     fontSize: 12,
                     fontWeight: 700,
                     color: 'primary.dark',
-                    '[data-tg-color-scheme="dark"] &': { bgcolor: 'rgba(196, 96, 58, 0.15)' },
                   }}
                 >
                   {i + 1}
@@ -223,10 +217,9 @@ export default async function GuidePage({ params }: Props) {
           sx={{
             mt: 6,
             borderRadius: 4,
-            bgcolor: 'rgba(248, 234, 226, 1)',
+            bgcolor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.1)',
             p: 4,
             textAlign: 'center',
-            '[data-tg-color-scheme="dark"] &': { bgcolor: 'rgba(196, 96, 58, 0.1)' },
           }}
         >
           <Typography component="h3" sx={{ fontSize: '1.25rem', fontWeight: 700, color: 'text.primary' }}>

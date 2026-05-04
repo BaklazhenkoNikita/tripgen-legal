@@ -24,7 +24,7 @@ export function ConfirmCard({ question, onAnswer }: Props) {
           px: 1,
           py: 0.5,
           fontSize: 12,
-          color: question.status === 'confirmed' ? '#16a34a' : 'text.disabled',
+          color: question.status === 'confirmed' ? 'success.main' : 'text.disabled',
         }}
       >
         <StatusIcon size={14} aria-hidden style={{ flexShrink: 0 }} />
@@ -45,7 +45,7 @@ export function ConfirmCard({ question, onAnswer }: Props) {
         border: 1,
         borderColor: 'divider',
         borderLeftWidth: 4,
-        borderLeftColor: question.destructive ? '#dc2626' : 'primary.main',
+        borderLeftColor: question.destructive ? 'error.main' : 'primary.main',
         bgcolor: 'background.paper',
         p: 1.75,
       }}
@@ -61,8 +61,10 @@ export function ConfirmCard({ question, onAnswer }: Props) {
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 999,
-            bgcolor: question.destructive ? alpha('#dc2626', 0.12) : alpha(t.palette.primary.main, 0.12),
-            color: question.destructive ? '#dc2626' : t.palette.primary.main,
+            bgcolor: question.destructive
+              ? alpha(t.palette.error.main, 0.12)
+              : alpha(t.palette.primary.main, 0.12),
+            color: question.destructive ? t.palette.error.main : t.palette.primary.main,
           })}
         >
           <Icon size={16} aria-hidden />
@@ -109,7 +111,7 @@ export function ConfirmCard({ question, onAnswer }: Props) {
           component="button"
           type="button"
           onClick={() => onAnswer(question.questionId, 'confirmed', confirmLabel)}
-          sx={{
+          sx={(t) => ({
             flex: 1,
             border: 0,
             cursor: 'pointer',
@@ -122,10 +124,14 @@ export function ConfirmCard({ question, onAnswer }: Props) {
             py: 1,
             fontSize: 12,
             fontWeight: 600,
-            color: '#fff',
-            bgcolor: question.destructive ? '#dc2626' : 'primary.main',
-            '&:hover': { bgcolor: question.destructive ? '#b91c1c' : 'primary.dark' },
-          }}
+            color: question.destructive
+              ? t.palette.error.contrastText
+              : t.palette.primary.contrastText,
+            bgcolor: question.destructive ? t.palette.error.main : t.palette.primary.main,
+            '&:hover': {
+              bgcolor: question.destructive ? t.palette.error.dark : t.palette.primary.dark,
+            },
+          })}
         >
           <Check size={14} aria-hidden />
           {confirmLabel}

@@ -71,7 +71,7 @@ export function Photo({
         />
       ) : (
         <Box
-          sx={{
+          sx={(t) => ({
             position: 'absolute',
             inset: 0,
             display: 'flex',
@@ -80,8 +80,11 @@ export function Photo({
             justifyContent: 'center',
             gap: 0.5,
             color: 'text.disabled',
-            background: 'linear-gradient(135deg, #C4603A 0%, #D88564 100%)',
-          }}
+            background:
+              t.palette.mode === 'dark'
+                ? `linear-gradient(135deg, ${t.palette.primary.dark} 0%, ${t.palette.primary.main} 100%)`
+                : `linear-gradient(135deg, ${t.palette.primary.main} 0%, ${t.palette.primary.light} 100%)`,
+          })}
         >
           <ImageOff size={20} aria-hidden style={{ color: '#fff', opacity: 0.85 }} />
         </Box>

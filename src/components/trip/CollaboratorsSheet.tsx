@@ -364,8 +364,8 @@ function Section({
                     sx={{
                       color: 'text.secondary',
                       '&:hover': {
-                        bgcolor: (t: Theme) => alpha('#dc2626', 0.12),
-                        color: '#dc2626',
+                        bgcolor: (t: Theme) => alpha(t.palette.error.main, 0.12),
+                        color: 'error.main',
                       },
                     }}
                   >

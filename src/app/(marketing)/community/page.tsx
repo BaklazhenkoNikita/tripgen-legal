@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -5,6 +6,18 @@ import { Photo } from '@/components/ui/Photo';
 import { destinations } from '@/data/destinations';
 
 const CONTINENT_ORDER = ['Europe', 'Asia', 'North America', 'South America', 'Oceania', 'Africa'];
+
+export const metadata: Metadata = {
+  title: 'City Guides — Curated Itineraries',
+  description: `${destinations.length} curated city guides with overviews, highlights, and ready-to-personalize itineraries — Paris, London, Rome, Tokyo, and more.`,
+  alternates: { canonical: '/community' },
+  openGraph: {
+    title: 'City Guides — Curated Itineraries | Periplo',
+    description: `${destinations.length} curated city guides with overviews, highlights, and ready-to-personalize itineraries.`,
+    url: 'https://periploapp.com/community',
+    type: 'website',
+  },
+};
 
 /**
  * Community page — 50 curated city guides grouped by continent.

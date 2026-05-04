@@ -6,21 +6,13 @@ import { withSentryConfig } from '@sentry/nextjs';
 // ai-disclosure, dsa, delete-account (referenced from mobile app config /
 // store metadata). Plus mcp + mcp-upgrade — previously live at periploapp.com
 // before the legal-repo restructure, so existing bookmarks need to land.
+//
+// The .html bookmark URLs (e.g. /privacy.html) are NOT redirected: the
+// static HTMLs in /public are the canonical surface for those URLs (mobile
+// app store metadata + external bookmarks expect them to resolve as-is).
+// The Next.js /legal/<slug> route is the rich, fully-themed surface for
+// in-app navigation.
 const LEGAL_SLUGS = [
-  'privacy',
-  'terms',
-  'help',
-  'delete-account',
-  'dsa',
-  'affiliate-disclosure',
-  'ai-disclosure',
-  'mcp',
-  'mcp-upgrade',
-] as const;
-
-// All HTML pages that existed at the GitHub-Pages-era root and should now
-// 301 to their extensionless Next.js equivalent.
-const HTML_BOOKMARK_SLUGS = [
   'privacy',
   'terms',
   'help',
@@ -37,17 +29,11 @@ const nextConfig: NextConfig = {
   // repo's lockfile when this app is built standalone.
   outputFileTracingRoot: __dirname,
   async redirects() {
-    const legalRedirects = LEGAL_SLUGS.map((slug) => ({
+    return LEGAL_SLUGS.map((slug) => ({
       source: `/${slug}`,
       destination: `/legal/${slug}`,
       permanent: true,
     }));
-    const htmlRedirects = HTML_BOOKMARK_SLUGS.map((slug) => ({
-      source: `/${slug}.html`,
-      destination: `/legal/${slug}`,
-      permanent: true,
-    }));
-    return [...legalRedirects, ...htmlRedirects];
   },
   async rewrites() {
     // Proxy backend API calls — /api/* not matched by a local Next route

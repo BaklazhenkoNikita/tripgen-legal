@@ -25,12 +25,14 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   iconLeft?: ReactNode;
 }
 
-const categoryColors = {
-  exploration: '#7B6BA0',
-  activity:    '#5B7B5E',
-  event:       '#C07850',
-  restaurant:  '#D4943A',
-  viator:      '#5A9EB0',
+// Badge `event` is the legacy alias for the `live_event` palette key — kept
+// because callers pass tone="event". Map it through here.
+const CATEGORY_TONE_TO_PALETTE = {
+  exploration: 'exploration',
+  activity: 'activity',
+  event: 'live_event',
+  restaurant: 'restaurant',
+  viator: 'viator',
 } as const;
 
 const toneSx = (tone: BadgeTone) => (theme: Theme) => {
@@ -41,17 +43,17 @@ const toneSx = (tone: BadgeTone) => (theme: Theme) => {
       color: p.text.secondary,
       border: `1px solid ${p.divider}`,
     };
-    case 'accent':  return { bgcolor: alpha(p.primary.main, 0.14),  color: p.primary.main };
-    case 'success': return { bgcolor: alpha('#16a34a', 0.14),       color: '#15803d' };
-    case 'warning': return { bgcolor: alpha('#FF9500', 0.14),       color: '#b15300' };
-    case 'danger':  return { bgcolor: alpha('#dc2626', 0.14),       color: '#b91c1c' };
+    case 'accent':  return { bgcolor: alpha(p.primary.main, 0.14),   color: p.primary.main };
+    case 'success': return { bgcolor: alpha(p.success.main, 0.14),   color: p.success.dark };
+    case 'warning': return { bgcolor: alpha(p.warning.main, 0.14),   color: p.warning.dark };
+    case 'danger':  return { bgcolor: alpha(p.error.main, 0.14),     color: p.error.dark };
     case 'info':    return { bgcolor: alpha(p.secondary.main, 0.14), color: p.secondary.main };
     case 'exploration':
     case 'activity':
     case 'event':
     case 'restaurant':
     case 'viator': {
-      const c = categoryColors[tone];
+      const c = p.category[CATEGORY_TONE_TO_PALETTE[tone]];
       return { bgcolor: alpha(c, 0.18), color: c };
     }
   }

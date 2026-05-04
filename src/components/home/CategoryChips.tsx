@@ -25,7 +25,16 @@ export function CategoryChips({ city, active, onChange, hideCategories }: Props)
   if (isLoading && !data) {
     return (
       <Box
-        sx={{ display: 'flex', gap: 1, overflowX: 'auto', pb: 0.5, '&::-webkit-scrollbar': { display: 'none' }, scrollbarWidth: 'none' }}
+        sx={{
+          display: 'flex',
+          gap: 1,
+          flexWrap: 'nowrap',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          pb: 0.5,
+          '&::-webkit-scrollbar': { display: 'none' },
+          scrollbarWidth: 'none',
+        }}
         aria-label="Loading categories"
       >
         {[0, 1, 2, 3, 4].map((i) => (
@@ -52,9 +61,17 @@ export function CategoryChips({ city, active, onChange, hideCategories }: Props)
         display: 'flex',
         alignItems: 'center',
         gap: 1,
+        flexWrap: 'nowrap',
         overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch',
         scrollbarWidth: 'none',
         '&::-webkit-scrollbar': { display: 'none' },
+        // Soft fade on the right edge hints at scrollable overflow.
+        // Invisible when content fits because there's nothing under the gradient.
+        maskImage:
+          'linear-gradient(to right, black calc(100% - 24px), transparent 100%)',
+        WebkitMaskImage:
+          'linear-gradient(to right, black calc(100% - 24px), transparent 100%)',
       }}
     >
       <Chip

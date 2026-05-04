@@ -128,8 +128,8 @@ export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick 
                   backdropFilter: 'blur(8px)',
                   color: 'text.primary',
                   '&:hover': {
-                    bgcolor: (t: Theme) => alpha('#dc2626', 0.95),
-                    color: '#fff',
+                    bgcolor: (t: Theme) => alpha(t.palette.error.main, 0.95),
+                    color: (t: Theme) => t.palette.error.contrastText,
                   },
                 }}
               >
@@ -172,7 +172,7 @@ export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick 
                       gap: 0.25,
                       fontSize: 12,
                       fontWeight: 500,
-                      color: '#FF9500',
+                      color: 'warning.main',
                     }}
                   >
                     <Star size={12} fill="currentColor" aria-hidden />
