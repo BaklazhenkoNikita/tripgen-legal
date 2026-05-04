@@ -186,7 +186,7 @@ function StripCard({
           bottom: 0,
           px: 1.5,
           py: 1.25,
-          color: '#fff',
+          color: 'common.white',
           display: 'flex',
           flexDirection: 'column',
           gap: 0.25,
@@ -198,7 +198,7 @@ function StripCard({
             fontSize: isPreview ? 16 : 14,
             fontWeight: 600,
             lineHeight: 1.25,
-            color: '#fff',
+            color: 'common.white',
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
@@ -212,7 +212,7 @@ function StripCard({
           <Typography
             sx={{
               fontSize: 12,
-              color: 'rgba(255,255,255,0.88)',
+              color: (t) => alpha(t.palette.common.white, 0.88),
               display: '-webkit-box',
               WebkitLineClamp: 1,
               WebkitBoxOrient: 'vertical',

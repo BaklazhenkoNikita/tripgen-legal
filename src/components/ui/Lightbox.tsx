@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
+import { alpha } from '@mui/material/styles';
 
 interface LightboxProps {
   images: Array<{ url: string }>;
@@ -53,7 +54,7 @@ export function Lightbox({ images, alt, initialIndex = 0, open, onClose }: Light
       aria-label={alt}
       PaperProps={{
         sx: {
-          bgcolor: 'rgba(0,0,0,0.92)',
+          bgcolor: (t) => alpha(t.palette.common.black, 0.92),
           backdropFilter: 'blur(6px)',
           display: 'flex',
           alignItems: 'center',
@@ -69,9 +70,9 @@ export function Lightbox({ images, alt, initialIndex = 0, open, onClose }: Light
           right: 16,
           top: 16,
           zIndex: 2,
-          color: '#fff',
-          bgcolor: 'rgba(255,255,255,0.10)',
-          '&:hover': { bgcolor: 'rgba(255,255,255,0.20)' },
+          color: 'common.white',
+          bgcolor: (t) => alpha(t.palette.common.white, 0.1),
+          '&:hover': { bgcolor: (t) => alpha(t.palette.common.white, 0.2) },
         }}
       >
         <X size={20} aria-hidden />
@@ -85,8 +86,8 @@ export function Lightbox({ images, alt, initialIndex = 0, open, onClose }: Light
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 2,
-            color: '#fff',
-            bgcolor: 'rgba(255,255,255,0.10)',
+            color: 'common.white',
+            bgcolor: (t) => alpha(t.palette.common.white, 0.1),
             borderRadius: 999,
             px: 1.5,
             py: 0.5,
@@ -151,7 +152,7 @@ function navZoneSx(side: 'left' | 'right') {
     m: 0,
     background: 'transparent',
     cursor: 'pointer',
-    color: '#fff',
+    color: 'common.white',
     display: 'flex',
     alignItems: 'center',
     justifyContent: side === 'left' ? 'flex-start' : 'flex-end',

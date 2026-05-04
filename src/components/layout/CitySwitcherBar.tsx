@@ -76,7 +76,7 @@ function CitySwitcherBarInner({ pathname }: { pathname: string }) {
         top: 64,
         zIndex: (t) => t.zIndex.appBar - 1,
         borderBottom: (t) => `1px solid ${t.palette.divider}`,
-        bgcolor: (t) => alpha(t.palette.background.paper, 0.92),
+        bgcolor: (t) => alpha(t.palette.background.default, 0.85),
         backdropFilter: 'blur(12px)',
       }}
     >

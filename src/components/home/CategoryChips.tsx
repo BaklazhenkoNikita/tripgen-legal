@@ -181,7 +181,7 @@ function Chip({
             fontSize: 10,
             fontVariantNumeric: 'tabular-nums',
             ...(selected
-              ? { bgcolor: 'rgba(255,255,255,0.25)', color: 'primary.contrastText' }
+              ? { bgcolor: (t) => alpha(t.palette.common.white, 0.25), color: 'primary.contrastText' }
               : {
                   bgcolor: (t) => alpha(t.palette.text.primary, 0.04),
                   color: 'text.disabled',

@@ -393,7 +393,7 @@ export default function LandingPage() {
             px: 3,
             py: 7,
             textAlign: 'center',
-            color: '#fff',
+            color: 'common.white',
             boxShadow: 'var(--tg-shadow-primary-button-hover)',
           }}
         >
@@ -414,7 +414,7 @@ export default function LandingPage() {
             endIcon={<ArrowRight size={16} />}
             sx={{
               mt: 4,
-              bgcolor: '#fff',
+              bgcolor: 'common.white',
               color: 'primary.main',
               px: 3,
               py: 1.25,

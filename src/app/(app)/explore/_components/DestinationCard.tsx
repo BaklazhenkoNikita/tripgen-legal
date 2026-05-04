@@ -63,7 +63,7 @@ export function DestinationCard({ destination, priority }: DestinationCardProps)
             px: 1.25,
             py: 0.4,
             borderRadius: 999,
-            bgcolor: 'rgba(255,255,255,0.92)',
+            bgcolor: (t) => alpha(t.palette.common.white, 0.92),
             color: 'text.primary',
             fontSize: 11,
             fontWeight: 600,
@@ -82,7 +82,7 @@ export function DestinationCard({ destination, priority }: DestinationCardProps)
             bottom: 0,
             px: 2,
             py: 1.75,
-            color: '#fff',
+            color: 'common.white',
           }}
         >
           <Typography

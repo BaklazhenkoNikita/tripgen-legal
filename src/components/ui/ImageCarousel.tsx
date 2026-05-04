@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Box from '@mui/material/Box';
+import { alpha } from '@mui/material/styles';
 import { Photo } from '@/components/ui/Photo';
 
 type Aspect = '21/9' | '16/9' | '4/3';
@@ -138,8 +139,8 @@ export function ImageCarousel({
               right: 12,
               top: 12,
               borderRadius: 999,
-              bgcolor: 'rgba(0,0,0,0.45)',
-              color: '#fff',
+              bgcolor: (t) => alpha(t.palette.common.black, 0.45),
+              color: 'common.white',
               px: 1.25,
               py: 0.5,
               fontSize: 11,
@@ -175,11 +176,12 @@ export function ImageCarousel({
                   width: i === index ? 20 : 6,
                   borderRadius: 999,
                   border: 0,
-                  bgcolor: i === index ? '#fff' : 'rgba(255,255,255,0.55)',
+                  bgcolor: (t) =>
+                    i === index ? t.palette.common.white : alpha(t.palette.common.white, 0.55),
                   transition: 'all 0.2s',
                   cursor: 'pointer',
                   p: 0,
-                  '&:hover': { bgcolor: 'rgba(255,255,255,0.85)' },
+                  '&:hover': { bgcolor: (t) => alpha(t.palette.common.white, 0.85) },
                 }}
               />
             ))}
@@ -206,7 +208,7 @@ function navZoneSx(side: 'left' | 'right') {
     m: 0,
     background: 'transparent',
     cursor: 'pointer',
-    color: '#fff',
+    color: 'common.white',
     display: 'flex',
     alignItems: 'center',
     justifyContent: side === 'left' ? 'flex-start' : 'flex-end',

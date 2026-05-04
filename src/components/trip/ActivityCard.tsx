@@ -3,7 +3,7 @@
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
-import { type Theme } from '@mui/material/styles';
+import { alpha, type Theme } from '@mui/material/styles';
 import { Clock, MapPin, Sparkles, Star } from 'lucide-react';
 import type { TravelActivity } from '@/types';
 import { getActivityImageUrl } from '@/hooks/useActivityPhotos';
@@ -99,7 +99,7 @@ export function ActivityCard({ activity, photoMap, onClick }: Props) {
           bottom: 0,
           px: 1.75,
           py: 1.5,
-          color: '#fff',
+          color: 'common.white',
           display: 'flex',
           alignItems: 'flex-end',
           gap: 1,
@@ -111,7 +111,7 @@ export function ActivityCard({ activity, photoMap, onClick }: Props) {
             sx={{
               fontWeight: 600,
               lineHeight: 1.25,
-              color: '#fff',
+              color: 'common.white',
               fontSize: 15,
               m: 0,
               display: '-webkit-box',
@@ -128,7 +128,7 @@ export function ActivityCard({ activity, photoMap, onClick }: Props) {
               sx={{
                 mt: 0.25,
                 fontSize: 12,
-                color: 'rgba(255,255,255,0.88)',
+                color: (t) => alpha(t.palette.common.white, 0.88),
                 display: '-webkit-box',
                 WebkitBoxOrient: 'vertical',
                 WebkitLineClamp: 1,
@@ -151,7 +151,7 @@ export function ActivityCard({ activity, photoMap, onClick }: Props) {
               gap: 0.25,
               fontSize: 12,
               fontWeight: 600,
-              color: '#fff',
+              color: 'common.white',
               textShadow: '0 1px 2px rgba(0,0,0,0.45)',
             }}
           >

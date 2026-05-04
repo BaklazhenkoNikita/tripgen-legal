@@ -43,7 +43,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <>
-      <Box sx={{ position: 'relative', height: '40vh', minHeight: 256, overflow: 'hidden', bgcolor: '#111827' }}>
+      <Box sx={{ position: 'relative', height: '40vh', minHeight: 256, overflow: 'hidden', bgcolor: 'grey.900' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <Box
           component="img"

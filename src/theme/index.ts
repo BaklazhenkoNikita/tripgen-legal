@@ -45,8 +45,8 @@ const darkSecondaryDark = '#00A699';
 const darkSecondaryLight = '#5DE5D4';
 const darkText = '#F3EFE9';
 const darkMuted = '#B8AFA6';
-const darkSurface = '#181513';
-const darkBackground = '#0E0C0B';
+const darkSurface = '#1F1A16';
+const darkBackground = '#0A0807';
 const darkDivider = '#2B2724';
 const darkHighlight = '#FFB44C';
 

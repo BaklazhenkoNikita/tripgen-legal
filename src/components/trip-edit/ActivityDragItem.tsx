@@ -124,7 +124,7 @@ export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick 
                   right: 8,
                   opacity: { xs: 1, md: 0 },
                   transition: 'opacity 0.15s ease, background-color 0.15s ease',
-                  bgcolor: 'rgba(255,255,255,0.95)',
+                  bgcolor: (t: Theme) => alpha(t.palette.common.white, 0.95),
                   backdropFilter: 'blur(8px)',
                   color: 'text.primary',
                   '&:hover': {

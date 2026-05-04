@@ -2,7 +2,7 @@
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { type Theme } from '@mui/material/styles';
+import { alpha, type Theme } from '@mui/material/styles';
 import { Utensils, Star } from 'lucide-react';
 import type { Restaurant } from '@/types';
 import { Photo } from '@/components/ui/Photo';
@@ -80,7 +80,7 @@ export function RestaurantCard({ restaurant: r, photoMap }: Props) {
           bottom: 0,
           px: 1.75,
           py: 1.5,
-          color: '#fff',
+          color: 'common.white',
           display: 'flex',
           alignItems: 'flex-end',
           gap: 1,
@@ -92,7 +92,7 @@ export function RestaurantCard({ restaurant: r, photoMap }: Props) {
             sx={{
               fontWeight: 600,
               lineHeight: 1.25,
-              color: '#fff',
+              color: 'common.white',
               fontSize: 15,
               m: 0,
               display: '-webkit-box',
@@ -109,7 +109,7 @@ export function RestaurantCard({ restaurant: r, photoMap }: Props) {
               sx={{
                 mt: 0.25,
                 fontSize: 12,
-                color: 'rgba(255,255,255,0.88)',
+                color: (t) => alpha(t.palette.common.white, 0.88),
                 display: '-webkit-box',
                 WebkitBoxOrient: 'vertical',
                 WebkitLineClamp: 1,
@@ -131,7 +131,7 @@ export function RestaurantCard({ restaurant: r, photoMap }: Props) {
               gap: 0.25,
               fontSize: 12,
               fontWeight: 600,
-              color: '#fff',
+              color: 'common.white',
               textShadow: '0 1px 2px rgba(0,0,0,0.45)',
             }}
           >

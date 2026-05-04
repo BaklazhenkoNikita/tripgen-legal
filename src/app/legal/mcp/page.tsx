@@ -89,8 +89,8 @@ function CodeBlock({ children }: { children: ReactNode }) {
     <Box
       component="pre"
       sx={{
-        bgcolor: '#1A1612',
-        color: '#F5F2ED',
+        bgcolor: 'grey.900',
+        color: 'grey.100',
         p: '16px 18px',
         borderRadius: 1.25,
         overflowX: 'auto',

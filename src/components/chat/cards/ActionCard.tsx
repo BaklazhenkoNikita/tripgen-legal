@@ -263,7 +263,7 @@ export function ActionCard({ action, onConfirm, onReject }: Props) {
             py: 1,
             fontSize: 12,
             fontWeight: 600,
-            color: '#fff',
+            color: 'common.white',
             bgcolor: btn.bg,
             '&:hover': { bgcolor: btn.hover },
           }}

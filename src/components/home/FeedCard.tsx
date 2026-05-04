@@ -189,7 +189,7 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
           bottom: 0,
           px: 1.75,
           py: 1.5,
-          color: '#fff',
+          color: 'common.white',
           display: 'flex',
           alignItems: 'flex-end',
           gap: 1,
@@ -202,7 +202,7 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
               fontSize: 15,
               fontWeight: 600,
               lineHeight: 1.25,
-              color: '#fff',
+              color: 'common.white',
               display: '-webkit-box',
               WebkitLineClamp: 1,
               WebkitBoxOrient: 'vertical',
@@ -217,7 +217,7 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
               sx={{
                 mt: 0.25,
                 fontSize: 12,
-                color: 'rgba(255,255,255,0.88)',
+                color: (t) => alpha(t.palette.common.white, 0.88),
                 display: '-webkit-box',
                 WebkitLineClamp: 1,
                 WebkitBoxOrient: 'vertical',
@@ -239,7 +239,7 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
               gap: 0.25,
               fontSize: 12,
               fontWeight: 600,
-              color: '#fff',
+              color: 'common.white',
               textShadow: '0 1px 2px rgba(0,0,0,0.45)',
             }}
           >

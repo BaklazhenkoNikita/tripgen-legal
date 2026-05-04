@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import Link from 'next/link';
 import Box from '@mui/material/Box';
+import { alpha } from '@mui/material/styles';
 import { Maximize2 } from 'lucide-react';
 import type { FeedItem } from '@/hooks/useHomeFeed';
 import { Sheet } from '@/components/ui/Sheet';
@@ -57,12 +58,12 @@ export function FeedItemDrawer({ item, city, onClose }: Props) {
                 height: 32,
                 width: 32,
                 borderRadius: 999,
-                bgcolor: 'rgba(0,0,0,0.45)',
-                color: '#fff',
+                bgcolor: (t) => alpha(t.palette.common.black, 0.45),
+                color: 'common.white',
                 backdropFilter: 'blur(4px)',
                 textDecoration: 'none',
                 transition: 'background-color 150ms',
-                '&:hover': { bgcolor: 'rgba(0,0,0,0.6)' },
+                '&:hover': { bgcolor: (t) => alpha(t.palette.common.black, 0.6) },
               }}
             >
               <Maximize2 size={14} />

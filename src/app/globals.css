@@ -214,17 +214,17 @@ body {
 .tg-cluster--active,
 .tg-cluster--active.tg-cluster {
   transform: scale(1.12);
-  background: #C4603A;
+  background: var(--tg-palette-primary-main);
   color: #fff;
   border-color: rgba(255, 255, 255, 0.95);
   box-shadow:
-    0 0 0 2px #C4603A,
+    0 0 0 2px var(--tg-palette-primary-main),
     0 6px 18px rgba(0, 0, 0, 0.18);
 }
 [data-tg-color-scheme="dark"] .tg-cluster--active,
 [data-tg-color-scheme="dark"] .tg-cluster--active.tg-cluster {
   box-shadow:
-    0 0 0 2px #C4603A,
+    0 0 0 2px var(--tg-palette-primary-main),
     0 6px 18px rgba(0, 0, 0, 0.6);
 }
 

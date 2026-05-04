@@ -39,7 +39,7 @@ export default async function GuidePage({ params }: Props) {
 
   return (
     <>
-      <Box sx={{ position: 'relative', height: '50vh', minHeight: 320, overflow: 'hidden', bgcolor: '#111827' }}>
+      <Box sx={{ position: 'relative', height: '50vh', minHeight: 320, overflow: 'hidden', bgcolor: 'grey.900' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <Box
           component="img"

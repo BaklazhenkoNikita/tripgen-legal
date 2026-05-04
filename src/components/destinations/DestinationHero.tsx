@@ -4,6 +4,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { DestinationInfo } from '@/types';
 
@@ -160,8 +161,8 @@ export function DestinationHero({
               right: 16,
               top: 16,
               borderRadius: 999,
-              bgcolor: 'rgba(0,0,0,0.42)',
-              color: '#fff',
+              bgcolor: (t) => alpha(t.palette.common.black, 0.42),
+              color: 'common.white',
               px: 1.25,
               py: 0.5,
               fontSize: 11,
@@ -197,11 +198,12 @@ export function DestinationHero({
                   width: i === index ? 20 : 6,
                   borderRadius: 999,
                   border: 0,
-                  bgcolor: i === index ? '#fff' : 'rgba(255,255,255,0.55)',
+                  bgcolor: (t) =>
+                    i === index ? t.palette.common.white : alpha(t.palette.common.white, 0.55),
                   transition: 'all 0.2s',
                   cursor: 'pointer',
                   p: 0,
-                  '&:hover': { bgcolor: 'rgba(255,255,255,0.85)' },
+                  '&:hover': { bgcolor: (t) => alpha(t.palette.common.white, 0.85) },
                 }}
               />
             ))}
@@ -233,7 +235,7 @@ export function DestinationHero({
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.12em',
-              color: 'rgba(255,255,255,0.85)',
+              color: (t) => alpha(t.palette.common.white, 0.85),
               textShadow: '0 1px 4px rgba(0,0,0,0.45)',
             }}
           >
@@ -245,7 +247,7 @@ export function DestinationHero({
           sx={{
             fontSize: { xs: 28, sm: 40 },
             fontWeight: 500,
-            color: '#fff',
+            color: 'common.white',
             lineHeight: 1.05,
             letterSpacing: '-0.01em',
             textShadow: '0 2px 8px rgba(0,0,0,0.45)',
@@ -261,7 +263,7 @@ export function DestinationHero({
               mt: 0.5,
               fontSize: 14,
               lineHeight: 1.55,
-              color: 'rgba(255,255,255,0.94)',
+              color: (t) => alpha(t.palette.common.white, 0.94),
               textShadow: '0 1px 4px rgba(0,0,0,0.45)',
               maxWidth: 560,
               display: '-webkit-box',
@@ -283,7 +285,7 @@ export function DestinationHero({
               alignItems: 'center',
               gap: 0,
               fontSize: 13,
-              color: 'rgba(255,255,255,0.88)',
+              color: (t) => alpha(t.palette.common.white, 0.88),
               textShadow: '0 1px 4px rgba(0,0,0,0.45)',
             }}
           >
@@ -297,7 +299,7 @@ export function DestinationHero({
                   <Box
                     aria-hidden
                     component="span"
-                    sx={{ mx: 1, color: 'rgba(255,255,255,0.40)' }}
+                    sx={{ mx: 1, color: (t) => alpha(t.palette.common.white, 0.4) }}
                   >
                     ·
                   </Box>
@@ -347,7 +349,7 @@ function navZoneSx(side: 'left' | 'right') {
     m: 0,
     background: 'transparent',
     cursor: 'pointer',
-    color: '#fff',
+    color: 'common.white',
     display: 'flex',
     alignItems: 'center',
     justifyContent: side === 'left' ? 'flex-start' : 'flex-end',
