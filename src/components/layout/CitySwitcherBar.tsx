@@ -16,6 +16,7 @@ import { useRecentDestinations } from '@/hooks/useRecentDestinations';
 import { destinationSlug } from '@/lib/destinationSlug';
 import { formatPlaceName } from '@/lib/cities/normalizeCity';
 import type { DestinationListItem } from '@/types';
+import { NavSearch } from './NavSearch';
 
 const POPULAR_FALLBACK = [
   'Barcelona', 'Paris', 'Rome', 'Tokyo', 'New York',
@@ -132,6 +133,10 @@ function CitySwitcherBarInner({ pathname }: { pathname: string }) {
           <MapPin size={14} color="currentColor" style={{ color: 'var(--tg-palette-primary-main)' }} aria-hidden />
           <span>{city ?? 'Pick a city'}</span>
           <ChevronDown size={12} aria-hidden style={{ color: 'var(--tg-palette-text-disabled)' }} />
+        </Box>
+
+        <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
+          <NavSearch />
         </Box>
       </Box>
 

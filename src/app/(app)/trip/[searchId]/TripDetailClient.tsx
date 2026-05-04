@@ -26,6 +26,12 @@ function NewTripButton() {
   );
 }
 
+const breadcrumbLinkSx = {
+  color: 'inherit',
+  textDecoration: 'none',
+  '&:hover': { color: 'text.primary' },
+};
+
 interface Props {
   searchId: string;
   initialDestination?: string;
@@ -75,20 +81,15 @@ export function TripDetailClient({ searchId, initialDestination }: Props) {
             mb: 2,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
             gap: 1.5,
           }}
         >
           <Box component="nav" sx={{ fontSize: 14, color: 'text.secondary' }}>
-            <Box
-              component={Link}
-              href="/history"
-              sx={{
-                color: 'inherit',
-                textDecoration: 'none',
-                '&:hover': { color: 'text.primary' },
-              }}
-            >
+            <Box component={Link} href="/trip?new=1" sx={breadcrumbLinkSx}>
+              Plan a trip
+            </Box>
+            <Box component="span" sx={{ mx: 1 }}>/</Box>
+            <Box component={Link} href="/history" sx={breadcrumbLinkSx}>
               My Trips
             </Box>
             <Box component="span" sx={{ mx: 1 }}>/</Box>
@@ -109,7 +110,6 @@ export function TripDetailClient({ searchId, initialDestination }: Props) {
               />
             )}
           </Box>
-          <NewTripButton />
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box
@@ -220,26 +220,20 @@ export function TripDetailClient({ searchId, initialDestination }: Props) {
           mb: 2,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
           gap: 1.5,
         }}
       >
         <Box component="nav" sx={{ fontSize: 14, color: 'text.secondary' }}>
-          <Box
-            component={Link}
-            href="/history"
-            sx={{
-              color: 'inherit',
-              textDecoration: 'none',
-              '&:hover': { color: 'text.primary' },
-            }}
-          >
+          <Box component={Link} href="/trip?new=1" sx={breadcrumbLinkSx}>
+            Plan a trip
+          </Box>
+          <Box component="span" sx={{ mx: 1 }}>/</Box>
+          <Box component={Link} href="/history" sx={breadcrumbLinkSx}>
             My Trips
           </Box>
           <Box component="span" sx={{ mx: 1 }}>/</Box>
           <Box component="span" sx={{ color: 'text.primary' }}>{destination}</Box>
         </Box>
-        <NewTripButton />
       </Box>
 
       <CollaboratorsSheet

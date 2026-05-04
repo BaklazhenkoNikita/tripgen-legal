@@ -17,7 +17,6 @@ import MenuItem from '@mui/material/MenuItem';
 import { alpha, useTheme } from '@mui/material/styles';
 import { CreditBadge } from '@/components/credits/CreditBadge';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { NavSearch } from './NavSearch';
 import { tgShadow } from '@/theme/shadows';
 import { useActiveTrip, useCityOptional } from '@/contexts';
 import { destinationSlug } from '@/lib/destinationSlug';
@@ -29,10 +28,6 @@ const marketingLinks = [
   { href: '/chat', label: 'Chat' },
 ];
 
-const appTrailingLinks = [
-  { href: '/history', label: 'My Trips' },
-];
-
 const discoverLinks = [
   { href: '/community', label: 'Guides' },
   { href: '/blog', label: 'Blog' },
@@ -40,12 +35,14 @@ const discoverLinks = [
 ];
 
 const DISCOVER_PATH_PREFIXES = ['/community', '/blog', '/faq'];
+const TRIP_PATH_PREFIXES = ['/trip', '/history'];
 
 export function Navigation() {
   const pathname = usePathname() ?? '/';
   const { openSignIn } = useClerk();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileDiscoverOpen, setMobileDiscoverOpen] = useState(false);
+  const [mobileTripOpen, setMobileTripOpen] = useState(false);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   // Skip the redirect-page hop on /trip, /explore, /chat by linking directly
@@ -59,17 +56,25 @@ export function Navigation() {
   }, [pathname]);
 
   const appLinks = useMemo(() => {
-    const tripHref =
-      activeTripHydrated && activeTripId ? `/trip/${activeTripId}` : '/trip';
     const slug = destinationSlug(city);
     const exploreHref = slug ? `/explore/${slug}` : '/explore';
     const chatHref = lastChatId ? `/chat/${lastChatId}` : '/chat';
     return [
-      { href: tripHref, match: '/trip', label: 'Trip' },
       { href: exploreHref, match: '/explore', label: 'Explore' },
       { href: chatHref, match: '/chat', label: 'Chat' },
     ];
-  }, [activeTripHydrated, activeTripId, city, lastChatId]);
+  }, [city, lastChatId]);
+
+  const tripMenuItems = useMemo(() => {
+    const items: { href: string; label: string }[] = [
+      { href: '/trip?new=1', label: 'Plan a new trip' },
+    ];
+    if (activeTripHydrated && activeTripId) {
+      items.push({ href: `/trip/${activeTripId}`, label: 'Open current trip' });
+    }
+    items.push({ href: '/history', label: 'All my trips' });
+    return items;
+  }, [activeTripHydrated, activeTripId]);
 
   useEffect(() => {
     if (pendingHref && pathname.startsWith(pendingHref.split('?')[0])) {
@@ -87,10 +92,17 @@ export function Navigation() {
     DISCOVER_PATH_PREFIXES.some(
       (prefix) => pathname === prefix || pathname.startsWith(prefix + '/'),
     );
+  const tripActive =
+    (pendingHref !== null &&
+      TRIP_PATH_PREFIXES.some((p) => pendingHref.startsWith(p))) ||
+    TRIP_PATH_PREFIXES.some(
+      (prefix) => pathname === prefix || pathname.startsWith(prefix + '/'),
+    );
 
   const closeMobile = () => {
     setMobileOpen(false);
     setMobileDiscoverOpen(false);
+    setMobileTripOpen(false);
   };
 
   return (
@@ -171,6 +183,11 @@ export function Navigation() {
             <DiscoverDropdown active={discoverActive} onNavigate={setPendingHref} />
           </SignedOut>
           <SignedIn>
+            <TripDropdown
+              active={tripActive}
+              items={tripMenuItems}
+              onNavigate={setPendingHref}
+            />
             {appLinks.map((link) => (
               <NavLink
                 key={link.match}
@@ -182,23 +199,12 @@ export function Navigation() {
               </NavLink>
             ))}
             <DiscoverDropdown active={discoverActive} onNavigate={setPendingHref} />
-            {appTrailingLinks.map((link) => (
-              <NavLink
-                key={link.href}
-                href={link.href}
-                active={isActive(link.href)}
-                onNavigate={setPendingHref}
-              >
-                {link.label}
-              </NavLink>
-            ))}
           </SignedIn>
         </Box>
 
         {/* Right cluster */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <SignedIn>
-            <NavSearch />
             <CreditBadge />
           </SignedIn>
 
@@ -265,6 +271,76 @@ export function Navigation() {
               ))}
             </SignedOut>
             <SignedIn>
+              <Box
+                component="button"
+                type="button"
+                onClick={() => setMobileTripOpen((v) => !v)}
+                aria-expanded={mobileTripOpen}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  borderRadius: 1.5,
+                  px: 1.5,
+                  py: 1.25,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  background: 'transparent',
+                  border: 0,
+                  cursor: 'pointer',
+                  ...(tripActive
+                    ? {
+                        bgcolor: (t) => alpha(t.palette.primary.main, 0.12),
+                        color: 'primary.main',
+                      }
+                    : {
+                        color: 'text.secondary',
+                        '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
+                      }),
+                }}
+              >
+                Trip
+                <ChevronDown
+                  size={16}
+                  style={{
+                    transition: 'transform 0.2s',
+                    transform: mobileTripOpen ? 'rotate(180deg)' : undefined,
+                  }}
+                />
+              </Box>
+              {mobileTripOpen ? (
+                <Box
+                  component={motion.div}
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.15 }}
+                  sx={{
+                    ml: 1.5,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 0.5,
+                    borderLeft: (t) => `1px solid ${t.palette.divider}`,
+                    pl: 1.5,
+                  }}
+                >
+                  {tripMenuItems.map((link) => (
+                    <MobileLink
+                      key={link.href}
+                      href={link.href}
+                      active={
+                        pendingHref === link.href ||
+                        pathname === link.href.split('?')[0]
+                      }
+                      onClick={() => {
+                        setPendingHref(link.href);
+                        closeMobile();
+                      }}
+                    >
+                      {link.label}
+                    </MobileLink>
+                  ))}
+                </Box>
+              ) : null}
               {appLinks.map((link) => (
                 <MobileLink
                   key={link.match}
@@ -349,21 +425,6 @@ export function Navigation() {
                 ))}
               </Box>
             ) : null}
-            <SignedIn>
-              {appTrailingLinks.map((link) => (
-                <MobileLink
-                  key={link.href}
-                  href={link.href}
-                  active={isActive(link.href)}
-                  onClick={() => {
-                    setPendingHref(link.href);
-                    closeMobile();
-                  }}
-                >
-                  {link.label}
-                </MobileLink>
-              ))}
-            </SignedIn>
             <Box
               sx={{
                 mt: 1,
@@ -430,6 +491,90 @@ function NavLink({
     >
       {children}
     </Box>
+  );
+}
+
+function TripDropdown({
+  active,
+  items,
+  onNavigate,
+}: {
+  active: boolean;
+  items: { href: string; label: string }[];
+  onNavigate?: (href: string) => void;
+}) {
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const theme = useTheme();
+  const open = Boolean(anchor);
+  return (
+    <>
+      <Box
+        component="button"
+        type="button"
+        onClick={(e) => setAnchor(e.currentTarget as HTMLElement)}
+        sx={{
+          position: 'relative',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 0.5,
+          height: 36,
+          borderRadius: 999,
+          px: 1.75,
+          fontSize: 14,
+          fontWeight: 500,
+          background: 'transparent',
+          border: 0,
+          cursor: 'pointer',
+          transition: 'color 0.2s, background-color 0.2s',
+          ...(active
+            ? {
+                bgcolor: alpha(theme.palette.primary.main, 0.12),
+                color: 'primary.main',
+              }
+            : {
+                color: 'text.secondary',
+                '&:hover': { color: 'text.primary' },
+              }),
+        }}
+      >
+        Trip
+        <ChevronDown size={14} aria-hidden />
+      </Box>
+      <MuiMenu
+        anchorEl={anchor}
+        open={open}
+        onClose={() => setAnchor(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+        slotProps={{
+          paper: {
+            sx: {
+              mt: 1,
+              minWidth: 192,
+              borderRadius: 1.5,
+              border: (t) => `1px solid ${t.palette.divider}`,
+              boxShadow: (t) => tgShadow(t, 'dropdown'),
+              p: 0.5,
+            },
+          },
+        }}
+      >
+        {items.map((item) => (
+          <MenuItem
+            key={item.href}
+            component={Link}
+            href={item.href}
+            onClick={() => {
+              onNavigate?.(item.href);
+              setAnchor(null);
+            }}
+            sx={{ borderRadius: 1, fontSize: 14, py: 1, px: 1.5 }}
+          >
+            {item.label}
+          </MenuItem>
+        ))}
+      </MuiMenu>
+    </>
   );
 }
 

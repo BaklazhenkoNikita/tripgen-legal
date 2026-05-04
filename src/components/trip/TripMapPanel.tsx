@@ -131,7 +131,7 @@ export function TripMapPanel({
           activityPool={displayPool}
           activeDayNumber={activeDayNumber}
           onActivityClick={onActivityClick}
-          showRoute={filter.kind !== 'restaurants'}
+          showRoute={filter.kind === 'day'}
         />
       </Box>
     </Box>
