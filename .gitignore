@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Testing
+coverage/
+
+# Misc
+*.log
+trace-*.json
+*lf-traces-export*.json
+
+# Legacy references (kept during migration)
+# frontend/node_modules/ is already covered by top-level node_modules/ pattern
+
+# Read-only mobile reference — lives locally but not tracked in this repo's history
+trip_gen_mobile/

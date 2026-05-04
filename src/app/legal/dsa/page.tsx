@@ -1,0 +1,214 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import Box from '@mui/material/Box';
+import { LegalLayout } from '@/components/layout/LegalLayout';
+
+export const metadata: Metadata = {
+  title: 'EU Digital Services Act Notice',
+  description: "Periplo's EU Digital Services Act contact points for users and authorities.",
+  alternates: { canonical: '/legal/dsa' },
+};
+
+export default function DsaPage() {
+  return (
+    <LegalLayout
+      title="EU Digital Services Act — Contact & Transparency Notice"
+      lastUpdated="April 19, 2026"
+    >
+      <p>
+        This page is Periplo&apos;s public-facing notice under Regulation (EU)
+        2022/2065 (the &quot;Digital Services Act&quot;, or &quot;DSA&quot;). It
+        provides the points of contact required for communications with users and
+        with EU Member State authorities, and a plain-language overview of our
+        transparency obligations.
+      </p>
+
+      <h2>1. Service provider</h2>
+      <dl>
+        <dt>Service name</dt>
+        <dd>Periplo</dd>
+        <dt>Service description</dt>
+        <dd>
+          AI-assisted travel planning mobile application (iOS) and associated website
+          (periploapp.com).
+        </dd>
+        <dt>Operator</dt>
+        <dd>Nikita Baklazhenko (sole operator, acting as data controller).</dd>
+      </dl>
+
+      <h2>2. Single point of contact for authorities (Art. 11 DSA)</h2>
+      <p>
+        EU Member State authorities, the European Commission, and the European Board
+        for Digital Services may contact Periplo in connection with the application
+        of the DSA at the following electronic address:
+      </p>
+      <Box
+        sx={{
+          bgcolor: 'action.hover',
+          borderRadius: 1.5,
+          p: 2.5,
+          my: 2,
+          '& p': { mb: 1, '&:last-child': { mb: 0 } },
+        }}
+      >
+        <p>
+          <strong>Email:</strong>{' '}
+          <a href="mailto:support@periploapp.com?subject=DSA%20Authority%20Contact">
+            support@periploapp.com
+          </a>
+        </p>
+        <p>
+          <strong>Subject line:</strong> <em>DSA Authority Contact</em>
+        </p>
+        <p>
+          <strong>Accepted languages:</strong> English.
+        </p>
+      </Box>
+      <p>
+        Communications should be sent in writing. Requests that are not clearly
+        marked as DSA authority communications will be handled through our standard
+        support channel and may take longer to reach the designated point of contact.
+      </p>
+
+      <h2>3. Point of contact for users (Art. 12 DSA)</h2>
+      <p>
+        Users (recipients of the service) can contact Periplo directly, without
+        automated tools, regarding DSA-related matters including moderation of
+        content, account restrictions, or questions about our terms:
+      </p>
+      <Box
+        sx={{
+          bgcolor: 'action.hover',
+          borderRadius: 1.5,
+          p: 2.5,
+          my: 2,
+          '& p': { mb: 1, '&:last-child': { mb: 0 } },
+        }}
+      >
+        <p>
+          <strong>Email:</strong>{' '}
+          <a href="mailto:support@periploapp.com?subject=DSA%20User%20Contact">
+            support@periploapp.com
+          </a>
+        </p>
+        <p>
+          <strong>Subject line:</strong> <em>DSA User Contact</em>
+        </p>
+        <p>
+          <strong>Accepted languages:</strong> English.
+        </p>
+      </Box>
+      <p>
+        You can choose any means of communication, provided it is not exclusively
+        based on automated tools. Inquiries are handled by a human.
+      </p>
+
+      <h2>4. Legal representative in the EU (Art. 13 DSA)</h2>
+      <p>
+        A legal representative under Art. 13 is required only for providers of
+        intermediary services that do not have an establishment in the Union. Where
+        applicable, the representative&apos;s contact details and the Member State of
+        residence or establishment will be published here.
+      </p>
+      <p>
+        If you are an EU authority and require a physical address or representative
+        details not listed on this page, contact us using the Art. 11 point of
+        contact above and we will respond promptly.
+      </p>
+
+      <h2>5. Content moderation, notice and action</h2>
+      <p>
+        Periplo does not host user-generated public content in the ordinary sense:
+        the service generates personalized trip itineraries for individual users, and
+        sharing is opt-in and peer-to-peer (you choose to share a specific itinerary
+        with specific people). We nonetheless handle notices that content distributed
+        through our service is illegal:
+      </p>
+      <ul>
+        <li>
+          <strong>How to submit a notice:</strong> email{' '}
+          <a href="mailto:support@periploapp.com?subject=DSA%20Illegal%20Content%20Notice">
+            support@periploapp.com
+          </a>{' '}
+          with the subject line <em>DSA Illegal Content Notice</em>. Include (a) a
+          precise description of the allegedly illegal content, (b) its location (URL
+          or share identifier), (c) an explanation of why it is illegal with
+          reference to applicable law, (d) your name and email, and (e) a good-faith
+          statement that the information is accurate and complete.
+        </li>
+        <li>
+          <strong>What we do:</strong> we review all notices in good faith and
+          without undue delay. Where a notice is justified, we act on the content
+          (e.g., remove a shared itinerary, suspend an account). We inform the
+          affected parties of the decision and the reasons for it, where feasible.
+        </li>
+        <li>
+          <strong>Appeals:</strong> if you believe a decision we took about your
+          content or account is incorrect, reply to the decision email within 6
+          months. We will re-examine the decision and respond.
+        </li>
+      </ul>
+
+      <h2>6. Terms of service</h2>
+      <p>
+        Our <Link href="/legal/terms">Terms of Service</Link> describe the rules
+        applicable to the service, including acceptable use and our right to restrict
+        accounts. We apply these rules in a diligent, objective, and proportionate
+        manner, with due regard for the rights and legitimate interests of all
+        parties involved, including fundamental rights under the EU Charter.
+      </p>
+
+      <h2>7. Advertising and recommender systems</h2>
+      <ul>
+        <li>
+          <strong>Advertising:</strong> Periplo does not display third-party
+          advertising and does not participate in behavioral advertising networks.
+        </li>
+        <li>
+          <strong>Recommender system:</strong> Periplo uses machine learning to
+          suggest activities and generate itineraries. Recommendations are produced
+          from your stated preferences, swipe history, saved items, and approximate
+          location. See our <Link href="/legal/ai-disclosure">AI Disclosure</Link>{' '}
+          for details and limitations.
+        </li>
+        <li>
+          <strong>Commercial content:</strong> affiliate links are clearly labeled as
+          booking actions (Hotels, Flights, Trains, eSIM, Book now) and disclosed in
+          our{' '}
+          <Link href="/legal/affiliate-disclosure">Affiliate Disclosure</Link>.
+        </li>
+      </ul>
+
+      <h2>8. Minors</h2>
+      <p>
+        Periplo is not directed at children under 13 (or 16 in the EEA). We apply
+        appropriate safeguards as described in the{' '}
+        <Link href="/legal/privacy">Privacy Policy</Link>.
+      </p>
+
+      <h2>9. Transparency reporting</h2>
+      <p>
+        As a micro enterprise under Art. 15(2) DSA, Periplo is currently exempt from
+        the annual transparency-reporting obligation. If the service grows beyond the
+        micro-enterprise threshold, an annual transparency report will be published
+        on this page.
+      </p>
+
+      <h2>10. Contact for everything else</h2>
+      <Box
+        sx={{
+          bgcolor: 'action.hover',
+          borderRadius: 1.5,
+          p: 2.5,
+          mt: 3,
+          '& p': { mb: 1, '&:last-child': { mb: 0 } },
+        }}
+      >
+        <p>General questions, privacy requests, or anything not covered above:</p>
+        <p>
+          <a href="mailto:support@periploapp.com">support@periploapp.com</a>
+        </p>
+      </Box>
+    </LegalLayout>
+  );
+}

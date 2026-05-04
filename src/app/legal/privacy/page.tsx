@@ -1,0 +1,320 @@
+import type { Metadata } from 'next';
+import Box from '@mui/material/Box';
+import { LegalLayout } from '@/components/layout/LegalLayout';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy',
+  description:
+    'How Periplo collects, uses, and safeguards your information across the mobile app, website, and AI host connectors.',
+  alternates: { canonical: '/legal/privacy' },
+};
+
+export default function PrivacyPage() {
+  return (
+    <LegalLayout title="Privacy Policy" lastUpdated="April 19, 2026">
+      <p>
+        Periplo, operated by Nikita Baklazhenko (&quot;we&quot;, &quot;our&quot;, or
+        &quot;us&quot;), is committed to protecting your privacy. This Privacy Policy
+        explains how we collect, use, and safeguard your information when you use the
+        Periplo mobile application.
+      </p>
+
+      <h2>1. Information We Collect</h2>
+
+      <p>
+        <strong>Account Information</strong>
+      </p>
+      <p>
+        When you create an account, we collect your email address and display name
+        through our authentication provider (Clerk). You may also use Periplo as a
+        guest without creating an account, in which case a local anonymous identifier
+        is generated on your device.
+      </p>
+
+      <p>
+        <strong>Location Data</strong>
+      </p>
+      <p>
+        With your explicit permission, we access your device location to show
+        activities and points of interest near you. Location data is processed only
+        while the app is in use (&quot;when in use&quot; permission) and is not stored
+        on our servers or shared with third parties.
+      </p>
+
+      <p>
+        <strong>Trip and Preference Data</strong>
+      </p>
+      <p>
+        We store the trips you create, your travel preferences, and interaction data
+        (such as activities you save or swipe on) to personalize your recommendations.
+        This data is sent to our backend servers for AI processing.
+      </p>
+
+      <p>
+        <strong>Device Information</strong>
+      </p>
+      <p>
+        We collect basic device information (device type, operating system version,
+        crash logs) for app performance and error tracking via Sentry. This data is
+        anonymized and cannot be used to identify you personally.
+      </p>
+
+      <p>
+        <strong>Payment and Subscription Information</strong>
+      </p>
+      <p>
+        If you subscribe to Periplo Pro, all payment processing is handled entirely by
+        Apple (App Store). We do not collect, store, or have access to your payment
+        card details, billing address, or other financial information. We receive only
+        your subscription status (active, cancelled, or expired) and renewal dates
+        through our subscription management provider (RevenueCat) to enable Pro
+        features in the app.
+      </p>
+
+      <p>
+        <strong>On-Device Storage</strong>
+      </p>
+      <p>
+        Periplo stores certain data locally on your device, including cached trip data
+        (retained for up to 24 hours for offline access), authentication tokens
+        (stored in encrypted device storage), and your app preferences. This data
+        never leaves your device unless explicitly sent to our servers as part of
+        normal app functionality.
+      </p>
+
+      <h2>2. How We Use Your Information</h2>
+      <ul>
+        <li>To generate personalized trip itineraries using AI</li>
+        <li>To show relevant activities and points of interest near you</li>
+        <li>To improve recommendations based on your preferences</li>
+        <li>To send trip reminders and travel notifications (with your permission)</li>
+        <li>To diagnose technical issues and improve app performance</li>
+      </ul>
+
+      <h2>3. Legal Basis for Processing (GDPR)</h2>
+      <p>
+        If you are located in the European Economic Area (EEA), United Kingdom, or
+        Switzerland, we process your personal data on the following legal bases:
+      </p>
+      <ul>
+        <li>
+          <strong>Consent</strong> &mdash; for location data access and push
+          notifications. You can withdraw consent at any time via your device
+          settings.
+        </li>
+        <li>
+          <strong>Contract performance</strong> &mdash; for account creation, trip
+          generation, and delivering the core service you requested.
+        </li>
+        <li>
+          <strong>Legitimate interest</strong> &mdash; for crash reporting, performance
+          monitoring, and improving our recommendations, where these interests are not
+          overridden by your rights.
+        </li>
+      </ul>
+
+      <h2>4. Third-Party Services</h2>
+      <p>
+        Periplo uses the following third-party services, each of which may process
+        data as described:
+      </p>
+      <ul>
+        <li>
+          <strong>Clerk</strong> (clerk.com) &mdash; Authentication and account
+          management. Processes your email and login credentials.
+        </li>
+        <li>
+          <strong>Sentry</strong> (sentry.io) &mdash; Crash reporting and error
+          tracking. Receives anonymized device and error data.
+        </li>
+        <li>
+          <strong>Google Cloud Platform</strong> (cloud.google.com) &mdash; Backend
+          hosting and AI processing. Trip data and preferences are processed on Google
+          Cloud servers.
+        </li>
+        <li>
+          <strong>RevenueCat</strong> (revenuecat.com) &mdash; Subscription management.
+          Receives your anonymous user identifier and subscription status from Apple
+          or Google to manage your Pro access. RevenueCat does not receive your name,
+          email, or payment card details.
+        </li>
+      </ul>
+      <p>
+        When you tap on booking links within the app, you may be redirected to
+        third-party travel services (such as booking platforms). These services have
+        their own privacy policies, and we encourage you to review them. We may earn a
+        commission from these referrals through affiliate partnerships. We do not
+        share your personal data with these affiliate partners.
+      </p>
+
+      <h2>5. International Data Transfers</h2>
+      <p>
+        Your data may be processed on servers located outside your country of
+        residence, including in the United States and European Union (via Google Cloud
+        Platform). Where data is transferred outside the EEA, we rely on appropriate
+        safeguards such as Google Cloud&apos;s standard contractual clauses and data
+        processing agreements.
+      </p>
+
+      <h2>6. Data Storage and Security</h2>
+      <p>
+        Your data is stored on secure servers hosted on Google Cloud Platform. We use
+        industry-standard encryption for data in transit (HTTPS/TLS). Authentication
+        tokens are stored securely on your device using encrypted storage (Expo
+        SecureStore). We implement reasonable technical and organizational measures to
+        protect your data, but no method of electronic transmission or storage is 100%
+        secure.
+      </p>
+
+      <h2>7. Data Retention</h2>
+      <p>
+        We retain your account and trip data for as long as your account is active. If
+        you delete your account, we will remove your personal data within 30 days.
+        Anonymized, aggregated usage data may be retained for service improvement
+        purposes. Crash reports in Sentry are automatically deleted after 90 days.
+      </p>
+
+      <h2>8. Your Rights</h2>
+      <p>
+        Depending on your location, you may have the following rights regarding your
+        personal data:
+      </p>
+      <ul>
+        <li>
+          <strong>Access</strong> &mdash; request a copy of the personal data we hold
+          about you
+        </li>
+        <li>
+          <strong>Correction</strong> &mdash; request correction of inaccurate or
+          incomplete data
+        </li>
+        <li>
+          <strong>Deletion</strong> &mdash; request deletion of your account and
+          associated data. You can delete your account directly in the app via
+          Settings &gt; Delete Account. All personal data will be removed within 30
+          days.
+        </li>
+        <li>
+          <strong>Data portability</strong> &mdash; request your data in a structured,
+          machine-readable format (EEA/UK users)
+        </li>
+        <li>
+          <strong>Restriction</strong> &mdash; request that we restrict processing of
+          your data in certain circumstances (EEA/UK users)
+        </li>
+        <li>
+          <strong>Withdraw consent</strong> &mdash; revoke consent for location access
+          or notifications at any time via your device settings
+        </li>
+        <li>
+          <strong>Lodge a complaint</strong> &mdash; if you are in the EEA/UK, you
+          have the right to lodge a complaint with your local data protection
+          supervisory authority
+        </li>
+      </ul>
+      <p>
+        To exercise any of these rights, contact us at{' '}
+        <a href="mailto:support@periploapp.com">support@periploapp.com</a>. We will
+        respond within 30 days.
+      </p>
+
+      <h2>9. California Residents (CCPA)</h2>
+      <p>If you are a California resident, you have the right to:</p>
+      <ul>
+        <li>Know what personal information we collect and how it is used</li>
+        <li>Request deletion of your personal information</li>
+        <li>Be free from discrimination for exercising your privacy rights</li>
+      </ul>
+      <p>
+        We do not sell your personal information. We do not share your personal
+        information for cross-context behavioral advertising. To make a request,
+        contact us at <a href="mailto:support@periploapp.com">support@periploapp.com</a>.
+      </p>
+
+      <h2>10. Tracking and Advertising</h2>
+      <p>
+        Periplo does not track you across other apps or websites. We do not use
+        advertising identifiers (IDFA), and we do not participate in ad networks. We
+        do not sell, rent, or share your personal data with third parties for their
+        marketing purposes.
+      </p>
+
+      <h2>11. Children&apos;s Privacy</h2>
+      <p>
+        Periplo is not directed at children under the age of 13 (or 16 in the EEA).
+        We do not knowingly collect personal information from children. If you
+        believe a child has provided us with personal data, please contact us at{' '}
+        <a href="mailto:support@periploapp.com">support@periploapp.com</a> and we
+        will promptly delete it.
+      </p>
+
+      <h2>12. Changes to This Policy</h2>
+      <p>
+        We may update this Privacy Policy from time to time. We will notify you of
+        significant changes through the app or by updating the &quot;Last updated&quot;
+        date above. Your continued use of Periplo after changes are posted constitutes
+        acceptance of the updated policy.
+      </p>
+
+      <h2>13. Connector Access via AI Hosts</h2>
+      <p>
+        When you connect Periplo to an AI host like Claude, ChatGPT, or any other
+        Model Context Protocol (MCP) compatible client, your trip queries and the
+        resulting itineraries flow through that host&apos;s infrastructure subject to
+        the host&apos;s own privacy policy.
+      </p>
+      <p>Periplo only receives:</p>
+      <ul>
+        <li>
+          The query text you type into the host (e.g. &quot;Plan a 5-day trip to
+          Cappadocia&quot;), parameters the host extracts (destination, duration,
+          travel style), and your authenticated Periplo user identifier so we can
+          apply your subscription tier and credit balance.
+        </li>
+        <li>
+          The User-Agent header your host sends, which we use to attribute MCP traffic
+          separately from web and mobile.
+        </li>
+      </ul>
+      <p>
+        Periplo does <strong>not</strong> receive: your conversation history with the
+        host, any other tool calls in the same session, your host account email, or
+        any data the host collects about you.
+      </p>
+      <p>
+        Trips you generate via a connector are saved to the same Periplo account you
+        authenticated with &mdash; they appear in the &quot;Connector trips&quot;
+        section of the mobile app and can be opened, edited, or shared from there.
+      </p>
+      <p>
+        You can revoke a connector&apos;s access at any time from the host&apos;s
+        Settings &rarr; Connectors page; revocation takes effect immediately and
+        Periplo will no longer accept tool calls authenticated with the revoked token.
+      </p>
+      <p>
+        Authentication is handled by Clerk (our identity provider) using OAuth 2.1
+        with PKCE. Periplo&apos;s MCP endpoint is a pure resource server and never
+        sees your password.
+      </p>
+
+      <h2>14. Contact Us</h2>
+      <Box
+        sx={{
+          bgcolor: 'action.hover',
+          borderRadius: 1.5,
+          p: 2.5,
+          mt: 3,
+          '& p': { mb: 1, '&:last-child': { mb: 0 } },
+        }}
+      >
+        <p>
+          If you have questions about this Privacy Policy or your personal data,
+          contact us at:
+        </p>
+        <p>
+          <a href="mailto:support@periploapp.com">support@periploapp.com</a>
+        </p>
+      </Box>
+    </LegalLayout>
+  );
+}

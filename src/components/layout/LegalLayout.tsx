@@ -1,0 +1,161 @@
+import type { ReactNode } from 'react';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
+
+export interface LegalLayoutProps {
+  title: string;
+  lastUpdated?: string;
+  children: ReactNode;
+}
+
+/**
+ * Shared chrome for legal / policy / help pages.
+ *
+ * Wraps a long-form prose body in the site Navigation + Footer, applies the
+ * Periplo display font to headings, and provides sensible defaults for
+ * paragraphs, lists, links, and emphasis used inside the prose container.
+ */
+export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        bgcolor: 'background.default',
+      }}
+    >
+      <Navigation />
+      <Box component="main" sx={{ flex: 1 }}>
+        <Container maxWidth="md" sx={{ pt: { xs: 5, md: 6 }, pb: { xs: 7, md: 8 } }}>
+          <Box component="header" sx={{ mb: { xs: 3, md: 4 } }}>
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: '2.25rem', sm: '2.75rem', md: '3rem' },
+                lineHeight: 1.15,
+                color: 'primary.main',
+                letterSpacing: '-0.01em',
+                mb: lastUpdated ? 1 : 0,
+              }}
+            >
+              {title}
+            </Typography>
+            {lastUpdated ? (
+              <Typography
+                variant="caption"
+                component="p"
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: '0.9rem',
+                  display: 'block',
+                }}
+              >
+                Last updated {lastUpdated}
+              </Typography>
+            ) : null}
+          </Box>
+
+          <Box
+            sx={{
+              fontSize: '1rem',
+              lineHeight: 1.7,
+              color: 'text.primary',
+              maxWidth: '70ch',
+
+              '& h2': {
+                fontFamily: 'var(--font-display), Georgia, "Times New Roman", serif',
+                fontWeight: 400,
+                fontSize: { xs: '1.4rem', md: '1.5rem' },
+                lineHeight: 1.3,
+                mt: 5,
+                mb: 1.5,
+                color: 'text.primary',
+              },
+              '& h3': {
+                fontFamily: 'var(--font-display), Georgia, "Times New Roman", serif',
+                fontWeight: 400,
+                fontSize: { xs: '1.15rem', md: '1.2rem' },
+                lineHeight: 1.35,
+                mt: 3,
+                mb: 1,
+                color: 'text.primary',
+              },
+              '& p': {
+                mb: 1.5,
+                color: 'text.primary',
+              },
+              '& ul, & ol': {
+                pl: 3,
+                mb: 1.5,
+              },
+              '& li': {
+                mb: 1,
+                color: 'text.primary',
+              },
+              '& li::marker': {
+                color: 'text.secondary',
+              },
+              '& strong': {
+                fontWeight: 600,
+                color: 'text.primary',
+              },
+              '& em': {
+                fontStyle: 'italic',
+              },
+              '& a': {
+                color: 'primary.main',
+                textDecoration: 'none',
+                '&:hover': { textDecoration: 'underline' },
+              },
+              '& code': {
+                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+                fontSize: '0.9em',
+                bgcolor: 'action.hover',
+                px: 0.75,
+                py: 0.25,
+                borderRadius: 0.75,
+              },
+              '& dl': {
+                my: 1.5,
+              },
+              '& dt': {
+                fontWeight: 600,
+                mt: 1,
+                color: 'text.primary',
+              },
+              '& dd': {
+                ml: 0,
+                color: 'text.primary',
+                mb: 1,
+              },
+              '& table': {
+                width: '100%',
+                borderCollapse: 'collapse',
+                my: 2,
+              },
+              '& th, & td': {
+                textAlign: 'left',
+                p: '10px 12px',
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+                verticalAlign: 'top',
+                fontSize: '0.95rem',
+              },
+              '& th': {
+                fontWeight: 600,
+                bgcolor: 'action.hover',
+              },
+            }}
+          >
+            {children}
+          </Box>
+        </Container>
+      </Box>
+      <Footer />
+    </Box>
+  );
+}

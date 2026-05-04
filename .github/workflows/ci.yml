@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, feature/sync_with_mobile]
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    name: Type-check + build + drift check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo (with mobile submodule or path alias)
+        uses: actions/checkout@v4
+        with:
+          # sync-endpoints.ts + sync-types.ts read from
+          # trip_gen_mobile/mobile/. If the mobile repo is a submodule,
+          # recursive clone it here. If it lives in the main worktree
+          # (as it does today on this branch), the default checkout is
+          # enough — the `submodules: recursive` line is a no-op.
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Sync drift check
+        run: npm run sync:check
+
+      - name: Type-check
+        run: npm run type-check
+
+      - name: Build
+        env:
+          SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING: '1'
+          # `NEXT_PUBLIC_API_URL` defaults to localhost inside baseUrl.ts
+          # so the build doesn't need a backend to compile. Leaving
+          # SENTRY_DSN unset → sentry init short-circuits.
+          NEXT_PUBLIC_API_URL: 'http://localhost:8080'
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: 'pk_test_placeholder'
+          CLERK_SECRET_KEY: 'sk_test_placeholder'
+        run: npm run build
