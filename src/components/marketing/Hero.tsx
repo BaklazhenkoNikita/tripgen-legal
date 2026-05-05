@@ -133,7 +133,7 @@ export function Hero() {
               state="live"
               href="https://apps.apple.com/us/app/periplo-ai-trip-planner/id6761609896"
             />
-            <StoreBadge platform="google" state="coming-soon" />
+            <StoreBadge platform="google" state="closed-beta" />
           </Stack>
         </Box>
 

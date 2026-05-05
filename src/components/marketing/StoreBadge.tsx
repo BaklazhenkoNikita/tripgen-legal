@@ -4,7 +4,7 @@ import { Apple, Play } from 'lucide-react';
 import { Tooltip } from '@/components/ui/Tooltip';
 
 type Platform = 'apple' | 'google';
-type State = 'live' | 'coming-soon';
+type State = 'live' | 'coming-soon' | 'closed-beta';
 
 interface StoreBadgeProps {
   platform: Platform;
@@ -17,17 +17,44 @@ const PLATFORM_COPY: Record<Platform, { topLive: string; bottom: string; ariaNam
   google: { topLive: 'Get it on', bottom: 'Google Play', ariaName: 'Android' },
 };
 
+const CLOSED_BETA_MAILTO = `mailto:support@periploapp.com?subject=${encodeURIComponent(
+  'Periplo Android closed beta — request access',
+)}&body=${encodeURIComponent(
+  "Hi Periplo team,\n\nI'd like to join the Android closed beta. My Google account email is: ___\n\nThanks!",
+)}`;
+
 export function StoreBadge({ platform, state = 'coming-soon', href }: StoreBadgeProps) {
   const copy = PLATFORM_COPY[platform];
   const Glyph = platform === 'apple' ? Apple : Play;
-  const isLive = state === 'live';
-  const topLine = isLive ? copy.topLive : 'Coming soon';
+  const isInteractive = state === 'live' || state === 'closed-beta';
+
+  let topLine: string;
+  let bottomLine: string;
+  let ariaLabel: string;
+  let linkAttrs: Record<string, string | boolean>;
+
+  if (state === 'closed-beta') {
+    topLine = 'Request access';
+    bottomLine = 'Closed Beta';
+    ariaLabel = 'Request Android closed beta access';
+    linkAttrs = { href: CLOSED_BETA_MAILTO };
+  } else if (state === 'live' && href) {
+    topLine = copy.topLive;
+    bottomLine = copy.bottom;
+    ariaLabel = `${copy.topLive} ${copy.bottom}`;
+    linkAttrs = { href, target: '_blank', rel: 'noopener noreferrer' };
+  } else {
+    topLine = 'Coming soon';
+    bottomLine = copy.bottom;
+    ariaLabel = `${copy.ariaName} app — coming soon`;
+    linkAttrs = { 'aria-disabled': true };
+  }
 
   const badge = (
     <Box
-      component={isLive && href ? 'a' : 'div'}
-      {...(isLive && href ? { href, target: '_blank', rel: 'noopener noreferrer' } : { 'aria-disabled': true })}
-      aria-label={isLive ? `${copy.topLive} ${copy.bottom}` : `${copy.ariaName} app — coming soon`}
+      component={isInteractive ? 'a' : 'div'}
+      {...linkAttrs}
+      aria-label={ariaLabel}
       sx={{
         display: 'inline-flex',
         alignItems: 'center',
@@ -38,10 +65,10 @@ export function StoreBadge({ platform, state = 'coming-soon', href }: StoreBadge
         bgcolor: 'text.primary',
         color: 'background.paper',
         textDecoration: 'none',
-        cursor: isLive ? 'pointer' : 'default',
-        opacity: isLive ? 1 : 0.85,
+        cursor: isInteractive ? 'pointer' : 'default',
+        opacity: isInteractive ? 1 : 0.85,
         transition: 'transform 0.18s ease, opacity 0.18s ease',
-        '&:hover': isLive
+        '&:hover': isInteractive
           ? { transform: 'translateY(-1px)' }
           : undefined,
       }}
@@ -52,12 +79,12 @@ export function StoreBadge({ platform, state = 'coming-soon', href }: StoreBadge
           {topLine}
         </Box>
         <Box component="span" sx={{ fontSize: 14, fontWeight: 600, letterSpacing: -0.1 }}>
-          {copy.bottom}
+          {bottomLine}
         </Box>
       </Stack>
     </Box>
   );
 
-  if (isLive) return badge;
-  return <Tooltip content="Coming soon">{badge}</Tooltip>;
+  if (state === 'coming-soon') return <Tooltip content="Coming soon">{badge}</Tooltip>;
+  return badge;
 }
