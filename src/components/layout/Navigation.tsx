@@ -1,14 +1,15 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link, { useLinkStatus } from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { SignedIn, SignedOut, UserButton, useClerk } from '@clerk/nextjs';
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown, Menu as MenuIcon, Sparkles, X } from 'lucide-react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -16,18 +17,9 @@ import MuiMenu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { alpha, useTheme } from '@mui/material/styles';
 import { CreditBadge } from '@/components/credits/CreditBadge';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { ThemeToggle, ThemeTogglePopover } from '@/components/ui/ThemeToggle';
 import { tgShadow } from '@/theme/shadows';
-import { useActiveTrip, useCityOptional } from '@/contexts';
 import { useSubscriptionOptional } from '@/contexts/SubscriptionContext';
-import { destinationSlug } from '@/lib/destinationSlug';
-import { readLastChatId } from '@/components/chat/lastChatStorage';
-
-const marketingLinks = [
-  { href: '/trip', label: 'Trip' },
-  { href: '/explore', label: 'Explore' },
-  { href: '/chat', label: 'Chat' },
-];
 
 const discoverLinks = [
   { href: '/community', label: 'Guides' },
@@ -36,47 +28,27 @@ const discoverLinks = [
 ];
 
 const DISCOVER_PATH_PREFIXES = ['/community', '/blog', '/faq'];
-const TRIP_PATH_PREFIXES = ['/trip', '/history'];
+
+// Stable, SSR-safe hrefs for the navbar pills. The destination pages
+// (/trip, /explore, /chat) handle redirecting to the canonical per-user
+// path so the link element doesn't flip mid-navigation and cancel the
+// in-flight transition.
+const primaryLinks = [
+  { href: '/trip', match: '/trip', label: 'Trip' },
+  { href: '/explore', match: '/explore', label: 'Explore' },
+  { href: '/chat', match: '/chat', label: 'Chat' },
+];
 
 export function Navigation() {
   const pathname = usePathname() ?? '/';
+  const router = useRouter();
+  const onChat = pathname === '/chat' || pathname.startsWith('/chat/');
   const { openSignIn } = useClerk();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileDiscoverOpen, setMobileDiscoverOpen] = useState(false);
-  const [mobileTripOpen, setMobileTripOpen] = useState(false);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
 
-  // Skip the redirect-page hop on /trip, /explore, /chat by linking directly
-  // to the canonical destination when we already know it. The bare paths still
-  // work as fallbacks for fresh sessions and deep links.
-  const { activeTripId, hydrated: activeTripHydrated } = useActiveTrip();
-  const city = useCityOptional()?.city ?? null;
   const isPro = useSubscriptionOptional()?.credits?.isPro ?? false;
-  const [lastChatId, setLastChatId] = useState<string | null>(null);
-  useEffect(() => {
-    setLastChatId(readLastChatId());
-  }, [pathname]);
-
-  const appLinks = useMemo(() => {
-    const slug = destinationSlug(city);
-    const exploreHref = slug ? `/explore/${slug}` : '/explore';
-    const chatHref = lastChatId ? `/chat/${lastChatId}` : '/chat';
-    return [
-      { href: exploreHref, match: '/explore', label: 'Explore' },
-      { href: chatHref, match: '/chat', label: 'Chat' },
-    ];
-  }, [city, lastChatId]);
-
-  const tripMenuItems = useMemo(() => {
-    const items: { href: string; label: string }[] = [
-      { href: '/trip?new=1', label: 'Plan a new trip' },
-    ];
-    if (activeTripHydrated && activeTripId) {
-      items.push({ href: `/trip/${activeTripId}`, label: 'Open current trip' });
-    }
-    items.push({ href: '/history', label: 'All my trips' });
-    return items;
-  }, [activeTripHydrated, activeTripId]);
 
   useEffect(() => {
     if (pendingHref && pathname.startsWith(pendingHref.split('?')[0])) {
@@ -84,8 +56,17 @@ export function Navigation() {
     }
   }, [pathname, pendingHref]);
 
-  const isActive = (href: string) =>
-    pendingHref === href || pathname.startsWith(href);
+  // Warm the router cache for the canonical pill destinations + discover
+  // links as soon as the navbar mounts. `<Link prefetch>` only fires on
+  // viewport intersection, which on a cold marketing → app click is too late
+  // — the user pays the full RSC + bundle fetch on the first hop. Calling
+  // router.prefetch on mount kicks the prefetch off immediately so by the
+  // time they click the destination's loading.tsx + page chunk are cached.
+  useEffect(() => {
+    for (const link of primaryLinks) router.prefetch(link.href);
+    for (const link of discoverLinks) router.prefetch(link.href);
+  }, [router]);
+
   const isActiveSection = (match: string, href: string) =>
     pendingHref === href || pathname.startsWith(match);
   const discoverActive =
@@ -94,17 +75,10 @@ export function Navigation() {
     DISCOVER_PATH_PREFIXES.some(
       (prefix) => pathname === prefix || pathname.startsWith(prefix + '/'),
     );
-  const tripActive =
-    (pendingHref !== null &&
-      TRIP_PATH_PREFIXES.some((p) => pendingHref.startsWith(p))) ||
-    TRIP_PATH_PREFIXES.some(
-      (prefix) => pathname === prefix || pathname.startsWith(prefix + '/'),
-    );
 
   const closeMobile = () => {
     setMobileOpen(false);
     setMobileDiscoverOpen(false);
-    setMobileTripOpen(false);
   };
 
   return (
@@ -118,15 +92,17 @@ export function Navigation() {
     >
       <Toolbar
         sx={{
-          mx: 'auto',
           width: '100%',
-          maxWidth: 1280,
           height: 64,
           minHeight: 64,
-          display: 'flex',
+          // Grid keeps the middle pill cluster centered against the viewport
+          // regardless of left/right content widths (the right cluster is
+          // wider than the logo, so a flex `space-between` would offset the
+          // pills to the left of true center).
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr auto', md: '1fr auto 1fr' },
           alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 2,
+          columnGap: 2,
           px: { xs: 2, sm: 3 },
         }}
       >
@@ -135,29 +111,32 @@ export function Navigation() {
           href="/"
           aria-label="Periplo home"
           sx={{
+            justifySelf: 'start',
             display: 'flex',
             alignItems: 'center',
-            gap: 0.5,
+            gap: 1,
             fontWeight: 600,
             fontSize: 20,
             color: 'text.primary',
             textDecoration: 'none',
           }}
         >
-          <span>Peri</span>
-          <Box component="span" sx={{ color: 'primary.main' }}>plo</Box>
           <Box
-            component="span"
+            component="img"
+            src="/apple-touch-icon.png"
+            alt=""
             aria-hidden
             sx={{
-              ml: 0.25,
-              display: 'inline-block',
-              width: 6,
-              height: 6,
-              borderRadius: '50%',
-              bgcolor: 'primary.main',
+              width: 28,
+              height: 28,
+              borderRadius: 1.25,
+              display: 'block',
             }}
           />
+          <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center' }}>
+            <span>Peri</span>
+            <Box component="span" sx={{ color: 'primary.main' }}>plo</Box>
+          </Box>
         </Box>
 
         {/* Desktop nav */}
@@ -165,53 +144,32 @@ export function Navigation() {
           component="nav"
           sx={{
             display: { xs: 'none', md: 'flex' },
-            flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
             gap: 0.5,
           }}
         >
-          <SignedOut>
-            {marketingLinks.map((link) => (
-              <NavLink
-                key={link.href}
-                href={link.href}
-                active={isActive(link.href)}
-                onNavigate={setPendingHref}
-              >
-                {link.label}
-              </NavLink>
-            ))}
-            <DiscoverDropdown active={discoverActive} onNavigate={setPendingHref} />
-          </SignedOut>
-          <SignedIn>
-            <TripDropdown
-              active={tripActive}
-              items={tripMenuItems}
+          {primaryLinks.map((link) => (
+            <NavLink
+              key={link.match}
+              href={link.href}
+              active={isActiveSection(link.match, link.href)}
               onNavigate={setPendingHref}
-            />
-            {appLinks.map((link) => (
-              <NavLink
-                key={link.match}
-                href={link.href}
-                active={isActiveSection(link.match, link.href)}
-                onNavigate={setPendingHref}
-              >
-                {link.label}
-              </NavLink>
-            ))}
-            <DiscoverDropdown active={discoverActive} onNavigate={setPendingHref} />
-          </SignedIn>
+            >
+              {link.label}
+            </NavLink>
+          ))}
+          <DiscoverDropdown active={discoverActive} onNavigate={setPendingHref} />
         </Box>
 
         {/* Right cluster */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ justifySelf: 'end', display: 'flex', alignItems: 'center', gap: 1 }}>
           <SignedIn>
             <CreditBadge />
           </SignedIn>
 
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-            <ThemeToggle />
+            <ThemeTogglePopover />
           </Box>
 
           <SignedOut>
@@ -235,26 +193,28 @@ export function Navigation() {
                 startIcon={<Sparkles size={14} />}
                 sx={{ display: { xs: 'none', md: 'inline-flex' }, fontWeight: 600 }}
               >
-                Get Pro
+                Upgrade
               </Button>
             ) : null}
-            <UserButton afterSignOutUrl="/">
-              <UserButton.MenuItems>
-                {!isPro ? (
-                  <UserButton.Link
-                    label="Get Pro"
-                    labelIcon={<Sparkles size={14} />}
-                    href="/pricing"
-                  />
-                ) : (
-                  <UserButton.Link
-                    label="Manage subscription"
-                    labelIcon={<Sparkles size={14} />}
-                    href="/profile"
-                  />
-                )}
-              </UserButton.MenuItems>
-            </UserButton>
+            {!onChat ? (
+              <UserButton afterSignOutUrl="/">
+                <UserButton.MenuItems>
+                  {!isPro ? (
+                    <UserButton.Link
+                      label="Upgrade"
+                      labelIcon={<Sparkles size={14} />}
+                      href="/pricing"
+                    />
+                  ) : (
+                    <UserButton.Link
+                      label="Manage subscription"
+                      labelIcon={<Sparkles size={14} />}
+                      href="/profile"
+                    />
+                  )}
+                </UserButton.MenuItems>
+              </UserButton>
+            ) : null}
           </SignedIn>
 
           <IconButton
@@ -286,21 +246,6 @@ export function Navigation() {
           }}
         >
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            <SignedOut>
-              {marketingLinks.map((link) => (
-                <MobileLink
-                  key={link.href}
-                  href={link.href}
-                  active={isActive(link.href)}
-                  onClick={() => {
-                    setPendingHref(link.href);
-                    closeMobile();
-                  }}
-                >
-                  {link.label}
-                </MobileLink>
-              ))}
-            </SignedOut>
             <SignedIn>
               {!isPro ? (
                 <Box
@@ -328,93 +273,23 @@ export function Navigation() {
                   }}
                 >
                   <Sparkles size={14} />
-                  Get Pro
+                  Upgrade
                 </Box>
               ) : null}
-              <Box
-                component="button"
-                type="button"
-                onClick={() => setMobileTripOpen((v) => !v)}
-                aria-expanded={mobileTripOpen}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  borderRadius: 1.5,
-                  px: 1.5,
-                  py: 1.25,
-                  fontSize: 14,
-                  fontWeight: 500,
-                  background: 'transparent',
-                  border: 0,
-                  cursor: 'pointer',
-                  ...(tripActive
-                    ? {
-                        bgcolor: (t) => alpha(t.palette.primary.main, 0.12),
-                        color: 'primary.main',
-                      }
-                    : {
-                        color: 'text.secondary',
-                        '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
-                      }),
+            </SignedIn>
+            {primaryLinks.map((link) => (
+              <MobileLink
+                key={link.match}
+                href={link.href}
+                active={isActiveSection(link.match, link.href)}
+                onClick={() => {
+                  setPendingHref(link.href);
+                  closeMobile();
                 }}
               >
-                Trip
-                <ChevronDown
-                  size={16}
-                  style={{
-                    transition: 'transform 0.2s',
-                    transform: mobileTripOpen ? 'rotate(180deg)' : undefined,
-                  }}
-                />
-              </Box>
-              {mobileTripOpen ? (
-                <Box
-                  component={motion.div}
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.15 }}
-                  sx={{
-                    ml: 1.5,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 0.5,
-                    borderLeft: (t) => `1px solid ${t.palette.divider}`,
-                    pl: 1.5,
-                  }}
-                >
-                  {tripMenuItems.map((link) => (
-                    <MobileLink
-                      key={link.href}
-                      href={link.href}
-                      active={
-                        pendingHref === link.href ||
-                        pathname === link.href.split('?')[0]
-                      }
-                      onClick={() => {
-                        setPendingHref(link.href);
-                        closeMobile();
-                      }}
-                    >
-                      {link.label}
-                    </MobileLink>
-                  ))}
-                </Box>
-              ) : null}
-              {appLinks.map((link) => (
-                <MobileLink
-                  key={link.match}
-                  href={link.href}
-                  active={isActiveSection(link.match, link.href)}
-                  onClick={() => {
-                    setPendingHref(link.href);
-                    closeMobile();
-                  }}
-                >
-                  {link.label}
-                </MobileLink>
-              ))}
-            </SignedIn>
+                {link.label}
+              </MobileLink>
+            ))}
             <Box
               component="button"
               type="button"
@@ -428,13 +303,13 @@ export function Navigation() {
                 px: 1.5,
                 py: 1.25,
                 fontSize: 14,
-                fontWeight: 500,
+                fontWeight: discoverActive ? 600 : 500,
                 background: 'transparent',
                 border: 0,
                 cursor: 'pointer',
                 ...(discoverActive
                   ? {
-                      bgcolor: (t) => alpha(t.palette.primary.main, 0.12),
+                      bgcolor: (t) => alpha(t.palette.primary.main, 0.16),
                       color: 'primary.main',
                     }
                   : {
@@ -514,7 +389,31 @@ export function Navigation() {
   );
 }
 
-function NavLink({
+/** Tiny spinner that appears alongside a Link's label while the click-driven
+ *  navigation is in flight. Combined with App Router's `loading.tsx`
+ *  boundaries, this is the user's confirmation that the click registered. */
+function LinkPendingDot({ size = 12 }: { size?: number }) {
+  const { pending } = useLinkStatus();
+  if (!pending) return null;
+  return (
+    <Box
+      component="span"
+      aria-hidden
+      sx={{
+        ml: 0.75,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: size,
+        height: size,
+      }}
+    >
+      <CircularProgress size={size} thickness={5} sx={{ color: 'inherit' }} />
+    </Box>
+  );
+}
+
+const NavLink = memo(function NavLink({
   href,
   active,
   onNavigate,
@@ -539,106 +438,26 @@ function NavLink({
         borderRadius: 999,
         px: 1.75,
         fontSize: 14,
-        fontWeight: 500,
+        fontWeight: active ? 600 : 500,
         textDecoration: 'none',
         transition: 'color 0.15s, background-color 0.15s',
         color: active ? 'primary.main' : 'text.secondary',
         bgcolor: active
-          ? alpha(theme.palette.primary.main, 0.12)
+          ? alpha(theme.palette.primary.main, 0.16)
           : 'transparent',
-        '&:hover': { color: active ? 'primary.main' : 'text.primary' },
+        '&:hover': {
+          color: active ? 'primary.main' : 'text.primary',
+          bgcolor: active ? alpha(theme.palette.primary.main, 0.16) : 'action.hover',
+        },
       }}
     >
       {children}
+      <LinkPendingDot />
     </Box>
   );
-}
+});
 
-function TripDropdown({
-  active,
-  items,
-  onNavigate,
-}: {
-  active: boolean;
-  items: { href: string; label: string }[];
-  onNavigate?: (href: string) => void;
-}) {
-  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const theme = useTheme();
-  const open = Boolean(anchor);
-  return (
-    <>
-      <Box
-        component="button"
-        type="button"
-        onClick={(e) => setAnchor(e.currentTarget as HTMLElement)}
-        sx={{
-          position: 'relative',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 0.5,
-          height: 36,
-          borderRadius: 999,
-          px: 1.75,
-          fontSize: 14,
-          fontWeight: 500,
-          background: 'transparent',
-          border: 0,
-          cursor: 'pointer',
-          transition: 'color 0.2s, background-color 0.2s',
-          ...(active
-            ? {
-                bgcolor: alpha(theme.palette.primary.main, 0.12),
-                color: 'primary.main',
-              }
-            : {
-                color: 'text.secondary',
-                '&:hover': { color: 'text.primary' },
-              }),
-        }}
-      >
-        Trip
-        <ChevronDown size={14} aria-hidden />
-      </Box>
-      <MuiMenu
-        anchorEl={anchor}
-        open={open}
-        onClose={() => setAnchor(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
-        slotProps={{
-          paper: {
-            sx: {
-              mt: 1,
-              minWidth: 192,
-              borderRadius: 1.5,
-              border: (t) => `1px solid ${t.palette.divider}`,
-              boxShadow: (t) => tgShadow(t, 'dropdown'),
-              p: 0.5,
-            },
-          },
-        }}
-      >
-        {items.map((item) => (
-          <MenuItem
-            key={item.href}
-            component={Link}
-            href={item.href}
-            onClick={() => {
-              onNavigate?.(item.href);
-              setAnchor(null);
-            }}
-            sx={{ borderRadius: 1, fontSize: 14, py: 1, px: 1.5 }}
-          >
-            {item.label}
-          </MenuItem>
-        ))}
-      </MuiMenu>
-    </>
-  );
-}
-
-function DiscoverDropdown({
+const DiscoverDropdown = memo(function DiscoverDropdown({
   active,
   onNavigate,
 }: {
@@ -663,19 +482,19 @@ function DiscoverDropdown({
           borderRadius: 999,
           px: 1.75,
           fontSize: 14,
-          fontWeight: 500,
+          fontWeight: active ? 600 : 500,
           background: 'transparent',
           border: 0,
           cursor: 'pointer',
           transition: 'color 0.2s, background-color 0.2s',
           ...(active
             ? {
-                bgcolor: alpha(theme.palette.primary.main, 0.12),
+                bgcolor: alpha(theme.palette.primary.main, 0.16),
                 color: 'primary.main',
               }
             : {
                 color: 'text.secondary',
-                '&:hover': { color: 'text.primary' },
+                '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
               }),
         }}
       >
@@ -706,6 +525,7 @@ function DiscoverDropdown({
             key={link.href}
             component={Link}
             href={link.href}
+            prefetch
             onClick={() => {
               onNavigate?.(link.href);
               setAnchor(null);
@@ -713,14 +533,15 @@ function DiscoverDropdown({
             sx={{ borderRadius: 1, fontSize: 14, py: 1, px: 1.5 }}
           >
             {link.label}
+            <LinkPendingDot />
           </MenuItem>
         ))}
       </MuiMenu>
     </>
   );
-}
+});
 
-function MobileLink({
+const MobileLink = memo(function MobileLink({
   href,
   active,
   onClick,
@@ -735,17 +556,20 @@ function MobileLink({
     <Box
       component={Link}
       href={href}
+      prefetch
       onClick={onClick}
       sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
         borderRadius: 1.5,
         px: 1.5,
         py: 1.25,
         fontSize: 14,
-        fontWeight: 500,
+        fontWeight: active ? 600 : 500,
         textDecoration: 'none',
         ...(active
           ? {
-              bgcolor: (t) => alpha(t.palette.primary.main, 0.12),
+              bgcolor: (t) => alpha(t.palette.primary.main, 0.16),
               color: 'primary.main',
             }
           : {
@@ -755,6 +579,7 @@ function MobileLink({
       }}
     >
       {children}
+      <LinkPendingDot />
     </Box>
   );
-}
+});

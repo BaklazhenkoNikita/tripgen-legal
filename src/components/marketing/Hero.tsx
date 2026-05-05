@@ -44,9 +44,9 @@ export function Hero() {
             component="h1"
             sx={{
               fontWeight: 700,
-              fontSize: 'clamp(2.5rem, 4vw, 4rem)',
-              lineHeight: 1.05,
-              letterSpacing: '-0.02em',
+              fontSize: 'clamp(2.5rem, 4vw, 3.75rem)',
+              lineHeight: 0.98,
+              letterSpacing: '-0.025em',
               color: 'text.primary',
             }}
           >
@@ -128,7 +128,11 @@ export function Hero() {
               rowGap: 1.5,
             }}
           >
-            <StoreBadge platform="apple" state="coming-soon" />
+            <StoreBadge
+              platform="apple"
+              state="live"
+              href="https://apps.apple.com/us/app/periplo-ai-trip-planner/id6761609896"
+            />
             <StoreBadge platform="google" state="coming-soon" />
           </Stack>
         </Box>

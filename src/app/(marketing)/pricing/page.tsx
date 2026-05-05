@@ -112,21 +112,22 @@ function PricingInner() {
   };
 
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 960, px: { xs: 2, sm: 3 }, py: { xs: 5, sm: 8 } }}>
+    <Box sx={{ mx: 'auto', maxWidth: 960, px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
       <Box sx={{ textAlign: 'center' }}>
         <Typography
           component="h1"
           sx={{
             fontFamily: 'var(--font-display, inherit)',
-            fontSize: { xs: '2rem', sm: '2.75rem' },
-            fontWeight: 600,
-            letterSpacing: '-0.02em',
+            fontSize: { xs: '2.25rem', sm: '3rem' },
+            fontWeight: 700,
+            letterSpacing: '-0.025em',
+            lineHeight: 1.0,
             color: 'text.primary',
           }}
         >
           Plan smarter with Pro
         </Typography>
-        <Typography sx={{ mt: 1.5, mx: 'auto', maxWidth: 560, fontSize: 16, color: 'text.secondary' }}>
+        <Typography sx={{ mt: 2, mx: 'auto', maxWidth: 560, fontSize: 17, lineHeight: 1.55, color: 'text.secondary' }}>
           Unlimited AI generations, priority routing, and the same itinerary engine the mobile app uses.
         </Typography>
       </Box>
@@ -265,8 +266,13 @@ function PlanColumn({
         border: '1px solid',
         borderColor: isAnnual ? 'primary.main' : 'divider',
         bgcolor: 'background.paper',
-        p: { xs: 2.5, sm: 3 },
-        boxShadow: isAnnual ? 6 : 0,
+        p: { xs: 3, sm: 3.5 },
+        boxShadow: isAnnual ? 'var(--tg-shadow-card-hover)' : 'var(--tg-shadow-card)',
+        transition: 'all 0.2s',
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: 'var(--tg-shadow-card-hover)',
+        },
       }}
     >
       {plan.badge ? (

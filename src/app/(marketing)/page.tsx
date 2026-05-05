@@ -8,6 +8,7 @@ import { destinations } from '@/data/destinations';
 import { blogPosts } from '@/data/blogPosts';
 import { Photo } from '@/components/ui/Photo';
 import { Badge } from '@/components/ui/Badge';
+import { HorizontalScrollRow } from '@/components/ui/HorizontalScrollRow';
 import { Hero } from '@/components/marketing/Hero';
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
   },
 };
 
-const featuredDestinations = destinations.slice(0, 6);
+const featuredDestinations = destinations.slice(0, 12);
 const featuredPosts = blogPosts.slice(0, 3);
 
 const features = [
@@ -52,7 +53,7 @@ export default function LandingPage() {
       <Hero />
 
       {/* Features */}
-      <Box component="section" sx={{ px: { xs: 2, sm: 3 }, py: { xs: 7, md: 9 } }}>
+      <Box component="section" sx={{ px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
         <Box sx={{ mx: 'auto', maxWidth: 1152 }}>
           <Typography
             component="h2"
@@ -91,10 +92,12 @@ export default function LandingPage() {
                   borderColor: 'divider',
                   bgcolor: 'background.paper',
                   p: 3.5,
+                  boxShadow: 'var(--tg-shadow-card)',
                   transition: 'all 0.2s',
                   '&:hover': {
                     borderColor: 'text.disabled',
                     boxShadow: 'var(--tg-shadow-card-hover)',
+                    transform: 'translateY(-1px)',
                   },
                 }}
               >
@@ -102,16 +105,16 @@ export default function LandingPage() {
                   <Box
                     sx={{
                       display: 'inline-flex',
-                      height: 44,
-                      width: 44,
+                      height: 48,
+                      width: 48,
                       alignItems: 'center',
                       justifyContent: 'center',
-                      borderRadius: 1.5,
+                      borderRadius: 2,
                       bgcolor: 'rgba(var(--tg-palette-primary-mainChannel) / 0.12)',
                       color: 'primary.main',
                     }}
                   >
-                    <Icon size={20} aria-hidden />
+                    <Icon size={22} aria-hidden strokeWidth={1.75} />
                   </Box>
                   <Typography
                     component="h3"
@@ -119,7 +122,7 @@ export default function LandingPage() {
                   >
                     {title}
                   </Typography>
-                  <Typography sx={{ mt: 1, fontSize: 14, lineHeight: 1.6, color: 'text.secondary' }}>
+                  <Typography sx={{ mt: 1, fontSize: 15, lineHeight: 1.55, color: 'text.secondary' }}>
                     {description}
                   </Typography>
                 </Box>
@@ -135,11 +138,10 @@ export default function LandingPage() {
         sx={{
           borderBlock: '1px solid var(--tg-palette-divider)',
           bgcolor: 'background.paper',
-          px: { xs: 2, sm: 3 },
-          py: { xs: 7, md: 9 },
+          py: { xs: 8, md: 12 },
         }}
       >
-        <Box sx={{ mx: 'auto', maxWidth: 1280 }}>
+        <Box sx={{ mx: 'auto', maxWidth: 1280, px: { xs: 2, sm: 3 } }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 1.5 }}>
             <Box>
               <Typography
@@ -170,70 +172,69 @@ export default function LandingPage() {
               <ArrowRight size={14} aria-hidden />
             </Box>
           </Box>
-          <Box
-            sx={{
-              mt: 4,
-              mx: { xs: -2, sm: -3 },
-              px: { xs: 2, sm: 3 },
-              pr: { xs: 2, sm: 3, lg: 6 },
-              pt: 1,
-              pb: 1,
-              display: 'flex',
-              gap: 2.5,
-              overflowX: 'auto',
-              scrollbarWidth: 'none',
-              '&::-webkit-scrollbar': { display: 'none' },
-            }}
-          >
-            {featuredDestinations.map((dest) => (
-              <Box
-                key={dest.slug}
-                component={Link}
-                href={`/explore/${dest.slug}`}
-                sx={{
-                  flex: '0 0 auto',
-                  width: { xs: 260, sm: 280, md: 300 },
-                  display: 'block',
-                  overflow: 'hidden',
-                  borderRadius: 1,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  bgcolor: 'background.paper',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  transition: 'all 0.2s',
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    borderColor: 'text.disabled',
-                    boxShadow: 'var(--tg-shadow-card-hover)',
-                    '& h3': { color: 'primary.main' },
-                  },
-                }}
-              >
-                <Photo
-                  src={dest.heroImage}
-                  alt={`${dest.city}, ${dest.country}`}
-                  aspect="16/9"
-                  zoomOnHover
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-                <Box sx={{ p: 2.5 }}>
-                  <Typography
-                    component="h3"
-                    sx={{ fontSize: 18, fontWeight: 600, color: 'text.primary', transition: 'color 0.2s' }}
-                  >
-                    {dest.city}
-                    <Box component="span" sx={{ color: 'text.disabled' }}>, {dest.country}</Box>
-                  </Typography>
+          <Box sx={{ mt: 4 }}>
+            <HorizontalScrollRow ariaLabel="Popular destinations">
+              {featuredDestinations.map((dest) => (
+                <Box
+                  key={dest.slug}
+                  component={Link}
+                  href={`/explore/${dest.slug}`}
+                  sx={{
+                    flex: {
+                      xs: '0 0 70%',
+                      sm: '0 0 240px',
+                      md: '0 0 280px',
+                    },
+                    scrollSnapAlign: 'start',
+                    display: 'block',
+                    overflow: 'hidden',
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    bgcolor: 'background.paper',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    boxShadow: 'var(--tg-shadow-card)',
+                    transition: 'all 0.2s',
+                    outline: 'none',
+                    '&:focus-visible': {
+                      outline: '2px solid',
+                      outlineColor: 'primary.main',
+                      outlineOffset: 2,
+                    },
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      borderColor: 'text.disabled',
+                      boxShadow: 'var(--tg-shadow-card-hover)',
+                      '& h3': { color: 'primary.main' },
+                    },
+                  }}
+                >
+                  <Photo
+                    src={dest.heroImage}
+                    alt={`${dest.city}, ${dest.country}`}
+                    aspect="16/9"
+                    zoomOnHover
+                    sizes="(max-width: 640px) 70vw, (max-width: 1024px) 240px, 280px"
+                  />
+                  <Box sx={{ p: 2 }}>
+                    <Typography
+                      component="h3"
+                      sx={{ fontSize: 16, fontWeight: 600, color: 'text.primary', transition: 'color 0.2s' }}
+                    >
+                      {dest.city}
+                      <Box component="span" sx={{ color: 'text.disabled', fontWeight: 400 }}>, {dest.country}</Box>
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-            ))}
+              ))}
+            </HorizontalScrollRow>
           </Box>
         </Box>
       </Box>
 
       {/* Blog preview */}
-      <Box component="section" sx={{ px: { xs: 2, sm: 3 }, py: { xs: 7, md: 9 } }}>
+      <Box component="section" sx={{ px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
         <Box sx={{ mx: 'auto', maxWidth: 1280 }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 1.5 }}>
             <Box>
@@ -285,14 +286,25 @@ export default function LandingPage() {
                   '&:hover h3': { color: 'primary.main' },
                 }}
               >
-                <Photo
-                  src={post.heroImage}
-                  alt={post.title}
-                  aspect="16/9"
-                  rounded="lg"
-                  zoomOnHover
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
+                <Box
+                  sx={{
+                    overflow: 'hidden',
+                    borderRadius: 'var(--radius-lg, 12px)',
+                    '& img': {
+                      filter: 'saturate(0.94) contrast(1.02)',
+                      transition: 'filter 0.3s',
+                    },
+                  }}
+                >
+                  <Photo
+                    src={post.heroImage}
+                    alt={post.title}
+                    aspect="16/9"
+                    rounded="lg"
+                    zoomOnHover
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </Box>
                 <Box sx={{ mt: 2 }}>
                   <Badge tone="accent" size="sm">{post.category}</Badge>
                   <Typography
@@ -303,8 +315,9 @@ export default function LandingPage() {
                   </Typography>
                   <Typography
                     sx={{
-                      mt: 0.5,
-                      fontSize: 14,
+                      mt: 0.75,
+                      fontSize: 15,
+                      lineHeight: 1.55,
                       color: 'text.secondary',
                       display: '-webkit-box',
                       WebkitBoxOrient: 'vertical',
@@ -384,12 +397,14 @@ export default function LandingPage() {
       <Box component="section" sx={{ px: { xs: 2, sm: 3 }, py: 6 }}>
         <Box
           sx={{
+            position: 'relative',
             mx: 'auto',
             maxWidth: 1024,
             overflow: 'hidden',
             borderRadius: 4,
-            background:
-              'linear-gradient(135deg, var(--tg-palette-primary-main) 0%, var(--tg-palette-primary-dark) 60%, #9b1d3a 100%)',
+            backgroundColor: 'var(--tg-palette-primary-dark)',
+            backgroundImage:
+              'radial-gradient(circle at 18% 22%, rgba(255,255,255,0.16) 0%, transparent 55%), linear-gradient(135deg, var(--tg-palette-primary-main) 0%, var(--tg-palette-primary-dark) 100%)',
             px: 3,
             py: 7,
             textAlign: 'center',
@@ -397,35 +412,61 @@ export default function LandingPage() {
             boxShadow: 'var(--tg-shadow-primary-button-hover)',
           }}
         >
-          <Typography
-            component="h2"
-            sx={{ fontWeight: 600, fontSize: { xs: '1.75rem', sm: '2.25rem' } }}
-          >
-            Ready for your next adventure?
-          </Typography>
-          <Typography sx={{ mx: 'auto', mt: 1.5, maxWidth: 480, color: 'rgba(255,255,255,0.92)' }}>
-            Create a personalized itinerary in minutes. No credit card needed.
-          </Typography>
-          <Button
-            component={Link}
-            href="/trip"
-            variant="contained"
-            size="large"
-            endIcon={<ArrowRight size={16} />}
+          <Box
+            component="img"
+            src="/assets/logo-icon.png"
+            alt=""
+            aria-hidden
             sx={{
-              mt: 4,
-              bgcolor: 'common.white',
-              color: 'primary.main',
-              px: 3,
-              py: 1.25,
-              borderRadius: 999,
-              fontSize: 16,
-              boxShadow: 'none',
-              '&:hover': { bgcolor: 'rgba(255,255,255,0.92)' },
+              position: 'absolute',
+              top: { xs: 'auto', sm: '50%' },
+              bottom: { xs: -40, sm: 'auto' },
+              right: { xs: -30, sm: -40 },
+              transform: { xs: 'none', sm: 'translateY(-50%)' },
+              width: { xs: 160, sm: 220 },
+              height: 'auto',
+              opacity: 0.07,
+              pointerEvents: 'none',
+              userSelect: 'none',
             }}
-          >
-            Start planning — it&apos;s free
-          </Button>
+          />
+          <Box sx={{ position: 'relative' }}>
+            <Typography
+              component="h2"
+              sx={{ fontWeight: 600, fontSize: { xs: '1.75rem', sm: '2.25rem' }, letterSpacing: '-0.015em' }}
+            >
+              Ready for your next adventure?
+            </Typography>
+            <Typography sx={{ mx: 'auto', mt: 1.5, maxWidth: 480, color: 'rgba(255,255,255,0.92)' }}>
+              Create a personalized itinerary in minutes. No credit card needed.
+            </Typography>
+            <Button
+              component={Link}
+              href="/trip"
+              variant="contained"
+              size="large"
+              endIcon={<ArrowRight size={16} />}
+              sx={{
+                mt: 4,
+                bgcolor: 'common.white',
+                color: 'primary.main',
+                px: 3,
+                py: 1.25,
+                borderRadius: 999,
+                fontSize: 16,
+                fontWeight: 600,
+                boxShadow: '0 1px 2px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.12)',
+                '&:hover': {
+                  bgcolor: 'common.white',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.10), 0 12px 28px rgba(0,0,0,0.16)',
+                  transform: 'translateY(-1px)',
+                },
+                transition: 'all 0.2s',
+              }}
+            >
+              Start planning — it&apos;s free
+            </Button>
+          </Box>
         </Box>
       </Box>
 

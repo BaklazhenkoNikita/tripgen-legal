@@ -2,10 +2,15 @@
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useCity } from '@/contexts';
+import { useRecentDestinations } from '@/hooks/useRecentDestinations';
+import { destinationSlug } from '@/lib/destinationSlug';
+import { CityPickerPopover } from './CityPickerPopover';
 import type { DestinationInfo } from '@/types';
 
 interface Props {
@@ -45,6 +50,25 @@ export function DestinationHero({
   const total = photos.length;
   const hasMany = total > 1;
 
+  const router = useRouter();
+  const { city: activeCity, setCity } = useCity();
+  const { add: recordRecent } = useRecentDestinations();
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const onPickCity = useCallback(
+    (next: string) => {
+      if (!next) return;
+      setCity(next);
+      recordRecent(next);
+      setPickerOpen(false);
+      if (next.toLowerCase() !== city.toLowerCase()) {
+        router.push(`/explore/${destinationSlug(next)}`);
+      }
+    },
+    [city, router, setCity, recordRecent],
+  );
+
   const goTo = useCallback(
     (i: number) => {
       if (total === 0) return;
@@ -74,7 +98,6 @@ export function DestinationHero({
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
 
   const facts = useMemo(() => buildFacts(info), [info]);
-  const description = info?.description?.trim() || '';
 
   return (
     <Box
@@ -89,7 +112,7 @@ export function DestinationHero({
         position: 'relative',
         overflow: 'hidden',
         borderRadius: 3,
-        height: { xs: 280, md: 360 },
+        height: { xs: 280, md: 400 },
         bgcolor: 'action.hover',
         outline: 'none',
         // Neutral fallback when there is no image at all.
@@ -153,25 +176,6 @@ export function DestinationHero({
             sx={navZoneSx('right')}
           >
             <ChevronRight size={28} aria-hidden />
-          </Box>
-          <Box
-            sx={{
-              pointerEvents: 'none',
-              position: 'absolute',
-              right: 16,
-              top: 16,
-              borderRadius: 999,
-              bgcolor: (t) => alpha(t.palette.common.black, 0.42),
-              color: 'common.white',
-              px: 1.25,
-              py: 0.5,
-              fontSize: 11,
-              fontWeight: 500,
-              backdropFilter: 'blur(4px)',
-              zIndex: 2,
-            }}
-          >
-            {index + 1} / {total}
           </Box>
           <Box
             sx={{
@@ -242,51 +246,94 @@ export function DestinationHero({
             {country}
           </Typography>
         ) : null}
-        <Typography
-          component="h1"
+        <Box
+          component="button"
+          ref={triggerRef}
+          type="button"
+          onClick={(e) => { stop(e); setPickerOpen((v) => !v); }}
+          aria-haspopup="listbox"
+          aria-expanded={pickerOpen}
+          aria-label={`Change city (currently ${city})`}
           sx={{
-            fontSize: { xs: 28, sm: 40 },
-            fontWeight: 500,
-            color: 'common.white',
-            lineHeight: 1.05,
-            letterSpacing: '-0.01em',
-            textShadow: '0 2px 8px rgba(0,0,0,0.45)',
+            display: 'inline-flex',
+            alignItems: 'baseline',
+            gap: { xs: 0.75, sm: 1 },
+            border: 0,
+            background: 'transparent',
+            p: 0,
             m: 0,
+            cursor: 'pointer',
+            color: 'common.white',
+            textAlign: 'left',
+            '&:focus-visible': {
+              outline: (t) => `2px solid ${t.palette.primary.main}`,
+              outlineOffset: 4,
+              borderRadius: 4,
+            },
+            '& .city-name': {
+              transition: 'opacity 0.15s ease',
+            },
+            '&:hover .city-name': {
+              textDecoration: 'underline',
+              textDecorationThickness: '2px',
+              textUnderlineOffset: '6px',
+            },
+            '&:hover .city-chev': {
+              opacity: 1,
+              transform: 'translateY(2px)',
+            },
           }}
         >
-          {city}
-        </Typography>
-
-        {description ? (
           <Typography
+            component="h1"
+            className="city-name"
             sx={{
-              mt: 0.5,
-              fontSize: 14,
-              lineHeight: 1.55,
-              color: (t) => alpha(t.palette.common.white, 0.94),
-              textShadow: '0 1px 4px rgba(0,0,0,0.45)',
-              maxWidth: 560,
-              display: '-webkit-box',
-              WebkitLineClamp: 3,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
+              fontSize: { xs: 28, sm: 44 },
+              fontWeight: 600,
+              color: 'common.white',
+              lineHeight: 1.0,
+              letterSpacing: '-0.02em',
+              textShadow: '0 2px 12px rgba(0,0,0,0.5)',
+              m: 0,
             }}
           >
-            {description}
+            {city}
           </Typography>
-        ) : null}
+          <Box
+            component="span"
+            className="city-chev"
+            aria-hidden
+            sx={{
+              display: 'inline-flex',
+              opacity: 0.85,
+              transition: 'opacity 0.15s ease, transform 0.15s ease',
+              filter: 'drop-shadow(0 1px 6px rgba(0,0,0,0.55))',
+            }}
+          >
+            <ChevronDown size={22} />
+          </Box>
+        </Box>
+
+        <CityPickerPopover
+          open={pickerOpen}
+          anchorEl={triggerRef.current}
+          onClose={() => setPickerOpen(false)}
+          onPick={onPickCity}
+          selectedCity={activeCity ?? city}
+        />
 
         {facts.length > 0 ? (
           <Box
             sx={{
-              mt: 0.5,
+              mt: 1,
               display: 'flex',
               flexWrap: 'wrap',
               alignItems: 'center',
               gap: 0,
-              fontSize: 13,
-              color: (t) => alpha(t.palette.common.white, 0.88),
-              textShadow: '0 1px 4px rgba(0,0,0,0.45)',
+              fontSize: 14,
+              fontWeight: 500,
+              color: 'common.white',
+              textShadow: '0 1px 6px rgba(0,0,0,0.7)',
             }}
           >
             {facts.map((f, i) => (
@@ -299,7 +346,7 @@ export function DestinationHero({
                   <Box
                     aria-hidden
                     component="span"
-                    sx={{ mx: 1, color: (t) => alpha(t.palette.common.white, 0.4) }}
+                    sx={{ mx: 1, color: (t) => alpha(t.palette.common.white, 0.65) }}
                   >
                     ·
                   </Box>
@@ -325,12 +372,12 @@ function buildFacts(info?: DestinationInfo | null): string[] {
   return out;
 }
 
-/** Defensive: server should return single-word climate ("Mediterranean"), but
- *  if it sent a sentence we clamp to the first two words. */
+// Climate names are single words ("Mediterranean", "Tropical"). If the server
+// sends a sentence ("Mediterranean with mild winters…") we'd otherwise show a
+// partial fragment like "Mediterranean with" — so just take the first word.
 function clampClimate(climate: string): string {
-  const words = climate.trim().split(/\s+/).slice(0, 2);
-  // Drop trailing punctuation like commas/periods so "Mediterranean," → "Mediterranean".
-  return words.join(' ').replace(/[,.;:]+$/, '');
+  const first = climate.trim().split(/\s+/)[0] ?? '';
+  return first.replace(/[,.;:]+$/, '');
 }
 
 function navZoneSx(side: 'left' | 'right') {

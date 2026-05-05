@@ -144,7 +144,7 @@ function ProfilePageInner() {
                 fontSize: '1.25rem',
                 fontWeight: 600,
                 color: 'common.white',
-                boxShadow: 2,
+                boxShadow: 'var(--tg-shadow-card)',
               }}
             >
               {initials || '?'}

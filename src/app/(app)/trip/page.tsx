@@ -34,7 +34,7 @@ function TripPageInner() {
     searchParams.has('new');
   const { isSignedIn, isLoaded: authLoaded } = useAuth();
   const { city } = useCity();
-  const { activeTripId, hydrated: activeTripHydrated } = useActiveTrip();
+  const { activeTripId } = useActiveTrip();
 
   const {
     travelData,
@@ -129,19 +129,21 @@ function TripPageInner() {
   // If the user has a last-viewed trip, /trip should land them there instead
   // of the empty generation form. Skipped when the URL explicitly asks for
   // the form (`?new=1`, `?destination=…`, `?days=…`) or when a generation is
-  // already in flight on this page.
+  // already in flight on this page. activeTripId is read synchronously from
+  // localStorage on first commit (useSyncExternalStore in ActiveTripContext),
+  // so no hydration gate is needed.
   const isGenerationActive = phase !== 'idle' || Boolean(travelData);
   const shouldRedirectToActive =
-    activeTripHydrated && !wantsForm && !isGenerationActive && activeTripId != null;
+    !wantsForm && !isGenerationActive && activeTripId != null;
   useEffect(() => {
     if (shouldRedirectToActive && activeTripId) {
       router.replace(`/trip/${activeTripId}`);
     }
   }, [shouldRedirectToActive, activeTripId, router]);
 
-  // Render a thin placeholder while we resolve the redirect. Avoids a flash of
-  // the generation form before the activeTripId redirect kicks in.
-  if (!isGenerationActive && (!activeTripHydrated || shouldRedirectToActive)) {
+  // Render a thin placeholder while the redirect is in flight. Avoids a
+  // flash of the generation form before the activeTripId redirect commits.
+  if (shouldRedirectToActive) {
     return (
       <Box sx={{ mx: 'auto', maxWidth: 1320, px: { xs: 2, sm: 3 }, py: 4 }}>
         <Box

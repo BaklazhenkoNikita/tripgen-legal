@@ -1,29 +1,46 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, Search } from 'lucide-react';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
+import Paper from '@mui/material/Paper';
+import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
+import { useCity } from '@/contexts';
+import { useRecentDestinations } from '@/hooks/useRecentDestinations';
 import { destinationSlug } from '@/lib/destinationSlug';
+import { tgShadow } from '@/theme/shadows';
+import { CitySuggestionsList } from '@/components/destinations/CitySuggestionsList';
 
 const SUGGESTIONS = ['Tokyo', 'Lisbon', 'Mexico City', 'Marrakech', 'Kyoto'];
 
 export function ExploreHero() {
   const router = useRouter();
+  const { city: activeCity, setCity } = useCity();
+  const { add: recordRecent } = useRecentDestinations();
   const [input, setInput] = useState('');
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
 
   const submit = (raw: string) => {
-    const slug = destinationSlug(raw);
-    if (slug) router.push(`/explore/${slug}`);
+    const value = raw.trim();
+    if (!value) return;
+    const slug = destinationSlug(value);
+    if (!slug) return;
+    setCity(value);
+    recordRecent(value);
+    setOpen(false);
+    setInput('');
+    router.push(`/explore/${slug}`);
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    submit(input.trim());
+    submit(input);
   };
 
   return (
@@ -110,6 +127,7 @@ export function ExploreHero() {
         }}
       >
         <Box
+          ref={anchorRef}
           sx={{
             position: 'relative',
             display: 'flex',
@@ -141,9 +159,20 @@ export function ExploreHero() {
           </Box>
           <InputBase
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              if (!open) setOpen(true);
+            }}
+            onFocus={() => setOpen(true)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setOpen(false);
+            }}
             placeholder="Search a city — Tokyo, Lisbon, Mexico City…"
-            inputProps={{ 'aria-label': 'Search a city' }}
+            inputProps={{
+              'aria-label': 'Search a city',
+              'aria-autocomplete': 'list',
+              'aria-expanded': open,
+            }}
             fullWidth
             sx={{
               flex: 1,
@@ -174,6 +203,41 @@ export function ExploreHero() {
             <ArrowRight size={18} aria-hidden />
           </IconButton>
         </Box>
+
+        <Popover
+          open={open}
+          anchorEl={anchorRef.current}
+          onClose={() => setOpen(false)}
+          disableAutoFocus
+          disableEnforceFocus
+          disableRestoreFocus
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+          slotProps={{
+            paper: {
+              elevation: 0,
+              sx: {
+                mt: 1,
+                borderRadius: 2,
+                border: (t) => `1px solid ${t.palette.divider}`,
+                boxShadow: (t) => tgShadow(t, 'dropdown'),
+                overflow: 'visible',
+                width: anchorRef.current?.offsetWidth ?? 620,
+              },
+            },
+          }}
+        >
+          <Paper
+            elevation={0}
+            sx={{ p: 1.5, bgcolor: 'background.paper', textAlign: 'left' }}
+          >
+            <CitySuggestionsList
+              query={input}
+              selectedCity={activeCity}
+              onPick={submit}
+            />
+          </Paper>
+        </Popover>
 
         {/* Suggestion chips below search */}
         <Box

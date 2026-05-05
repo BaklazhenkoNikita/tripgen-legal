@@ -65,8 +65,10 @@ function CollabBody({
   const removeCollab = useRemoveCollaborator();
   const leave = useLeaveTrip();
 
-  const editors = data?.editors ?? [];
-  const viewers = data?.viewers ?? [];
+  const editors =
+    data?.collaborators?.filter((c) => c.role === 'editor') ?? [];
+  const viewers =
+    data?.collaborators?.filter((c) => c.role === 'viewer') ?? [];
 
   const handleInvite = async (role: CollabRole) => {
     try {
@@ -318,10 +320,10 @@ function Section({
             },
           }}
         >
-          {items.map((c) => (
+          {items.map((c, idx) => (
             <Box
               component="li"
-              key={c.user_id}
+              key={c.user_id ?? `${title}-${idx}`}
               sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -342,11 +344,13 @@ function Section({
               >
                 {collabDisplayName(c)}
               </Typography>
-              {isOwner ? (
+              {isOwner && c.user_id ? (
                 <>
                   <Select
-                    value={c.role}
-                    onChange={(e) => onChangeRole(c.user_id, e.target.value as CollabRole)}
+                    value={c.role ?? 'editor'}
+                    onChange={(e) =>
+                      onChangeRole(c.user_id as string, e.target.value as CollabRole)
+                    }
                     size="small"
                     aria-label="Role"
                     sx={{
@@ -358,7 +362,7 @@ function Section({
                     <MenuItem value="viewer">Viewer</MenuItem>
                   </Select>
                   <IconButton
-                    onClick={() => onRemove(c.user_id)}
+                    onClick={() => onRemove(c.user_id as string)}
                     aria-label="Remove"
                     size="small"
                     sx={{
@@ -372,9 +376,9 @@ function Section({
                     <X size={14} />
                   </IconButton>
                 </>
-              ) : (
+              ) : c.role ? (
                 <Badge tone="neutral" size="sm">{labelForRole(c.role)}</Badge>
-              )}
+              ) : null}
             </Box>
           ))}
         </Box>
@@ -384,7 +388,7 @@ function Section({
 }
 
 function collabDisplayName(c: Collaborator): string {
-  return c.name ?? c.email ?? c.user_id;
+  return c.name ?? c.email ?? c.user_id ?? 'Member';
 }
 
 function labelForRole(role: CollabRole): string {

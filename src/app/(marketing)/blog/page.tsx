@@ -16,7 +16,7 @@ export default function BlogListPage() {
   const [hero, ...rest] = blogPosts;
 
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 1280, px: { xs: 2, sm: 3 }, py: 7 }}>
+    <Box sx={{ mx: 'auto', maxWidth: 1280, px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
       <Box component="header">
         <Badge tone="accent" size="md">Travel guides</Badge>
         <Typography
@@ -24,9 +24,10 @@ export default function BlogListPage() {
           sx={{
             mt: 2,
             fontFamily: 'var(--font-display, inherit)',
-            fontSize: '3rem',
-            fontWeight: 600,
-            letterSpacing: '-0.02em',
+            fontSize: { xs: '2.25rem', sm: '3rem' },
+            fontWeight: 700,
+            letterSpacing: '-0.025em',
+            lineHeight: 1.0,
             color: 'text.primary',
           }}
         >
@@ -34,10 +35,10 @@ export default function BlogListPage() {
         </Typography>
         <Typography
           sx={{
-            mt: 1.5,
+            mt: 2,
             maxWidth: 672,
             fontSize: 17,
-            lineHeight: 1.6,
+            lineHeight: 1.55,
             color: 'text.secondary',
           }}
         >
@@ -59,8 +60,14 @@ export default function BlogListPage() {
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',
+            boxShadow: 'var(--tg-shadow-card)',
             gridTemplateColumns: { md: 'repeat(2, 1fr)' },
             textDecoration: 'none',
+            transition: 'all 0.2s',
+            '&:hover': {
+              boxShadow: 'var(--tg-shadow-card-hover)',
+              borderColor: 'text.disabled',
+            },
           }}
         >
           <Photo src={hero.heroImage} alt={hero.title} aspect="3/2" zoomOnHover sizes="(max-width: 768px) 100vw, 50vw" />
@@ -80,9 +87,9 @@ export default function BlogListPage() {
               sx={{
                 mt: 1.5,
                 fontFamily: 'var(--font-display, inherit)',
-                fontSize: '1.875rem',
+                fontSize: { xs: '1.625rem', md: '2rem' },
                 fontWeight: 600,
-                lineHeight: 1.2,
+                lineHeight: 1.15,
                 letterSpacing: '-0.02em',
                 color: 'text.primary',
                 transition: 'color 200ms',
@@ -160,12 +167,13 @@ export default function BlogListPage() {
               </Typography>
               <Typography
                 sx={{
-                  mt: 0.5,
+                  mt: 0.75,
                   display: '-webkit-box',
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
-                  fontSize: 14,
+                  fontSize: 15,
+                  lineHeight: 1.55,
                   color: 'text.secondary',
                 }}
               >

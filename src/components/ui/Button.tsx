@@ -126,6 +126,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     borderRadius: 999,
     textTransform: 'none' as const,
     gap: 1,
+    '& .MuiButton-startIcon': { mr: 0.75, ml: 0 },
+    '& .MuiButton-endIcon': { ml: 0.75, mr: 0 },
   };
   if (variant === 'subtle') {
     baseSx.bgcolor = (t: import('@mui/material/styles').Theme) => alpha(t.palette.primary.main, 0.12);

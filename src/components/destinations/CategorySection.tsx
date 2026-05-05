@@ -44,14 +44,19 @@ export function CategorySection({ city, category, activeItemId, onHoverItem, onC
     limit: 12,
   });
 
+  const items = data?.activities ?? [];
   const title = category.charAt(0).toUpperCase() + category.slice(1);
+
+  if (visible && !isLoading && items.length === 0) {
+    return null;
+  }
 
   return (
     <div ref={ref}>
       {visible ? (
         <FeedRow
           title={title}
-          items={data?.activities ?? []}
+          items={items}
           isLoading={isLoading}
           activeItemId={activeItemId}
           onHoverItem={onHoverItem}

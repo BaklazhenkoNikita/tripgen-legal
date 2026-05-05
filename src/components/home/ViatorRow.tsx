@@ -3,6 +3,7 @@
 import type { FeedItem } from '@/hooks/useHomeFeed';
 import { useViatorFeed } from '@/hooks/useViatorFeed';
 import { FeedRow } from './FeedRow';
+import { cardId } from './FeedCard';
 
 interface Props {
   city: string | null | undefined;
@@ -13,14 +14,27 @@ interface Props {
    *  layout when Viator has no items; the destination view passes false to
    *  always render the row + empty state. */
   hideWhenEmpty?: boolean;
+  /** Optional set of card ids to drop before rendering — used by the
+   *  destination view to avoid duplicating tours that were already mixed
+   *  into the For You row. */
+  excludeIds?: Set<string>;
 }
 
 /** Viator bookable-tours row. Separate from the main home feed because the
  *  data source is its own endpoint (and much slower to warm), so we scope
  *  the loading state to this row only. */
-export function ViatorRow({ city, activeItemId, onHoverItem, onCardClick, hideWhenEmpty }: Props) {
+export function ViatorRow({
+  city,
+  activeItemId,
+  onHoverItem,
+  onCardClick,
+  hideWhenEmpty,
+  excludeIds,
+}: Props) {
   const { data, isLoading, isError } = useViatorFeed(city);
-  const items = (data?.viator_activities ?? []) as FeedItem[];
+  const all = (data?.viator_activities ?? []) as FeedItem[];
+  const items =
+    excludeIds && excludeIds.size > 0 ? all.filter((it) => !excludeIds.has(cardId(it))) : all;
 
   return (
     <FeedRow

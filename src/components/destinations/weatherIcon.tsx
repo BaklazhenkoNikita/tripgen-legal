@@ -13,26 +13,26 @@ import {
 interface ConditionIconProps {
   code?: string;
   size?: number;
+  strokeWidth?: number;
 }
 
-/** Maps a free-text condition (`code`) to a lucide weather icon. Used by both
- *  the WeatherForecastStrip cells and the per-day conditions sheet. */
-export function ConditionIcon({ code, size = 16 }: ConditionIconProps) {
+export type ConditionTone = 'rain' | 'sun' | 'cloud' | 'storm' | 'snow';
+
+export function ConditionIcon({ code, size = 16, strokeWidth = 1.75 }: ConditionIconProps) {
   const c = (code ?? '').toLowerCase();
-  if (c.includes('thunder')) return <CloudLightning size={size} aria-hidden />;
-  if (c.includes('snow')) return <Snowflake size={size} aria-hidden />;
+  if (c.includes('thunder')) return <CloudLightning size={size} strokeWidth={strokeWidth} aria-hidden />;
+  if (c.includes('snow')) return <Snowflake size={size} strokeWidth={strokeWidth} aria-hidden />;
   if (c.includes('rain') || c.includes('drizzle') || c.includes('shower'))
-    return <CloudRain size={size} aria-hidden />;
+    return <CloudRain size={size} strokeWidth={strokeWidth} aria-hidden />;
   if (c.includes('fog') || c.includes('mist') || c.includes('haze'))
-    return <CloudFog size={size} aria-hidden />;
+    return <CloudFog size={size} strokeWidth={strokeWidth} aria-hidden />;
   if (c.includes('cloud') || c.includes('overcast'))
-    return <Cloud size={size} aria-hidden />;
-  if (c.includes('clear') || c.includes('sun')) return <Sun size={size} aria-hidden />;
-  return <CloudSun size={size} aria-hidden />;
+    return <Cloud size={size} strokeWidth={strokeWidth} aria-hidden />;
+  if (c.includes('clear') || c.includes('sun')) return <Sun size={size} strokeWidth={strokeWidth} aria-hidden />;
+  return <CloudSun size={size} strokeWidth={strokeWidth} aria-hidden />;
 }
 
-/** Picks a tone color based on condition. Used to color-code icons in cells. */
-export function conditionTone(code?: string): 'rain' | 'sun' | 'cloud' | 'storm' | 'snow' {
+export function conditionTone(code?: string): ConditionTone {
   const c = (code ?? '').toLowerCase();
   if (c.includes('thunder')) return 'storm';
   if (c.includes('snow')) return 'snow';
@@ -41,10 +41,14 @@ export function conditionTone(code?: string): 'rain' | 'sun' | 'cloud' | 'storm'
   return 'cloud';
 }
 
-export const TONE_COLOR: Record<ReturnType<typeof conditionTone>, string> = {
-  rain: '#1D9E75',
-  sun: '#BA7517',
-  cloud: '#888780',
-  storm: '#5B6CC1',
-  snow: '#7FA9D6',
-};
+/** Theme-token colors so all icons share one visual language and adapt to dark mode.
+ *  Pass the result to a wrapper Box's `color` prop; lucide icons inherit via `currentColor`. */
+export function toneColor(tone: ConditionTone): string {
+  switch (tone) {
+    case 'rain':  return 'info.main';
+    case 'sun':   return 'warning.main';
+    case 'cloud': return 'text.secondary';
+    case 'storm': return 'info.dark';
+    case 'snow':  return 'info.light';
+  }
+}

@@ -12,9 +12,9 @@ interface ChatListResponse {
   total: number;
 }
 
-export function useChats(params?: { limit?: number; skip?: number }) {
+export function useChats(params?: { limit?: number; skip?: number; enabled?: boolean }) {
   return useQuery({
-    queryKey: queryKeys.chats.list(params),
+    queryKey: queryKeys.chats.list({ limit: params?.limit, skip: params?.skip }),
     queryFn: async (): Promise<ChatSummary[]> => {
       const limit = params?.limit ?? 20;
       const skip = params?.skip ?? 0;
@@ -24,6 +24,7 @@ export function useChats(params?: { limit?: number; skip?: number }) {
       return res.chats ?? [];
     },
     staleTime: 60 * 1000,
+    enabled: params?.enabled ?? true,
   });
 }
 

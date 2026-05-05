@@ -4,13 +4,13 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react';
 
 const STORAGE_KEY = 'tripgen_active_city';
+const CITY_EVENT = 'tripgen:city-change';
 
 interface CityContextValue {
   city: string | null;
@@ -19,6 +19,32 @@ interface CityContextValue {
 
 const CityContext = createContext<CityContextValue | null>(null);
 
+function getCitySnapshot(): string | null {
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function getServerCitySnapshot(): string | null {
+  return null;
+}
+
+function subscribeCity(cb: () => void): () => void {
+  if (typeof window === 'undefined') return () => {};
+  const handler = (e: Event) => {
+    if (e instanceof StorageEvent && e.key !== null && e.key !== STORAGE_KEY) return;
+    cb();
+  };
+  window.addEventListener('storage', handler);
+  window.addEventListener(CITY_EVENT, handler);
+  return () => {
+    window.removeEventListener('storage', handler);
+    window.removeEventListener(CITY_EVENT, handler);
+  };
+}
+
 export function CityProvider({
   children,
   defaultCity,
@@ -26,23 +52,21 @@ export function CityProvider({
   children: ReactNode;
   defaultCity?: string;
 }) {
-  const [city, setCityState] = useState<string | null>(defaultCity ?? null);
-
-  // Hydrate from localStorage after mount (SSR safe).
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setCityState(stored);
-    } catch {
-      // storage disabled — stick with defaultCity
-    }
-  }, []);
+  // Read localStorage synchronously on first client commit so consumers
+  // (e.g. nav's Explore pill) don't flicker `/explore` → `/explore/<slug>`
+  // after a post-mount effect.
+  const stored = useSyncExternalStore(
+    subscribeCity,
+    getCitySnapshot,
+    getServerCitySnapshot,
+  );
+  const city = stored ?? defaultCity ?? null;
 
   const setCity = useCallback((next: string | null) => {
-    setCityState(next);
     try {
       if (next) localStorage.setItem(STORAGE_KEY, next);
       else localStorage.removeItem(STORAGE_KEY);
+      window.dispatchEvent(new Event(CITY_EVENT));
     } catch {
       // noop
     }

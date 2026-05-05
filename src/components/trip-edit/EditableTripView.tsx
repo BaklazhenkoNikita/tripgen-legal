@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -23,7 +23,7 @@ import { ExtendTripCta } from '../trip/ExtendTripCta';
 import { RestaurantCard } from '../trip/RestaurantCard';
 import { Button } from '@/components/ui/Button';
 import { DestinationHero } from '../destinations/DestinationHero';
-import { CityOverview } from '../destinations/CityOverview';
+import { CityOverviewIntro, CityOverviewDetails } from '../destinations/CityOverview';
 import { WeatherForecastStrip } from '../destinations/WeatherForecastStrip';
 import { destinationSlug } from '@/lib/destinationSlug';
 
@@ -60,13 +60,15 @@ export function EditableTripView({
     activity: TravelActivity;
     dayNumber: number;
   } | null>(null);
+  const [overviewOpen, setOverviewOpen] = useState(false);
+  const overviewId = useId();
 
   const destination = tripData.destination;
   const { data: info, isLoading: infoLoading } = useDestinationInfo(destination || null);
 
   const mutations = useTripMutations({ searchId, tripData, setTripData });
 
-  const days = tripData.travel_plan ?? [];
+  const days = useMemo(() => tripData.travel_plan ?? [], [tripData.travel_plan]);
   const activityPool = useMemo(() => tripData.activities ?? [], [tripData.activities]);
   const activityPoolMap = useMemo(() => {
     const map = new Map<string, TravelActivity>();
@@ -81,9 +83,21 @@ export function EditableTripView({
     (dayIndex: number): TravelActivity[] => {
       const day = days[dayIndex];
       if (!day) return [];
-      return day.activities
-        .map((s) => activityPoolMap.get(s.id) ?? activityPoolMap.get(s.activity_id ?? ''))
-        .filter((a): a is TravelActivity => a != null);
+      return day.activities.map((s): TravelActivity => {
+        const refId = s.id || s.activity_id || '';
+        const pooled =
+          activityPoolMap.get(s.id) ?? activityPoolMap.get(s.activity_id ?? '');
+        if (pooled) {
+          return pooled.id === refId ? pooled : { ...pooled, id: refId };
+        }
+        return {
+          id: refId,
+          name: s.name,
+          category: s.category,
+          time_of_visit: s.time_of_visit,
+          activity_id: s.activity_id,
+        };
+      });
     },
     [days, activityPoolMap],
   );
@@ -171,13 +185,29 @@ export function EditableTripView({
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <DestinationHero
-        city={destination}
-        info={info}
-        isLoading={infoLoading}
-      />
-
-      <CityOverview key={destination} city={destination} info={info} />
+      <Box sx={{ position: 'relative' }}>
+        <DestinationHero
+          city={destination}
+          info={info}
+          isLoading={infoLoading}
+        />
+        <Box
+          sx={{
+            position: 'absolute',
+            top: { xs: 12, sm: 16 },
+            right: { xs: 12, sm: 16 },
+            zIndex: 3,
+            maxWidth: 'calc(100% - 24px)',
+          }}
+        >
+          <TripContextBand
+            startDate={tripData.start_date}
+            endDate={tripData.end_date}
+            durationDays={tripData.total_trip_days}
+            budget={tripData.budget}
+          />
+        </Box>
+      </Box>
 
       <Box
         sx={{
@@ -185,62 +215,78 @@ export function EditableTripView({
           gap: 2,
           gridTemplateColumns: {
             xs: 'minmax(0, 1fr)',
-            md: 'minmax(0, 2fr) minmax(0, 3fr)',
+            md: 'minmax(0, 3fr) minmax(0, 2fr)',
           },
-          alignItems: 'start',
+          alignItems: 'stretch',
+          mt: 2.5,
         }}
       >
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, minWidth: 0 }}>
-          <TripContextBand
-            startDate={tripData.start_date}
-            endDate={tripData.end_date}
-            durationDays={tripData.total_trip_days}
-            budget={tripData.budget}
+        <Box sx={{ minWidth: 0, display: 'flex', '& > *': { width: '100%' } }}>
+          <CityOverviewIntro
+            key={destination}
+            city={destination}
+            info={info}
+            open={overviewOpen}
+            onToggle={() => setOverviewOpen((v) => !v)}
+            controlsId={overviewId}
+            fill
           />
-
-          {canEdit ? (
-            toolbar
-          ) : (
-            <Box
-              role="status"
-              sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 1.5,
-                px: 2,
-                py: 1.5,
-                borderRadius: 1.5,
-                border: '1px solid',
-                borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.3),
-                bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.06),
-              }}
-            >
-              <Box
-                component={Eye}
-                aria-hidden
-                sx={{ mt: 0.25, width: 16, height: 16, flexShrink: 0, color: 'primary.main' }}
-              />
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
-                  You&apos;re viewing this trip
-                </Typography>
-                <Typography sx={{ mt: 0.25, fontSize: 13, color: 'text.secondary' }}>
-                  Ask the owner for editor access to make changes.
-                </Typography>
-              </Box>
-              {onRequestEditAccess ? (
-                <Button size="sm" variant="secondary" onClick={onRequestEditAccess}>
-                  See collaborators
-                </Button>
-              ) : null}
-            </Box>
-          )}
         </Box>
 
-        <Box sx={{ minWidth: 0 }}>
-          <WeatherForecastStrip location={destination} variant="trip" activeDayIndex={0} />
+        <Box sx={{ minWidth: 0, display: 'flex', '& > *': { width: '100%' } }}>
+          <WeatherForecastStrip
+            location={destination}
+            startDate={tripData.start_date}
+            numDays={tripData.total_trip_days}
+          />
         </Box>
       </Box>
+
+      <CityOverviewDetails
+        key={`${destination}-details`}
+        city={destination}
+        info={info}
+        open={overviewOpen}
+        controlsId={overviewId}
+      />
+
+      {canEdit ? (
+        toolbar
+      ) : (
+        <Box
+          role="status"
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 1.5,
+            px: 2,
+            py: 1.5,
+            borderRadius: 1.5,
+            border: '1px solid',
+            borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.3),
+            bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.06),
+          }}
+        >
+          <Box
+            component={Eye}
+            aria-hidden
+            sx={{ mt: 0.25, width: 16, height: 16, flexShrink: 0, color: 'primary.main' }}
+          />
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
+              You&apos;re viewing this trip
+            </Typography>
+            <Typography sx={{ mt: 0.25, fontSize: 13, color: 'text.secondary' }}>
+              Ask the owner for editor access to make changes.
+            </Typography>
+          </Box>
+          {onRequestEditAccess ? (
+            <Button size="sm" variant="secondary" onClick={onRequestEditAccess}>
+              See collaborators
+            </Button>
+          ) : null}
+        </Box>
+      )}
 
       <Box
         sx={{

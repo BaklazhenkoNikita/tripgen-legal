@@ -7,6 +7,12 @@ export interface ChatLayoutContextValue {
   openHistory: () => void;
   /** True when viewport is below the md breakpoint and the sidebar is hidden. */
   isMobile: boolean;
+  /** Desktop sidebar collapse state (rail when true). Persisted in localStorage. */
+  collapsed: boolean;
+  setCollapsed: (next: boolean) => void;
+  /** Bumped by Cmd/Ctrl+K. ChatConversation watches it via effect to focus its input. */
+  focusInputRequest: number;
+  requestFocusInput: () => void;
 }
 
 export const ChatLayoutContext = createContext<ChatLayoutContextValue | null>(null);
@@ -14,7 +20,14 @@ export const ChatLayoutContext = createContext<ChatLayoutContextValue | null>(nu
 export function useChatLayout(): ChatLayoutContextValue {
   const ctx = useContext(ChatLayoutContext);
   if (!ctx) {
-    return { openHistory: () => {}, isMobile: false };
+    return {
+      openHistory: () => {},
+      isMobile: false,
+      collapsed: false,
+      setCollapsed: () => {},
+      focusInputRequest: 0,
+      requestFocusInput: () => {},
+    };
   }
   return ctx;
 }

@@ -70,7 +70,7 @@ export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick 
             <Photo
               src={imageUrl ?? null}
               alt={activity.name}
-              aspect="3/2"
+              aspect="16/9"
               zoomOnHover
               sizes="(max-width: 640px) 100vw, 50vw"
             />
@@ -78,8 +78,8 @@ export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick 
               sx={{
                 pointerEvents: 'none',
                 position: 'absolute',
-                insetInline: 12,
-                top: 12,
+                insetInline: 8,
+                top: 8,
                 display: 'flex',
                 alignItems: 'flex-start',
                 justifyContent: 'space-between',
@@ -138,7 +138,7 @@ export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick 
             )}
           </Box>
 
-          <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', gap: 0.75, p: 2 }}>
+          <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', gap: 0.5, p: 1.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
               <Typography
                 component="h4"
@@ -147,7 +147,7 @@ export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick 
                   fontWeight: 600,
                   lineHeight: 1.25,
                   color: 'text.primary',
-                  fontSize: 15,
+                  fontSize: 14,
                   m: 0,
                   display: '-webkit-box',
                   WebkitBoxOrient: 'vertical',
@@ -182,18 +182,18 @@ export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick 
               </Box>
             </Box>
             {secondarySubtitle ? (
-              <Typography sx={{ fontSize: 12, color: 'text.disabled' }}>
+              <Typography sx={{ fontSize: 11, color: 'text.disabled' }}>
                 {secondarySubtitle}
               </Typography>
             ) : activity.time_of_visit ? (
-              <Typography sx={{ fontSize: 12, color: 'text.disabled', textTransform: 'capitalize' }}>
+              <Typography sx={{ fontSize: 11, color: 'text.disabled', textTransform: 'capitalize' }}>
                 {activity.time_of_visit}
               </Typography>
             ) : null}
             {activity.description ? (
               <Typography
                 sx={{
-                  fontSize: 13,
+                  fontSize: 12,
                   color: 'text.secondary',
                   display: '-webkit-box',
                   WebkitBoxOrient: 'vertical',

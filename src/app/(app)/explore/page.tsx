@@ -1,15 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
-import { useCity } from '@/contexts';
 import { destinations } from '@/data/destinations';
-import { destinationSlug } from '@/lib/destinationSlug';
 import { ExploreHero } from './_components/ExploreHero';
 import { DestinationCard } from './_components/DestinationCard';
 
@@ -17,20 +13,6 @@ const FEATURED = destinations.slice(0, 9);
 const TOTAL_CITIES = destinations.length;
 
 export default function DestinationsPage() {
-  const { city } = useCity();
-  const router = useRouter();
-
-  // Land on a shareable URL when a city is already in context.
-  useEffect(() => {
-    if (city) {
-      const slug = destinationSlug(city);
-      if (slug) router.replace(`/explore/${slug}`);
-    }
-  }, [city, router]);
-
-  // Avoid a flash of the landing while the redirect is queued.
-  if (city) return null;
-
   return (
     <Box component="main">
       <Box sx={{ mx: 'auto', maxWidth: 1180, px: { xs: 2.5, sm: 4 } }}>

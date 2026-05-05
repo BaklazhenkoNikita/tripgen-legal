@@ -34,7 +34,21 @@ export function useTripPickerFeed({
   // the mixed view is showing we start at offset=12 to skip the home feed's
   // already-rendered first page of exploration + activity. Viator is never
   // preloaded by the home feed so it always starts at 0.
+  //
+  // The chip values `attractions` and `activities` are synthetic source-type
+  // pseudo-categories returned by /api/v4/category-counts (counts the size of
+  // the exploration / activities source). They are NOT real
+  // `primary_categories` values, so passing `category=attractions` to the
+  // feed endpoints (which filter by `primary_categories` membership) returns
+  // zero items. Map them to a single content source with no server-side
+  // category filter instead.
   const sources = useMemo<LoadMoreSource[]>(() => {
+    if (activeCategory === 'attractions') {
+      return [{ contentType: 'exploration', category: undefined, initialOffset: 0 }];
+    }
+    if (activeCategory === 'activities') {
+      return [{ contentType: 'activity', category: undefined, initialOffset: 0 }];
+    }
     const cat = activeCategory ?? undefined;
     return [
       { contentType: 'exploration', category: cat, initialOffset: cat ? 0 : 12 },
@@ -109,6 +123,10 @@ function finalize(
 
 function matchCategory(category: string | null) {
   if (!category) return () => true;
+  // Synthetic source-type chips: the source filter already narrowed results;
+  // re-filtering by `primary_categories` would reject everything since these
+  // values aren't real category tags on individual items.
+  if (category === 'attractions' || category === 'activities') return () => true;
   const target = category.toLowerCase();
   return (item: FeedItem): boolean => {
     const inner = item.item ?? {};

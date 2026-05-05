@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
 import { useChatSuggestions } from '@/hooks/useChatSuggestions';
 import type { SmartChatMessage } from '@/types';
 
@@ -49,7 +48,16 @@ export function SuggestionChips({ city, activeTripId, messages, onPick, disabled
 
   return (
     <Box
-      sx={{ display: 'flex', gap: 1, overflowX: 'auto', pb: 0.5 }}
+      sx={{
+        display: 'flex',
+        flexWrap: 'nowrap',
+        gap: 1,
+        justifyContent: 'center',
+        maxWidth: 940,
+        mx: 'auto',
+        px: 1,
+        overflow: 'visible',
+      }}
       aria-label="Suggested prompts"
     >
       {suggestions.map((s) => (
@@ -59,23 +67,24 @@ export function SuggestionChips({ city, activeTripId, messages, onPick, disabled
           type="button"
           disabled={disabled}
           onClick={() => onPick(s.prompt)}
-          sx={(t) => ({
-            flexShrink: 0,
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            height: 32,
             cursor: 'pointer',
             borderRadius: 999,
             border: 1,
             borderColor: 'divider',
             bgcolor: 'background.paper',
-            px: 1.5,
-            py: 0.5,
-            fontSize: 12,
+            px: 1.75,
+            fontSize: 14,
+            lineHeight: 1,
             color: 'text.primary',
-            '&:hover': {
-              borderColor: alpha(t.palette.primary.main, 0.4),
-              color: t.palette.primary.main,
-            },
-            '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
-          })}
+            whiteSpace: 'nowrap',
+            transition: 'background-color 0.15s, border-color 0.15s',
+            '&:hover:not(:disabled)': { bgcolor: 'action.hover' },
+            '&:disabled': { opacity: 0.4, cursor: 'not-allowed' },
+          }}
         >
           {s.label}
         </Box>

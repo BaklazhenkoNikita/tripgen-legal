@@ -51,6 +51,9 @@ export function LoadMoreCard({ onClick, isPending, mode, disabled }: Props) {
         justifyContent: 'center',
         gap: 1.25,
         width: 288,
+        // Match the adjacent FeedCard's 3:2 photo aspect (288 × 192) so the
+        // dashed outline draws a card-shaped rectangle, not a short pill.
+        aspectRatio: '3 / 2',
         flexShrink: 0,
         borderRadius: 2,
         border: '2px dashed',

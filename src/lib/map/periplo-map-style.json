@@ -10,7 +10,6 @@
     ]
   },
   "glyphs": "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
-  "sprite": "https://tiles.openfreemap.org/sprites/v1/",
   "sources": {
     "openmaptiles": {
       "type": "vector",

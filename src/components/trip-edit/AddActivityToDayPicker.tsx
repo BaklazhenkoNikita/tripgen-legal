@@ -29,7 +29,7 @@ interface Props {
   onSelectFromCity: (activity: TravelActivity) => void;
 }
 
-const HIDDEN_CHIPS = ['happening_now'] as const;
+const HIDDEN_CHIPS = ['happening_now', 'restaurants'] as const;
 
 export function AddActivityToDayPicker({
   destination,

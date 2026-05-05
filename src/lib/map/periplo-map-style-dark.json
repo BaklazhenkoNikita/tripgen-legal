@@ -6,7 +6,6 @@
     "periplo:description": "Dark variant of the Periplo basemap. Mirrors the light style's layer structure / minzooms / filters; only paint values change. Background #1A1614, water #1F2937, parks #202824, neutral dark roads. Designed to recede behind day-color route polylines and pin halos."
   },
   "glyphs": "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
-  "sprite": "https://tiles.openfreemap.org/sprites/v1/",
   "sources": {
     "openmaptiles": {
       "type": "vector",

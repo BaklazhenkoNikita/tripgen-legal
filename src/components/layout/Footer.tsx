@@ -75,7 +75,7 @@ export function Footer() {
           mx: 'auto',
           maxWidth: 1280,
           px: { xs: 2, sm: 3 },
-          py: 2.5,
+          py: 4,
         }}
       >
         <Box
@@ -93,11 +93,23 @@ export function Footer() {
             sx={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 0.5,
+              gap: 1,
               color: 'text.primary',
               textDecoration: 'none',
             }}
           >
+            <Box
+              component="img"
+              src="/apple-touch-icon.png"
+              alt=""
+              aria-hidden
+              sx={{
+                width: 24,
+                height: 24,
+                borderRadius: 1,
+                display: 'block',
+              }}
+            />
             <Box
               component="span"
               sx={{
@@ -109,18 +121,6 @@ export function Footer() {
             >
               Periplo
             </Box>
-            <Box
-              component="span"
-              aria-hidden
-              sx={{
-                ml: 0.25,
-                display: 'inline-block',
-                width: 5,
-                height: 5,
-                borderRadius: '50%',
-                bgcolor: 'primary.main',
-              }}
-            />
           </Box>
 
           <Stack
@@ -287,19 +287,17 @@ export function Footer() {
 
         <Box
           sx={{
-            mt: 2.5,
+            mt: 3,
             borderTop: '1px solid',
             borderColor: 'divider',
-            pt: 2,
+            pt: 2.5,
             textAlign: 'center',
             fontSize: 12,
             color: 'text.disabled',
+            letterSpacing: '0.01em',
           }}
         >
-          &copy; {new Date().getFullYear()} Periplo &mdash;{' '}
-          <Box component="span" sx={{ fontStyle: 'italic' }}>
-            Plan with intent.
-          </Box>
+          &copy; {new Date().getFullYear()} Periplo &middot; Plan with intent.
         </Box>
       </Box>
     </Box>

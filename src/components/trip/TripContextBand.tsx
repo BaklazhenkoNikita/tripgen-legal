@@ -3,6 +3,7 @@
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 import { Calendar, Coins, Pencil } from 'lucide-react';
 
 interface Props {
@@ -35,27 +36,30 @@ export function TripContextBand({
       component="section"
       aria-label="Trip details"
       sx={{
-        display: 'flex',
+        display: 'inline-flex',
         alignItems: 'center',
         flexWrap: 'wrap',
-        gap: { xs: 1.5, sm: 3 },
-        py: 1.5,
-        px: { xs: 2, sm: 3 },
-        bgcolor: 'background.paper',
+        gap: { xs: 1.25, sm: 2 },
+        px: { xs: 1.25, sm: 1.75 },
+        py: { xs: 0.75, sm: 1 },
+        borderRadius: 999,
+        bgcolor: (t) => alpha(t.palette.common.black, 0.42),
+        backdropFilter: 'blur(10px)',
         border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: 2,
+        borderColor: (t) => alpha(t.palette.common.white, 0.18),
+        color: 'common.white',
+        textShadow: '0 1px 4px rgba(0,0,0,0.45)',
       }}
     >
       {(dateRange || durationLabel) ? (
         <Slot icon={<Calendar size={14} aria-hidden />}>
           {dateRange ? (
-            <Box component="span" sx={{ fontWeight: 600, color: 'text.primary' }}>
+            <Box component="span" sx={{ fontWeight: 600, color: 'inherit' }}>
               {dateRange}
             </Box>
           ) : null}
           {durationLabel ? (
-            <Box component="span" sx={{ color: 'text.secondary' }}>
+            <Box component="span" sx={{ color: 'inherit', opacity: 0.78 }}>
               {dateRange ? ' · ' : ''}
               {durationLabel}
             </Box>
@@ -67,44 +71,41 @@ export function TripContextBand({
         <Slot icon={<Coins size={14} aria-hidden />}>
           <Box
             component="span"
-            sx={{ fontWeight: 600, color: 'text.primary', textTransform: 'capitalize' }}
+            sx={{ fontWeight: 600, color: 'inherit', textTransform: 'capitalize' }}
           >
             {budget}
           </Box>
-          <Box component="span" sx={{ color: 'text.secondary' }}> budget</Box>
+          <Box component="span" sx={{ color: 'inherit', opacity: 0.78 }}> budget</Box>
         </Slot>
       ) : null}
 
       {onEdit ? (
-        <Box sx={{ ml: 'auto' }}>
-          <ButtonBase
-            onClick={onEdit}
-            aria-label="Edit trip"
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 0.75,
-              fontSize: 13,
-              color: 'text.secondary',
-              textDecoration: { xs: 'none', sm: 'underline' },
-              textUnderlineOffset: '3px',
-              borderRadius: 999,
-              px: { xs: 1, sm: 0 },
-              py: { xs: 0.5, sm: 0 },
-              border: { xs: '1px solid', sm: 'none' },
-              borderColor: 'divider',
-              '&:hover': { color: 'text.primary' },
-            }}
+        <ButtonBase
+          onClick={onEdit}
+          aria-label="Edit trip"
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.75,
+            fontSize: 13,
+            color: 'inherit',
+            opacity: 0.85,
+            borderRadius: 999,
+            px: { xs: 1, sm: 1 },
+            py: 0.5,
+            border: '1px solid',
+            borderColor: (t) => alpha(t.palette.common.white, 0.25),
+            '&:hover': { opacity: 1 },
+          }}
+        >
+          <Pencil size={14} aria-hidden />
+          <Box
+            component="span"
+            sx={{ display: { xs: 'none', sm: 'inline' } }}
           >
-            <Pencil size={14} aria-hidden />
-            <Box
-              component="span"
-              sx={{ display: { xs: 'none', sm: 'inline' } }}
-            >
-              Edit trip
-            </Box>
-          </ButtonBase>
-        </Box>
+            Edit trip
+          </Box>
+        </ButtonBase>
       ) : null}
     </Box>
   );
@@ -124,13 +125,19 @@ function Slot({
         alignItems: 'center',
         gap: 0.75,
         fontSize: 13,
-        color: 'text.secondary',
+        color: 'inherit',
       }}
     >
-      <Box component="span" sx={{ display: 'inline-flex', color: 'text.disabled' }}>
+      <Box
+        component="span"
+        sx={{
+          display: 'inline-flex',
+          color: (t) => alpha(t.palette.common.white, 0.7),
+        }}
+      >
         {icon}
       </Box>
-      <Typography component="span" sx={{ fontSize: 13 }}>
+      <Typography component="span" sx={{ fontSize: 13, color: 'inherit' }}>
         {children}
       </Typography>
     </Box>

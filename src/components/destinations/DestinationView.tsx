@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useId, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Map as MapIcon } from 'lucide-react';
@@ -11,6 +11,7 @@ import { alpha } from '@mui/material/styles';
 import { Button } from '@/components/ui/Button';
 import { tgShadow } from '@/theme/shadows';
 import { useHomeFeed, type FeedItem } from '@/hooks/useHomeFeed';
+import { useViatorFeed } from '@/hooks/useViatorFeed';
 import { useDestinationInfo } from '@/hooks/useDestinationInfo';
 import { useCategoryCounts } from '@/hooks/useCategoryCounts';
 import { CategoryChips } from '@/components/home/CategoryChips';
@@ -25,8 +26,15 @@ import { placeSlugWithId } from '@/lib/placeSlug';
 import type { MapPinData } from '@/components/map/Map';
 import { FeedItemDrawer } from '@/components/explore/FeedItemDrawer';
 import { DestinationHero } from './DestinationHero';
-import { CityOverview } from './CityOverview';
+import { CityOverviewIntro, CityOverviewDetails } from './CityOverview';
+import { WeatherForecastStrip } from './WeatherForecastStrip';
 import { CategorySection } from './CategorySection';
+
+const breadcrumbLinkSx = {
+  color: 'inherit',
+  textDecoration: 'none',
+  '&:hover': { color: 'text.primary' },
+};
 
 interface Props {
   city: string;
@@ -39,16 +47,27 @@ interface Props {
 export function DestinationView({ city }: Props) {
   const router = useRouter();
   const { data: feed, isLoading } = useHomeFeed(city);
+  const { data: viator } = useViatorFeed(city);
   const { data: info, isLoading: infoLoading } = useDestinationInfo(city);
   const { data: categoryData } = useCategoryCounts(city);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [openItem, setOpenItem] = useState<FeedItem | null>(null);
-  const [mapVisible, setMapVisible] = useState(true);
+  const [mapVisible, setMapVisible] = useState(false);
+  const [overviewOpen, setOverviewOpen] = useState(false);
+  const overviewId = useId();
 
   const sections = useMemo(
-    () => deriveSections(feed, activeCategory),
-    [feed, activeCategory],
+    () => deriveSections(feed, (viator?.viator_activities ?? []) as FeedItem[], activeCategory),
+    [feed, viator, activeCategory],
+  );
+
+  const forYouViatorIds = useMemo(
+    () =>
+      new Set(
+        sections.forYou.filter((i) => i.entity_type === 'viator').map((i) => cardId(i)),
+      ),
+    [sections.forYou],
   );
 
   const categoryRows = useMemo(() => {
@@ -105,12 +124,22 @@ export function DestinationView({ city }: Props) {
       sx={{
         position: 'relative',
         mx: 'auto',
-        maxWidth: 1320,
+        maxWidth: 1440,
         px: { xs: 2, sm: 3, lg: 4 },
         pb: 6,
         pt: 3,
       }}
     >
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Box component="nav" sx={{ fontSize: 14, color: 'text.secondary' }}>
+          <Box component={Link} href="/explore" sx={breadcrumbLinkSx}>
+            Explore
+          </Box>
+          <Box component="span" sx={{ mx: 1 }}>/</Box>
+          <Box component="span" sx={{ color: 'text.primary' }}>{city}</Box>
+        </Box>
+      </Box>
+
       <DestinationHero
         city={city}
         info={info}
@@ -118,12 +147,49 @@ export function DestinationView({ city }: Props) {
         fallbackImage={fallbackImage}
       />
 
-      <CityOverview key={city} city={city} info={info} />
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 2,
+          gridTemplateColumns: {
+            xs: 'minmax(0, 1fr)',
+            md: 'minmax(0, 3fr) minmax(0, 2fr)',
+          },
+          alignItems: 'stretch',
+          mt: 2.5,
+        }}
+      >
+        <Box sx={{ minWidth: 0, display: 'flex', '& > *': { width: '100%' } }}>
+          <CityOverviewIntro
+            key={city}
+            city={city}
+            info={info}
+            open={overviewOpen}
+            onToggle={() => setOverviewOpen((v) => !v)}
+            controlsId={overviewId}
+            fill
+          />
+        </Box>
+
+        <Box sx={{ minWidth: 0, display: 'flex', '& > *': { width: '100%' } }}>
+          <WeatherForecastStrip location={city} />
+        </Box>
+      </Box>
+
+      <Box sx={{ mt: 2.5 }}>
+        <CityOverviewDetails
+          key={`${city}-details`}
+          city={city}
+          info={info}
+          open={overviewOpen}
+          controlsId={overviewId}
+        />
+      </Box>
 
       <Box
         sx={{
           position: 'sticky',
-          top: '7rem',
+          top: '4rem',
           zIndex: 10,
           mx: { xs: -2, sm: -3 },
           mb: 2.5,
@@ -181,6 +247,7 @@ export function DestinationView({ city }: Props) {
               sources: [
                 { contentType: 'exploration', category: activeCategory ?? undefined },
                 { contentType: 'activity', category: activeCategory ?? undefined },
+                { contentType: 'viator', category: activeCategory ?? undefined },
               ],
               aiAugmentable: false,
             }}
@@ -216,6 +283,7 @@ export function DestinationView({ city }: Props) {
             onHoverItem={setActiveItemId}
             onCardClick={setOpenItem}
             hideWhenEmpty={false}
+            excludeIds={forYouViatorIds}
           />
 
           {categoryRows.map((category) => (
@@ -273,7 +341,7 @@ export function DestinationView({ city }: Props) {
             right: 32,
             zIndex: 20,
             display: { xs: 'none', lg: 'block' },
-            boxShadow: (t) => tgShadow(t, 'sheet'),
+            boxShadow: (t) => tgShadow(t, 'cardHover'),
             borderRadius: 999,
           }}
         >
@@ -308,9 +376,12 @@ interface DerivedSections {
 
 const FOR_YOU_LIMIT = 12;
 const MUST_SEE_FALLBACK_LIMIT = 6;
+// 1-indexed positions 4, 8, 12 become Viator slots — roughly one tour per 4 cards.
+const VIATOR_INTERVAL = 4;
 
 function deriveSections(
   data: ReturnType<typeof useHomeFeed>['data'],
+  viatorItems: FeedItem[],
   category: string | null,
 ): DerivedSections {
   const empty: DerivedSections = { mustSee: [], forYou: [], eat: [], events: [] };
@@ -318,7 +389,6 @@ function deriveSections(
 
   const isValid = (i: FeedItem | undefined | null): i is FeedItem => !!i && !!i.item;
   const exploration = (data.exploration ?? []).filter(isValid).filter(matchCategory(category));
-  const activities = (data.activities ?? []).filter(isValid).filter(matchCategory(category));
   const events = (data.events ?? []).filter(isValid).filter(matchCategory(category));
   const restaurants = (data.restaurants ?? []).filter(isValid).filter(matchCategory(category));
 
@@ -331,12 +401,48 @@ function deriveSections(
           .slice(0, MUST_SEE_FALLBACK_LIMIT);
 
   const seenIds = new Set(mustSee.map(cardId));
-  const forYou = [...exploration, ...activities]
-    .filter((i) => !seenIds.has(cardId(i)))
-    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-    .slice(0, FOR_YOU_LIMIT);
+  const baseForYou = (data.for_you ?? [])
+    .filter(isValid)
+    .filter(matchCategory(category))
+    .filter((i) => !seenIds.has(cardId(i)));
+  const viatorPicks = viatorItems
+    .filter(isValid)
+    .filter(matchCategory(category))
+    .filter((i) => !seenIds.has(cardId(i)));
+  const forYou = interleaveViator(baseForYou, viatorPicks, FOR_YOU_LIMIT, VIATOR_INTERVAL);
 
   return { mustSee, forYou, eat: restaurants, events };
+}
+
+function interleaveViator(
+  base: FeedItem[],
+  viator: FeedItem[],
+  limit: number,
+  interval: number,
+): FeedItem[] {
+  const out: FeedItem[] = [];
+  const seen = new Set<string>();
+  let baseIdx = 0;
+  let viatorIdx = 0;
+
+  for (let pos = 0; out.length < limit; pos++) {
+    const wantViator = (pos + 1) % interval === 0;
+    let next: FeedItem | null = null;
+    if (wantViator && viatorIdx < viator.length) {
+      next = viator[viatorIdx++];
+    } else if (baseIdx < base.length) {
+      next = base[baseIdx++];
+    } else if (viatorIdx < viator.length) {
+      next = viator[viatorIdx++];
+    } else {
+      break;
+    }
+    const id = cardId(next);
+    if (seen.has(id)) continue;
+    seen.add(id);
+    out.push(next);
+  }
+  return out;
 }
 
 function matchCategory(category: string | null) {

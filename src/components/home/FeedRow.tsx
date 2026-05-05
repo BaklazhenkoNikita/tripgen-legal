@@ -7,6 +7,7 @@ import { FeedCard, cardId } from './FeedCard';
 import { LoadMoreCard } from './LoadMoreCard';
 import { SkeletonRail } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { HorizontalScrollRow } from '@/components/ui/HorizontalScrollRow';
 import { useLoadMoreFeed, type LoadMoreSource } from '@/hooks/useLoadMoreFeed';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -125,40 +126,30 @@ export function FeedRow({
       ) : isEmpty ? (
         <EmptyState title={emptyTitle} description={emptyDescription} variant="subtle" />
       ) : (
-        <Box
-          sx={{
-            mx: { xs: -2, sm: -3 },
-            px: { xs: 2, sm: 3 },
-            pr: { xs: 2, sm: 3, lg: 6 },
-            pt: 1,
-            pb: 1,
-            display: 'flex',
-            gap: 1.5,
-            overflowX: 'auto',
-            scrollbarWidth: 'none',
-            '&::-webkit-scrollbar': { display: 'none' },
-          }}
-        >
+        <HorizontalScrollRow ariaLabel={title} maskWidth={56}>
           {allItems.map((it) => {
             const id = cardId(it);
             return (
-              <FeedCard
-                key={id}
-                item={it}
-                onHover={onHoverItem}
-                isActive={activeItemId === id}
-                onClick={onCardClick ? () => onCardClick(it) : undefined}
-              />
+              <Box key={id} sx={{ flexShrink: 0, scrollSnapAlign: 'start' }}>
+                <FeedCard
+                  item={it}
+                  onHover={onHoverItem}
+                  isActive={activeItemId === id}
+                  onClick={onCardClick ? () => onCardClick(it) : undefined}
+                />
+              </Box>
             );
           })}
           {showLoadMoreCard ? (
-            <LoadMoreCard
-              onClick={() => void pager.loadMore()}
-              isPending={pager.isPending}
-              mode={pager.canGenerate ? 'ai' : 'db'}
-            />
+            <Box sx={{ flexShrink: 0, scrollSnapAlign: 'start' }}>
+              <LoadMoreCard
+                onClick={() => void pager.loadMore()}
+                isPending={pager.isPending}
+                mode={pager.canGenerate ? 'ai' : 'db'}
+              />
+            </Box>
           ) : null}
-        </Box>
+        </HorizontalScrollRow>
       )}
     </Box>
   );

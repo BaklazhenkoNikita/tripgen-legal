@@ -39,19 +39,19 @@ export default async function GuidePage({ params }: Props) {
 
   return (
     <>
-      <Box sx={{ position: 'relative', height: '50vh', minHeight: 320, overflow: 'hidden', bgcolor: 'grey.900' }}>
+      <Box sx={{ position: 'relative', height: '50vh', minHeight: 320, overflow: 'hidden', bgcolor: 'common.black' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <Box
           component="img"
           src={dest.heroImage}
           alt={`${dest.city}, ${dest.country}`}
-          sx={{ position: 'absolute', inset: 0, height: '100%', width: '100%', objectFit: 'cover', opacity: 0.7 }}
+          sx={{ position: 'absolute', inset: 0, height: '100%', width: '100%', objectFit: 'cover', opacity: 0.75 }}
         />
         <Box
           sx={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: 'linear-gradient(to top, rgba(17, 24, 39, 0.8), transparent)',
+            backgroundImage: 'linear-gradient(to top, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.15) 55%, transparent 80%)',
           }}
         />
         <Box
@@ -67,16 +67,28 @@ export default async function GuidePage({ params }: Props) {
             pb: 5,
           }}
         >
-          <Typography sx={{ fontSize: 14, fontWeight: 500, color: '#FCA5A5' }}>
+          <Typography
+            sx={{
+              fontSize: 11,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: 'rgba(255,255,255,0.85)',
+              textShadow: '0 1px 4px rgba(0,0,0,0.45)',
+            }}
+          >
             {dest.country} &middot; {dest.continent}
           </Typography>
           <Typography
             component="h1"
             sx={{
-              mt: 0.5,
+              mt: 1,
               fontSize: { xs: '2.25rem', sm: '3rem' },
               fontWeight: 700,
+              letterSpacing: '-0.025em',
+              lineHeight: 1.0,
               color: 'common.white',
+              textShadow: '0 2px 12px rgba(0,0,0,0.5)',
             }}
           >
             {dest.city} — {dest.days}-Day Itinerary

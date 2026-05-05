@@ -33,6 +33,7 @@ import { Badge } from '@/components/ui/Badge';
 import { destinations } from '@/data/destinations';
 import type { DestinationListItem } from '@/types';
 import { tgShadow } from '@/theme/shadows';
+import { MODE_GUIDANCE } from '@/constants/planModes';
 
 const ACTIVITY_TYPES = [
   { value: 'cultural', label: 'Cultural' },
@@ -169,14 +170,22 @@ export function TripInputForm({
   const [showAllInterests, setShowAllInterests] = useState(false);
 
   const [vibeTags, setVibeTags] = useState<string[]>([]);
-  const [energyLevel, setEnergyLevel] = useState('');
+  const [energyLevel, setEnergyLevel] = useState('moderate');
   const [who, setWho] = useState('');
-  const [planMode, setPlanMode] = useState('');
+  const [planMode, setPlanMode] = useState('balanced');
   const [surpriseMe, setSurpriseMe] = useState(false);
-  const [additionalInfo, setAdditionalInfo] = useState('');
+  const [additionalInfo, setAdditionalInfo] = useState(MODE_GUIDANCE.balanced);
   const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const lastRandomSlugRef = useRef<string | null>(null);
+  const lastGuidanceRef = useRef<string>(MODE_GUIDANCE.balanced);
+  useEffect(() => {
+    const next = planMode ? MODE_GUIDANCE[planMode] ?? '' : '';
+    setAdditionalInfo((current) =>
+      current === '' || current === lastGuidanceRef.current ? next : current,
+    );
+    lastGuidanceRef.current = next;
+  }, [planMode]);
 
   const [destinationDebounced, setDestinationDebounced] = useState('');
   useEffect(() => {
@@ -699,6 +708,7 @@ export function TripInputForm({
               value={additionalInfo}
               onChange={(e) => setAdditionalInfo(e.target.value)}
               placeholder="Travelling with kids, prefer walking, want to see cherry blossoms…"
+              helperText="This tells the AI what to focus on. Edit to refine your trip."
               multiline
               rows={4}
               fullWidth

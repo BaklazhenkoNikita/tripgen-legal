@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { alpha } from '@mui/material/styles';
 import { blogPosts } from '@/data/blogPosts';
 
 interface Props {
@@ -43,19 +42,19 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <>
-      <Box sx={{ position: 'relative', height: '40vh', minHeight: 256, overflow: 'hidden', bgcolor: 'grey.900' }}>
+      <Box sx={{ position: 'relative', height: '40vh', minHeight: 280, overflow: 'hidden', bgcolor: 'common.black' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <Box
           component="img"
           src={post.heroImage}
           alt={post.title}
-          sx={{ position: 'absolute', inset: 0, height: '100%', width: '100%', objectFit: 'cover', opacity: 0.6 }}
+          sx={{ position: 'absolute', inset: 0, height: '100%', width: '100%', objectFit: 'cover', opacity: 0.65 }}
         />
         <Box
           sx={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: 'linear-gradient(to top, rgba(17, 24, 39, 0.8), transparent)',
+            backgroundImage: 'linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.15) 55%, transparent 80%)',
           }}
         />
         <Box
@@ -71,19 +70,43 @@ export default async function BlogPostPage({ params }: Props) {
             pb: 4,
           }}
         >
-          <Typography sx={{ fontSize: 12, fontWeight: 500, color: '#FCA5A5' }}>{post.category}</Typography>
+          <Typography
+            sx={{
+              fontSize: 11,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: 'rgba(255,255,255,0.85)',
+              textShadow: '0 1px 4px rgba(0,0,0,0.45)',
+            }}
+          >
+            {post.category}
+          </Typography>
           <Typography
             component="h1"
             sx={{
-              mt: 0.5,
-              fontSize: { xs: '1.875rem', sm: '2.25rem' },
+              mt: 1,
+              fontSize: { xs: '2rem', sm: '2.5rem' },
               fontWeight: 700,
+              letterSpacing: '-0.025em',
+              lineHeight: 1.05,
               color: 'common.white',
+              textShadow: '0 2px 12px rgba(0,0,0,0.5)',
             }}
           >
             {post.title}
           </Typography>
-          <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1.5, fontSize: 14, color: '#D1D5DB' }}>
+          <Box
+            sx={{
+              mt: 1.5,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
+              fontSize: 13,
+              color: 'rgba(255,255,255,0.82)',
+              textShadow: '0 1px 4px rgba(0,0,0,0.5)',
+            }}
+          >
             <span>{post.author}</span>
             <span>&middot;</span>
             <span>{post.date}</span>

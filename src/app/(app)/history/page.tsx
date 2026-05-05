@@ -159,7 +159,8 @@ export default function HistoryPage() {
                           pr: 2,
                           textDecoration: 'none',
                           transition: 'all 200ms',
-                          '&:hover': { borderColor: 'text.disabled', boxShadow: 2 },
+                          boxShadow: 'var(--tg-shadow-card)',
+                          '&:hover': { borderColor: 'text.disabled', boxShadow: 'var(--tg-shadow-card-hover)' },
                           '&:hover .chev': { transform: 'translateX(2px)', color: 'primary.main' },
                         }}
                       >

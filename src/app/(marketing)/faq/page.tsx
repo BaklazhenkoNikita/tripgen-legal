@@ -51,7 +51,7 @@ const faqs = [
 
 export default function FAQPage() {
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 768, px: { xs: 2, sm: 3 }, py: 7 }}>
+    <Box sx={{ mx: 'auto', maxWidth: 768, px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
       <Box component="header">
         <Badge tone="accent" size="md">Help</Badge>
         <Typography
@@ -59,34 +59,40 @@ export default function FAQPage() {
           sx={{
             mt: 2,
             fontFamily: 'var(--font-display, inherit)',
-            fontSize: '3rem',
-            fontWeight: 600,
-            letterSpacing: '-0.02em',
+            fontSize: { xs: '2.25rem', sm: '3rem' },
+            fontWeight: 700,
+            letterSpacing: '-0.025em',
+            lineHeight: 1.0,
             color: 'text.primary',
           }}
         >
           Frequently asked questions
         </Typography>
-        <Typography sx={{ mt: 1.5, fontSize: 17, lineHeight: 1.6, color: 'text.secondary' }}>
+        <Typography sx={{ mt: 2, fontSize: 17, lineHeight: 1.55, color: 'text.secondary' }}>
           Everything you need to know about Periplo.
         </Typography>
       </Box>
 
-      <Box sx={{ mt: 5, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+      <Box sx={{ mt: 6, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
         {faqs.map((faq, i) => (
           <Box
             component="details"
             key={i}
             className="group"
             sx={{
-              borderRadius: 1.5,
+              borderRadius: 2,
               border: '1px solid',
               borderColor: 'divider',
               bgcolor: 'background.paper',
               p: 2.5,
+              boxShadow: 'var(--tg-shadow-card)',
+              transition: 'all 0.2s',
               '&[open]': {
                 bgcolor: 'action.hover',
-                boxShadow: 'var(--tg-shadow-card)',
+                boxShadow: 'var(--tg-shadow-card-hover)',
+              },
+              '&:hover:not([open])': {
+                borderColor: 'text.disabled',
               },
             }}
           >

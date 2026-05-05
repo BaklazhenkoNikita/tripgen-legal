@@ -1,7 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { SignedIn } from '@clerk/nextjs';
-import { Sparkles, Crown } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import Box from '@mui/material/Box';
 import { useSubscriptionOptional } from '@/contexts';
 import { Badge } from '@/components/ui/Badge';
@@ -20,36 +21,42 @@ function CreditBadgeInner() {
   if (!subscription?.credits) return null;
   const { credits } = subscription;
 
-  if (credits.isPro) {
-    return (
-      <Tooltip content="Pro — unlimited AI generations">
-        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
-          <Badge tone="warning" size="md" iconLeft={<Crown size={12} />}>
-            Pro
-          </Badge>
-        </Box>
-      </Tooltip>
-    );
-  }
+  if (credits.isPro) return null;
 
   const { credits: count, maxCredits } = credits;
+  const hasMax = typeof maxCredits === 'number' && maxCredits > 0;
   const tone =
-    count === 0 ? 'danger' : count <= Math.ceil(maxCredits / 3) ? 'warning' : 'neutral';
+    count === 0
+      ? 'danger'
+      : hasMax && count <= Math.ceil(maxCredits / 3)
+        ? 'warning'
+        : 'neutral';
+
+  const tooltipBase = hasMax
+    ? `${count} of ${maxCredits} AI credits remaining`
+    : `${count} AI credits remaining`;
+  const tooltipContent = credits.nextRegenAt
+    ? `${tooltipBase} — next credit at ${new Date(credits.nextRegenAt).toLocaleTimeString()}`
+    : `${tooltipBase} — click to upgrade`;
 
   return (
-    <Tooltip
-      content={
-        credits.nextRegenAt
-          ? `Next credit at ${new Date(credits.nextRegenAt).toLocaleTimeString()}`
-          : 'AI credits'
-      }
-    >
-      <Box component="span" sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
+    <Tooltip content={tooltipContent}>
+      <Box
+        component={Link}
+        href="/pricing"
+        aria-label={`${tooltipBase}. Click to upgrade.`}
+        sx={{
+          display: { xs: 'none', sm: 'inline-flex' },
+          textDecoration: 'none',
+        }}
+      >
         <Badge tone={tone} size="md" iconLeft={<Sparkles size={12} />}>
           {count}
-          <Box component="span" sx={{ fontWeight: 400, opacity: 0.6 }}>
-            /{maxCredits}
-          </Box>
+          {hasMax ? (
+            <Box component="span" sx={{ fontWeight: 400, opacity: 0.6 }}>
+              /{maxCredits}
+            </Box>
+          ) : null}
         </Badge>
       </Box>
     </Tooltip>

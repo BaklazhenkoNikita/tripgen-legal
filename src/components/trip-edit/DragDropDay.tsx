@@ -157,7 +157,7 @@ export function DragDropDay({
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: 1,
-                  minHeight: activities.length === 0 ? 160 : 220,
+                  minHeight: activities.length === 0 ? 140 : 190,
                   borderRadius: 2,
                   border: '1.5px dashed',
                   borderColor: 'divider',

@@ -36,10 +36,11 @@ export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) 
               variant="h1"
               sx={{
                 fontSize: { xs: '2.25rem', sm: '2.75rem', md: '3rem' },
-                lineHeight: 1.15,
-                color: 'primary.main',
-                letterSpacing: '-0.01em',
-                mb: lastUpdated ? 1 : 0,
+                fontWeight: 700,
+                lineHeight: 1.05,
+                color: 'text.primary',
+                letterSpacing: '-0.025em',
+                mb: lastUpdated ? 1.5 : 0,
               }}
             >
               {title}

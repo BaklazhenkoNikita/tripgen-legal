@@ -263,7 +263,8 @@ function ResultCard({ result }: { result: DiscoverResult }) {
         borderColor: 'divider',
         bgcolor: 'background.paper',
         transition: 'all 200ms',
-        '&:hover': { borderColor: 'text.disabled', boxShadow: 2 },
+        boxShadow: 'var(--tg-shadow-card)',
+        '&:hover': { borderColor: 'text.disabled', boxShadow: 'var(--tg-shadow-card-hover)', transform: 'translateY(-1px)' },
       }}
     >
       {imageUrl ? <Photo src={imageUrl} alt={title} aspect="3/2" zoomOnHover /> : null}

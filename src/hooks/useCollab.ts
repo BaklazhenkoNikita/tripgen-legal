@@ -14,18 +14,21 @@ export interface InviteResponse {
 }
 
 export interface Collaborator {
-  user_id: string;
+  /** Null for non-owner viewers, where the backend masks PII. */
+  user_id: string | null;
   name?: string;
   email?: string;
-  role: CollabRole;
+  role?: CollabRole;
   added_at?: string;
 }
 
 export interface CollaboratorsResponse {
   owner: Collaborator;
-  editors: Collaborator[];
-  viewers: Collaborator[];
-  invite_tokens?: Array<{ role: CollabRole; token: string }>;
+  /** Flat list — each entry has its own `role` field (`editor` | `viewer`). */
+  collaborators: Collaborator[];
+  invite_token: string | null;
+  viewer_invite_token: string | null;
+  viewer_mode?: boolean;
 }
 
 export interface TripVersionResponse {

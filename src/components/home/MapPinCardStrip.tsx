@@ -19,8 +19,8 @@ interface Props {
   onCardHover: (id: string | null) => void;
 }
 
-const COMPACT_WIDTH = 240;
-const PREVIEW_WIDTH = 360;
+const COMPACT_WIDTH = 320;
+const PREVIEW_WIDTH = 480;
 
 export function MapPinCardStrip({
   items,
@@ -135,7 +135,7 @@ function StripCard({
         scrollSnapAlign: 'center',
         position: 'relative',
         width,
-        height: isPreview ? 200 : 140,
+        height: isPreview ? 270 : 190,
         cursor: 'pointer',
         overflow: 'hidden',
         borderRadius: 2,

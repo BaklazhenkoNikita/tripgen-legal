@@ -42,8 +42,15 @@ export function TripDetailClient({ searchId, initialDestination }: Props) {
   const [activeDayNumber, setActiveDayNumber] = useState<number | null>(null);
   const [collabOpen, setCollabOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const { tripData, isLoading, error, activityPool, restaurants, setTripData } =
-    useTripDetail(searchId);
+  const {
+    tripData,
+    accessRole,
+    isLoading,
+    error,
+    activityPool,
+    restaurants,
+    setTripData,
+  } = useTripDetail(searchId);
   const { data: collab } = useCollaborators(searchId);
   const { setActiveTripId } = useActiveTrip();
 
@@ -66,11 +73,19 @@ export function TripDetailClient({ searchId, initialDestination }: Props) {
     setTripData,
   });
 
-  const isOwner =
-    !collab?.owner ? true : Boolean(userId && collab.owner.user_id === userId);
-  const isEditor = Boolean(
-    userId && collab?.editors?.some((e) => e.user_id === userId),
-  );
+  // Trust the server-side role from the trip-detail response. Defaulting to
+  // `owner` while the role is still loading prevents the toolbar from briefly
+  // flashing the "viewing only" banner on first paint for the trip's actual
+  // creator.
+  const isOwner = accessRole === null || accessRole === 'owner';
+  const isEditor =
+    accessRole === 'collaborator' &&
+    Boolean(
+      userId &&
+        collab?.collaborators?.some(
+          (c) => c.user_id === userId && c.role === 'editor',
+        ),
+    );
   const canEdit = isOwner || isEditor;
 
   if (isLoading && !tripData) {

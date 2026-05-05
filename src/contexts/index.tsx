@@ -40,6 +40,6 @@ export function AppContextsRoot({ children }: { children: ReactNode }) {
 
 export { useSnackbar } from './SnackbarContext';
 export { useCity, useCityOptional } from './CityContext';
-export { useActiveTrip } from './ActiveTripContext';
+export { useActiveTrip, useActiveTripOptional } from './ActiveTripContext';
 export { useSubscription, useSubscriptionOptional } from './SubscriptionContext';
 export { useAIContext } from './AIContext';

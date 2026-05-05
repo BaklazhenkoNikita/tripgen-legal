@@ -39,6 +39,7 @@ export interface HomeFeedResponse {
   activities: FeedItem[];
   events: FeedItem[];
   restaurants: FeedItem[];
+  for_you: FeedItem[];
   has_content: boolean;
   generating: boolean;
   events_generating: boolean;
@@ -60,6 +61,7 @@ export function useHomeFeed(city: string | null | undefined) {
         activities: data.activities ?? [],
         events: data.events ?? [],
         restaurants: data.restaurants ?? [],
+        for_you: data.for_you ?? [],
         has_content: data.has_content ?? false,
         generating: data.generating ?? false,
         events_generating: data.events_generating ?? false,

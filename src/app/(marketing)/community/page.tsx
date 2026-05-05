@@ -30,12 +30,22 @@ export default function CommunityPage() {
   }, {});
 
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 1024, px: { xs: 2, sm: 3 }, py: 5 }}>
+    <Box sx={{ mx: 'auto', maxWidth: 1024, px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
       <Box component="header">
-        <Typography component="h1" sx={{ fontSize: '1.875rem', fontWeight: 700, color: 'text.primary' }}>
+        <Typography
+          component="h1"
+          sx={{
+            fontFamily: 'var(--font-display, inherit)',
+            fontSize: { xs: '2.25rem', sm: '3rem' },
+            fontWeight: 700,
+            letterSpacing: '-0.025em',
+            lineHeight: 1.0,
+            color: 'text.primary',
+          }}
+        >
           Guides
         </Typography>
-        <Typography sx={{ mt: 0.5, fontSize: 14, color: 'text.secondary' }}>
+        <Typography sx={{ mt: 2, fontSize: 17, lineHeight: 1.55, color: 'text.secondary' }}>
           {destinations.length} curated city guides — overviews, highlights, and ready-to-personalize itineraries.
         </Typography>
       </Box>
@@ -79,16 +89,17 @@ export default function CommunityPage() {
                   className="group"
                   sx={{
                     overflow: 'hidden',
-                    borderRadius: 3,
+                    borderRadius: 2,
                     border: '1px solid',
                     borderColor: 'divider',
                     bgcolor: 'background.paper',
                     textDecoration: 'none',
+                    boxShadow: 'var(--tg-shadow-card)',
                     transition: 'all 200ms',
                     '&:hover': {
                       transform: 'translateY(-2px)',
                       borderColor: 'text.disabled',
-                      boxShadow: 3,
+                      boxShadow: 'var(--tg-shadow-card-hover)',
                     },
                   }}
                 >

@@ -19,19 +19,18 @@ interface Props {
   onClose: () => void;
 }
 
-interface Geom {
-  top: number;
-  left: number;
+interface Size {
   width: number;
   height: number;
 }
 
-type Direction = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
+type Direction = 'n' | 'w' | 'nw';
 
 const STORAGE_KEY = 'tg.exploreMap.geom';
 const MIN_SIZE = 280;
 const VIEWPORT_INSET = 8;
 const DEFAULT_MARGIN = 24;
+const FULLSCREEN_INSET = 16;
 
 export function FloatingMapShell({
   pins,
@@ -42,40 +41,37 @@ export function FloatingMapShell({
   visible,
   onClose,
 }: Props) {
-  const [geom, setGeom] = useState<Geom | null>(null);
+  const [size, setSize] = useState<Size | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const [previewItemId, setPreviewItemId] = useState<string | null>(null);
   const [focusPin, setFocusPin] = useState<{ lat: number; lng: number } | null>(null);
-  const stashedGeom = useRef<Geom | null>(null);
+  const stashedSize = useRef<Size | null>(null);
 
-  // Initialize geometry on mount (client-only).
+  // Initialize size on mount (client-only).
   useEffect(() => {
-    setGeom(initialGeom());
+    setSize(initialSize());
   }, []);
 
-  // Persist geometry (only when not fullscreen — we don't want fullscreen
-  // dimensions overwriting the user's resized layout).
+  // Persist size whenever it changes (fullscreen reuses the stashed size, so
+  // we never overwrite the user's preferred dimensions while fullscreen).
   useEffect(() => {
-    if (!geom || fullscreen) return;
+    if (!size || fullscreen) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(geom));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(size));
     } catch {
       /* swallow */
     }
-  }, [geom, fullscreen]);
+  }, [size, fullscreen]);
 
-  // Re-clamp geometry on viewport resize.
+  // Re-clamp size on viewport resize. The bottom-right anchor is handled by
+  // CSS, so no position math is needed here.
   useEffect(() => {
     function onResize() {
-      setGeom((prev) => {
-        if (!prev) return prev;
-        if (fullscreen) return fullscreenGeom();
-        return clampGeom(prev);
-      });
+      setSize((prev) => (prev ? clampSize(prev) : prev));
     }
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, [fullscreen]);
+  }, []);
 
   // Escape exits fullscreen.
   useEffect(() => {
@@ -83,9 +79,9 @@ export function FloatingMapShell({
     function onKey(e: KeyboardEvent) {
       if (e.key !== 'Escape') return;
       e.preventDefault();
-      const restored = stashedGeom.current;
+      const restored = stashedSize.current;
       setFullscreen(false);
-      setGeom(restored ? clampGeom(restored) : defaultGeom());
+      setSize(restored ? clampSize(restored) : defaultSize());
       setPreviewItemId(null);
     }
     window.addEventListener('keydown', onKey);
@@ -95,28 +91,27 @@ export function FloatingMapShell({
   const toggleFullscreen = useCallback(() => {
     setFullscreen((prev) => {
       if (!prev) {
-        stashedGeom.current = geom;
-        setGeom(fullscreenGeom());
+        stashedSize.current = size;
         return true;
       }
-      const restored = stashedGeom.current ?? initialGeom();
-      setGeom(clampGeom(restored));
+      const restored = stashedSize.current ?? initialSize();
+      setSize(clampSize(restored));
       setPreviewItemId(null);
       return false;
     });
-  }, [geom]);
+  }, [size]);
 
   const startResize = useCallback(
     (dir: Direction) =>
       (e: React.PointerEvent<HTMLDivElement>) => {
         if (fullscreen) return;
-        if (!geom) return;
+        if (!size) return;
         e.preventDefault();
         e.stopPropagation();
         const target = e.currentTarget;
         const startX = e.clientX;
         const startY = e.clientY;
-        const start: Geom = { ...geom };
+        const start: Size = { ...size };
         try {
           target.setPointerCapture(e.pointerId);
         } catch {
@@ -126,7 +121,7 @@ export function FloatingMapShell({
         const onMove = (ev: PointerEvent) => {
           const dx = ev.clientX - startX;
           const dy = ev.clientY - startY;
-          setGeom(applyResize(start, dir, dx, dy));
+          setSize(applyResize(start, dir, dx, dy));
         };
         const onUp = (ev: PointerEvent) => {
           try {
@@ -142,7 +137,7 @@ export function FloatingMapShell({
         target.addEventListener('pointerup', onUp);
         target.addEventListener('pointercancel', onUp);
       },
-    [fullscreen, geom],
+    [fullscreen, size],
   );
 
   const handleCardClick = useCallback(
@@ -184,7 +179,21 @@ export function FloatingMapShell({
     return out;
   }, [pins, itemById]);
 
-  if (!visible || !geom) return null;
+  if (!visible || !size) return null;
+
+  const positionSx = fullscreen
+    ? {
+        top: FULLSCREEN_INSET,
+        left: FULLSCREEN_INSET,
+        right: FULLSCREEN_INSET,
+        bottom: FULLSCREEN_INSET,
+      }
+    : {
+        right: DEFAULT_MARGIN,
+        bottom: DEFAULT_MARGIN,
+        width: size.width,
+        height: size.height,
+      };
 
   return (
     <Box
@@ -192,16 +201,13 @@ export function FloatingMapShell({
       aria-label="Map of visible items"
       sx={{
         position: 'fixed',
-        top: geom.top,
-        left: geom.left,
-        width: geom.width,
-        height: geom.height,
+        ...positionSx,
         zIndex: fullscreen ? 1300 : 15,
         display: { xs: 'none', lg: 'block' },
         borderRadius: fullscreen ? 4 : 3,
         boxShadow: (t) => tgShadow(t, 'sheet'),
         transition: fullscreen
-          ? 'top 240ms ease, left 240ms ease, width 240ms ease, height 240ms ease, border-radius 240ms ease'
+          ? 'top 240ms ease, left 240ms ease, right 240ms ease, bottom 240ms ease, width 240ms ease, height 240ms ease, border-radius 240ms ease'
           : undefined,
         '& .tg-resize-corner-affordance': {
           opacity: 0,
@@ -226,13 +232,8 @@ export function FloatingMapShell({
       {!fullscreen ? (
         <>
           <ResizeEdge dir="n" onPointerDown={startResize('n')} />
-          <ResizeEdge dir="s" onPointerDown={startResize('s')} />
-          <ResizeEdge dir="e" onPointerDown={startResize('e')} />
           <ResizeEdge dir="w" onPointerDown={startResize('w')} />
-          <ResizeCorner dir="nw" onPointerDown={startResize('nw')} />
-          <ResizeCorner dir="ne" onPointerDown={startResize('ne')} />
-          <ResizeCorner dir="sw" onPointerDown={startResize('sw')} />
-          <ResizeCorner dir="se" onPointerDown={startResize('se')} />
+          <ResizeCorner onPointerDown={startResize('nw')} />
         </>
       ) : null}
 
@@ -253,18 +254,13 @@ function ResizeEdge({
   dir,
   onPointerDown,
 }: {
-  dir: 'n' | 's' | 'e' | 'w';
+  dir: 'n' | 'w';
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
 }) {
-  const cursor =
-    dir === 'n' || dir === 's' ? 'ns-resize' : 'ew-resize';
+  const cursor = dir === 'n' ? 'ns-resize' : 'ew-resize';
   const sx =
     dir === 'n'
       ? { top: -4, left: 12, right: 12, height: 10 }
-      : dir === 's'
-      ? { bottom: -4, left: 12, right: 12, height: 10 }
-      : dir === 'e'
-      ? { right: -4, top: 12, bottom: 12, width: 10 }
       : { left: -4, top: 12, bottom: 12, width: 10 };
   return (
     <Box
@@ -282,31 +278,10 @@ function ResizeEdge({
 }
 
 function ResizeCorner({
-  dir,
   onPointerDown,
 }: {
-  dir: 'nw' | 'ne' | 'sw' | 'se';
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
 }) {
-  const cursor =
-    dir === 'nw' || dir === 'se' ? 'nwse-resize' : 'nesw-resize';
-  const cornerSx =
-    dir === 'nw'
-      ? { top: -6, left: -6 }
-      : dir === 'ne'
-      ? { top: -6, right: -6 }
-      : dir === 'sw'
-      ? { bottom: -6, left: -6 }
-      : { bottom: -6, right: -6 };
-  // Visual affordance position (a small dot inside the corner of the shell).
-  const dotSx =
-    dir === 'nw'
-      ? { top: 6, left: 6 }
-      : dir === 'ne'
-      ? { top: 6, right: 6 }
-      : dir === 'sw'
-      ? { bottom: 6, left: 6 }
-      : { bottom: 6, right: 6 };
   return (
     <>
       <Box
@@ -317,9 +292,10 @@ function ResizeCorner({
           width: 18,
           height: 18,
           zIndex: 1201,
-          cursor,
+          cursor: 'nwse-resize',
           touchAction: 'none',
-          ...cornerSx,
+          top: -6,
+          left: -6,
         }}
       />
       <Box
@@ -333,105 +309,53 @@ function ResizeCorner({
           borderRadius: 999,
           zIndex: 1100,
           bgcolor: (t) => alpha(t.palette.text.primary, 0.35),
-          ...dotSx,
+          top: 6,
+          left: 6,
         }}
       />
     </>
   );
 }
 
-function initialGeom(): Geom {
+function initialSize(): Size {
   if (typeof window === 'undefined') {
-    return { top: 0, left: 0, width: MIN_SIZE, height: MIN_SIZE };
+    return { width: MIN_SIZE, height: MIN_SIZE };
   }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw) as Partial<Geom>;
-      if (
-        typeof parsed.top === 'number' &&
-        typeof parsed.left === 'number' &&
-        typeof parsed.width === 'number' &&
-        typeof parsed.height === 'number'
-      ) {
-        return clampGeom(parsed as Geom);
+      const parsed = JSON.parse(raw) as Partial<Size>;
+      if (typeof parsed.width === 'number' && typeof parsed.height === 'number') {
+        return clampSize({ width: parsed.width, height: parsed.height });
       }
     }
   } catch {
     /* ignore */
   }
-  return defaultGeom();
+  return defaultSize();
 }
 
-function defaultGeom(): Geom {
+function defaultSize(): Size {
   const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const width = Math.max(320, Math.min(480, Math.round(vw * 0.28)));
-  const height = width;
-  return {
-    width,
-    height,
-    top: vh - height - DEFAULT_MARGIN,
-    left: vw - width - DEFAULT_MARGIN,
-  };
+  const width = Math.max(416, Math.min(624, Math.round(vw * 0.364)));
+  return { width, height: width };
 }
 
-function fullscreenGeom(): Geom {
-  if (typeof window === 'undefined') {
-    return { top: 0, left: 0, width: MIN_SIZE, height: MIN_SIZE };
-  }
-  return {
-    top: 16,
-    left: 16,
-    width: window.innerWidth - 32,
-    height: window.innerHeight - 32,
-  };
-}
-
-function clampGeom(g: Geom): Geom {
-  if (typeof window === 'undefined') return g;
+function clampSize(s: Size): Size {
+  if (typeof window === 'undefined') return s;
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const maxW = Math.max(MIN_SIZE, vw - VIEWPORT_INSET * 2);
   const maxH = Math.max(MIN_SIZE, vh - VIEWPORT_INSET * 2);
-  const width = Math.min(Math.max(MIN_SIZE, g.width), maxW);
-  const height = Math.min(Math.max(MIN_SIZE, g.height), maxH);
-  const left = Math.min(Math.max(VIEWPORT_INSET, g.left), vw - width - VIEWPORT_INSET);
-  const top = Math.min(Math.max(VIEWPORT_INSET, g.top), vh - height - VIEWPORT_INSET);
-  return { top, left, width, height };
+  return {
+    width: Math.min(Math.max(MIN_SIZE, s.width), maxW),
+    height: Math.min(Math.max(MIN_SIZE, s.height), maxH),
+  };
 }
 
-function applyResize(start: Geom, dir: Direction, dx: number, dy: number): Geom {
-  let { top, left, width, height } = start;
-
-  if (dir.includes('e')) {
-    width = start.width + dx;
-  }
-  if (dir.includes('w')) {
-    width = start.width - dx;
-    left = start.left + dx;
-  }
-  if (dir.includes('s')) {
-    height = start.height + dy;
-  }
-  if (dir.includes('n')) {
-    height = start.height - dy;
-    top = start.top + dy;
-  }
-
-  // Enforce minimum size first, adjusting top/left when growing from N/W edges.
-  if (width < MIN_SIZE) {
-    if (dir.includes('w')) {
-      left = start.left + (start.width - MIN_SIZE);
-    }
-    width = MIN_SIZE;
-  }
-  if (height < MIN_SIZE) {
-    if (dir.includes('n')) {
-      top = start.top + (start.height - MIN_SIZE);
-    }
-    height = MIN_SIZE;
-  }
-
-  return clampGeom({ top, left, width, height });
+function applyResize(start: Size, dir: Direction, dx: number, dy: number): Size {
+  let { width, height } = start;
+  if (dir.includes('w')) width = start.width - dx;
+  if (dir.includes('n')) height = start.height - dy;
+  return clampSize({ width, height });
 }
