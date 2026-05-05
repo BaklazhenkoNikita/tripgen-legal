@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { SignedIn, SignedOut, UserButton, useClerk } from '@clerk/nextjs';
 import { memo, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, Menu as MenuIcon, Sparkles, X } from 'lucide-react';
+import { ChevronDown, Crown, Menu as MenuIcon, Sparkles, X } from 'lucide-react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
@@ -17,6 +17,7 @@ import MuiMenu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { alpha, useTheme } from '@mui/material/styles';
 import { CreditBadge } from '@/components/credits/CreditBadge';
+import { Badge } from '@/components/ui/Badge';
 import { ThemeToggle, ThemeTogglePopover } from '@/components/ui/ThemeToggle';
 import { tgShadow } from '@/theme/shadows';
 import { useSubscriptionOptional } from '@/contexts/SubscriptionContext';
@@ -195,7 +196,21 @@ export function Navigation() {
               >
                 Upgrade
               </Button>
-            ) : null}
+            ) : (
+              <Box
+                component={Link}
+                href="/profile"
+                aria-label="You're on Pro — manage subscription"
+                sx={{
+                  display: { xs: 'none', md: 'inline-flex' },
+                  textDecoration: 'none',
+                }}
+              >
+                <Badge tone="warning" size="md" iconLeft={<Crown size={12} />}>
+                  Pro
+                </Badge>
+              </Box>
+            )}
             {!onChat ? (
               <UserButton afterSignOutUrl="/">
                 <UserButton.MenuItems>
@@ -275,7 +290,26 @@ export function Navigation() {
                   <Sparkles size={14} />
                   Upgrade
                 </Box>
-              ) : null}
+              ) : (
+                <Box
+                  component={Link}
+                  href="/profile"
+                  onClick={() => {
+                    setPendingHref('/profile');
+                    closeMobile();
+                  }}
+                  aria-label="You're on Pro — manage subscription"
+                  sx={{
+                    alignSelf: 'flex-start',
+                    mb: 0.5,
+                    textDecoration: 'none',
+                  }}
+                >
+                  <Badge tone="warning" size="md" iconLeft={<Crown size={12} />}>
+                    Pro
+                  </Badge>
+                </Box>
+              )}
             </SignedIn>
             {primaryLinks.map((link) => (
               <MobileLink
