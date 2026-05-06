@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import Script from 'next/script';
 import { getTrip, firstImageUrl } from '@/lib/server/api';
 import {

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { SignedIn, SignedOut, UserButton, useClerk } from '@clerk/nextjs';
 import { memo, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, Crown, Menu as MenuIcon, Sparkles, X } from 'lucide-react';
+import { ChevronDown, Menu as MenuIcon, Sparkles, X } from 'lucide-react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
@@ -17,6 +17,7 @@ import MuiMenu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { alpha, useTheme } from '@mui/material/styles';
 import { CreditBadge } from '@/components/credits/CreditBadge';
+import { ProBadge } from '@/components/credits/ProBadge';
 import { Badge } from '@/components/ui/Badge';
 import { ThemeToggle, ThemeTogglePopover } from '@/components/ui/ThemeToggle';
 import { tgShadow } from '@/theme/shadows';
@@ -204,11 +205,11 @@ export function Navigation() {
                 sx={{
                   display: { xs: 'none', md: 'inline-flex' },
                   textDecoration: 'none',
+                  transition: 'transform 150ms',
+                  '&:hover': { transform: 'translateY(-1px)' },
                 }}
               >
-                <Badge tone="warning" size="md" iconLeft={<Crown size={12} />}>
-                  Pro
-                </Badge>
+                <ProBadge size="md" />
               </Box>
             )}
             {!onChat ? (
@@ -305,9 +306,7 @@ export function Navigation() {
                     textDecoration: 'none',
                   }}
                 >
-                  <Badge tone="warning" size="md" iconLeft={<Crown size={12} />}>
-                    Pro
-                  </Badge>
+                  <ProBadge size="md" />
                 </Box>
               )}
             </SignedIn>

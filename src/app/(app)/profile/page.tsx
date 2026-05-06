@@ -15,10 +15,12 @@ import {
   useDeleteProfile,
 } from '@/hooks/useProfile';
 import { CreditsCard } from '@/components/credits/CreditsCard';
+import { WelcomeProDialog } from '@/components/credits/WelcomeProDialog';
 import { PreferencesForm } from '@/components/profile/PreferencesForm';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Badge } from '@/components/ui/Badge';
+import { ProBadge } from '@/components/credits/ProBadge';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Dialog } from '@/components/ui/Dialog';
 import { useSubscriptionOptional } from '@/contexts/SubscriptionContext';
@@ -43,18 +45,27 @@ function ProfilePageInner() {
   const searchParams = useSearchParams();
   const [editingPrefs, setEditingPrefs] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
 
   // Land here from Stripe Checkout success redirect (`/profile?upgraded=1`).
-  // Re-poll credits immediately instead of waiting for the 5-min poll, so the
-  // Pro badge flips as soon as the webhook lands.
+  // Open the welcome dialog and start polling credits — the Stripe redirect
+  // typically arrives ~1s before the webhook does, so we keep refreshing
+  // until `isPro` flips and the dialog can show its celebratory state.
   const upgradeHandled = useRef(false);
   useEffect(() => {
     if (upgradeHandled.current) return;
     if (searchParams.get('upgraded') !== '1') return;
     upgradeHandled.current = true;
-    void subscription?.refresh();
-    toast.success('Welcome to Pro — your credits are unlimited now.');
+    setWelcomeOpen(true);
     router.replace('/profile');
+    let attempts = 0;
+    const tick = () => {
+      void subscription?.refresh();
+      attempts += 1;
+      if (attempts >= 10) return;
+      setTimeout(tick, 1500);
+    };
+    tick();
   }, [searchParams, subscription, router]);
 
   const handleExport = async () => {
@@ -313,37 +324,51 @@ function ProfilePageInner() {
 
       <SubscriptionSection />
 
-      {fingerprint?.fingerprint ? (
-        <Box
-          component="section"
-          sx={{
-            mt: 2,
-            borderRadius: 1.5,
-            border: '1px solid',
-            borderColor: 'divider',
-            bgcolor: 'background.paper',
-            p: 2.5,
-          }}
-        >
-          <Typography
-            component="h2"
+      {(() => {
+        const fp = fingerprint?.fingerprint;
+        const text =
+          typeof fp === 'string'
+            ? fp
+            : fp && typeof fp === 'object'
+              ? Object.entries(fp as Record<string, number>)
+                  .sort(([, a], [, b]) => b - a)
+                  .slice(0, 3)
+                  .map(([k]) => k)
+                  .join(', ')
+              : '';
+        if (!text) return null;
+        return (
+          <Box
+            component="section"
             sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 1,
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.04em',
-              color: 'text.disabled',
+              mt: 2,
+              borderRadius: 1.5,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+              p: 2.5,
             }}
           >
-            <Box component={Sparkles} aria-hidden sx={{ width: 12, height: 12, color: 'primary.main' }} />
-            Travel personality
-          </Typography>
-          <Typography sx={{ mt: 1, fontSize: 14, color: 'text.secondary' }}>{fingerprint.fingerprint}</Typography>
-        </Box>
-      ) : null}
+            <Typography
+              component="h2"
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                fontSize: 11,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                color: 'text.disabled',
+              }}
+            >
+              <Box component={Sparkles} aria-hidden sx={{ width: 12, height: 12, color: 'primary.main' }} />
+              Travel personality
+            </Typography>
+            <Typography sx={{ mt: 1, fontSize: 14, color: 'text.secondary', textTransform: 'capitalize' }}>{text}</Typography>
+          </Box>
+        );
+      })()}
 
       <Box
         component="section"
@@ -425,6 +450,12 @@ function ProfilePageInner() {
       >
         <Box />
       </Dialog>
+
+      <WelcomeProDialog
+        open={welcomeOpen}
+        confirmed={subscription?.credits?.isPro ?? false}
+        onClose={() => setWelcomeOpen(false)}
+      />
     </Box>
   );
 }
@@ -497,7 +528,7 @@ function SubscriptionSection() {
           </Typography>
           {isPro ? (
             <Typography sx={{ mt: 0.75, display: 'inline-flex', alignItems: 'center', gap: 1, fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
-              <Badge tone="success" size="sm">Pro</Badge>
+              <ProBadge size="sm" />
               Unlimited AI generation
             </Typography>
           ) : (

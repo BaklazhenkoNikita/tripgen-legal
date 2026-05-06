@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import type Stripe from 'stripe';
 import { getStripe } from '@/lib/stripe/server';
-import { API_BASE_URL } from '@/lib/api/baseUrl';
+
+// Webhook relay runs server-side, so the rewrites-proxy trick (relative
+// `/api/...`) doesn't apply — Node fetch needs an absolute URL. Resolve
+// the real backend host directly.
+const BACKEND_URL =
+  process.env.BACKEND_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 
 /**
  * Stripe webhook receiver.
@@ -59,7 +64,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const res = await fetch(`${API_BASE_URL}/api/webhooks/stripe`, {
+    const res = await fetch(`${BACKEND_URL}/api/webhooks/stripe`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

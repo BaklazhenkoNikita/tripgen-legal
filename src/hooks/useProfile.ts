@@ -72,7 +72,7 @@ export function useProfileFingerprint() {
   const { userId, isSignedIn } = useAuth();
   return useQuery({
     queryKey: ['profile', 'fingerprint', userId ?? ''],
-    queryFn: async (): Promise<{ fingerprint?: string } | null> => {
+    queryFn: async (): Promise<{ fingerprint?: string | Record<string, number> } | null> => {
       if (!userId) return null;
       return api.get(`${endpoints.profileById(userId)}/fingerprint`);
     },
