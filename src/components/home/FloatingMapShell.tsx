@@ -17,6 +17,7 @@ interface Props {
   onPinClick: (id: string) => void;
   visible: boolean;
   onClose: () => void;
+  clusterThreshold?: number;
 }
 
 interface Size {
@@ -40,6 +41,7 @@ export function FloatingMapShell({
   onPinClick,
   visible,
   onClose,
+  clusterThreshold,
 }: Props) {
   const [size, setSize] = useState<Size | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
@@ -227,6 +229,7 @@ export function FloatingMapShell({
         focusPin={focusPin}
         onFullscreenToggle={toggleFullscreen}
         fullscreen={fullscreen}
+        clusterThreshold={clusterThreshold}
       />
 
       {!fullscreen ? (

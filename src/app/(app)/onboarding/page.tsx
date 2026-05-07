@@ -19,68 +19,76 @@ export default function OnboardingWelcomePage() {
         minHeight: 'calc(100vh - 4rem)',
         maxWidth: 576,
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         px: { xs: 2, sm: 3 },
         py: 5,
-        textAlign: 'center',
       }}
     >
       <Box
         sx={{
-          mb: 3,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: 999,
-          bgcolor: (t) => alpha(t.palette.primary.main, 0.12),
-          p: 2,
-          color: 'primary.main',
-        }}
-      >
-        <Sparkles className="size-8" aria-hidden />
-      </Box>
-      <Typography
-        component="h1"
-        sx={{
-          fontSize: { xs: '1.875rem', sm: '2.25rem' },
-          fontWeight: 700,
-          color: 'text.primary',
-        }}
-      >
-        Let&apos;s set up your travel taste
-      </Typography>
-      <Typography sx={{ mt: 1.5, fontSize: 16, color: 'text.secondary' }}>
-        Two quick steps. We&apos;ll use this to personalize your home feed and future trip suggestions.
-      </Typography>
-
-      <Box
-        component="ul"
-        sx={{
-          mt: 4,
-          display: 'grid',
+          display: 'flex',
           width: '100%',
-          gap: 1.5,
-          textAlign: 'left',
-          listStyle: 'none',
-          p: 0,
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
         }}
       >
-        <Step
-          icon={<Compass className="size-4" />}
-          title="Pick a city you love"
-          subtitle="Anchors your home feed and explore tab."
-        />
-        <Step
-          icon={<ChefHat className="size-4" />}
-          title="Tell us your vibe"
-          subtitle="Foodie? Hidden gems? Wellness retreats? Multiple is fine."
-        />
-        <Step
-          icon={<Map className="size-4" />}
-          title="That's it"
-          subtitle="You can change everything later from your profile."
-        />
+        <Box
+          sx={{
+            mb: 3,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 999,
+            bgcolor: (t) => alpha(t.palette.primary.main, 0.12),
+            p: 2,
+            color: 'primary.main',
+          }}
+        >
+          <Sparkles className="size-8" aria-hidden />
+        </Box>
+        <Typography
+          component="h1"
+          sx={{
+            fontSize: { xs: '1.875rem', sm: '2.25rem' },
+            fontWeight: 700,
+            color: 'text.primary',
+          }}
+        >
+          Let&apos;s set up your travel taste
+        </Typography>
+        <Typography sx={{ mt: 1.5, fontSize: 16, color: 'text.secondary' }}>
+          Two quick steps. We&apos;ll use this to personalize your home feed and future trip suggestions.
+        </Typography>
+
+        <Box
+          component="ul"
+          sx={{
+            mt: 4,
+            display: 'grid',
+            width: '100%',
+            gap: 1.5,
+            textAlign: 'left',
+            listStyle: 'none',
+            p: 0,
+          }}
+        >
+          <Step
+            icon={<Compass className="size-4" />}
+            title="Pick a city you love"
+            subtitle="Anchors your home feed and explore tab."
+          />
+          <Step
+            icon={<ChefHat className="size-4" />}
+            title="Tell us your vibe"
+            subtitle="Foodie? Hidden gems? Wellness retreats? Multiple is fine."
+          />
+          <Step
+            icon={<Map className="size-4" />}
+            title="That's it"
+            subtitle="You can change everything later from your profile."
+          />
+        </Box>
       </Box>
 
       <Box
@@ -91,6 +99,7 @@ export default function OnboardingWelcomePage() {
           flexDirection: { xs: 'column', sm: 'row' },
           gap: 1,
           justifyContent: { sm: 'center' },
+          pb: 'env(safe-area-inset-bottom)',
         }}
       >
         <Box

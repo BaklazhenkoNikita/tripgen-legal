@@ -61,35 +61,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function TripDetailPage({ params }: Props) {
-  const { searchId } = await params;
+// SEO-only side-channel: the JSON-LD scripts are valuable for crawlers but
+// the human-facing render doesn't need them, so we let them stream in via
+// Suspense rather than blocking the page on `getTrip`. `TripDetailClient`
+// re-fetches the same data through `useTripDetail(searchId)` on mount, so
+// the user never waits on this fetch.
+async function TripJsonLd({ searchId }: { searchId: string }) {
   const trip = await getTrip(searchId);
+  if (!trip?.destination) return null;
 
-  const breadcrumbLd = trip?.destination
-    ? stringifyJsonLd(
-        breadcrumbListJsonLd([
-          { name: 'Home', url: '/' },
-          { name: 'My Trips', url: '/history' },
-          { name: trip.destination, url: `/trip/${searchId}` },
-        ]),
-      )
-    : null;
+  const breadcrumbLd = stringifyJsonLd(
+    breadcrumbListJsonLd([
+      { name: 'Home', url: '/' },
+      { name: 'My Trips', url: '/history' },
+      { name: trip.destination, url: `/trip/${searchId}` },
+    ]),
+  );
 
-  const tripLd = trip?.destination
-    ? stringifyJsonLd(
-        touristTripJsonLd({
-          name: `${trip.travel_plan?.length ?? 0}-day ${trip.destination} itinerary`,
-          description: `AI-generated itinerary for ${trip.destination}.`,
-          url: `/trip/${searchId}`,
-          image: trip.activities?.length ? firstImageUrl(trip.activities[0].images as never) : undefined,
-          destination: { city: trip.destination },
-          itinerary: (trip.activities ?? []).slice(0, 12).map((a) => ({
-            name: a.name ?? 'Activity',
-            description: a.description,
-          })),
-        }),
-      )
-    : null;
+  const tripLd = stringifyJsonLd(
+    touristTripJsonLd({
+      name: `${trip.travel_plan?.length ?? 0}-day ${trip.destination} itinerary`,
+      description: `AI-generated itinerary for ${trip.destination}.`,
+      url: `/trip/${searchId}`,
+      image: trip.activities?.length ? firstImageUrl(trip.activities[0].images as never) : undefined,
+      destination: { city: trip.destination },
+      itinerary: (trip.activities ?? []).slice(0, 12).map((a) => ({
+        name: a.name ?? 'Activity',
+        description: a.description,
+      })),
+    }),
+  );
 
   return (
     <>
@@ -109,7 +110,19 @@ export default async function TripDetailPage({ params }: Props) {
           dangerouslySetInnerHTML={{ __html: tripLd }}
         />
       )}
-      <TripDetailClient searchId={searchId} initialDestination={trip?.destination} />
+    </>
+  );
+}
+
+export default async function TripDetailPage({ params }: Props) {
+  const { searchId } = await params;
+
+  return (
+    <>
+      <Suspense fallback={null}>
+        <TripJsonLd searchId={searchId} />
+      </Suspense>
+      <TripDetailClient searchId={searchId} />
     </>
   );
 }

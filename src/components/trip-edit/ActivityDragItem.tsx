@@ -99,7 +99,7 @@ export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick 
                   size="sm"
                   iconLeft={<Clock size={12} />}
                   style={{
-                    backgroundColor: 'rgba(255,255,255,0.95)',
+                    backgroundColor: 'rgb(var(--tg-palette-background-paperChannel) / 0.92)',
                     backdropFilter: 'blur(8px)',
                   }}
                 >

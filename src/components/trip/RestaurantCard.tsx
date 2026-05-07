@@ -64,7 +64,7 @@ export function RestaurantCard({ restaurant: r, photoMap }: Props) {
             tone="neutral"
             size="sm"
             style={{
-              backgroundColor: 'rgba(255,255,255,0.95)',
+              backgroundColor: 'rgb(var(--tg-palette-background-paperChannel) / 0.92)',
               backdropFilter: 'blur(8px)',
             }}
           >

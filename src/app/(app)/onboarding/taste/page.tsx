@@ -127,16 +127,28 @@ export default function OnboardingTastePage() {
   };
 
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 672, px: { xs: 2, sm: 3 }, py: 5 }}>
-      <ProgressDots step={2} />
-      <Typography component="h1" sx={{ mt: 2, fontSize: '1.5rem', fontWeight: 700, color: 'text.primary' }}>
-        What&apos;s your vibe?
-      </Typography>
-      <Typography sx={{ mt: 0.75, fontSize: 14, color: 'text.secondary' }}>
-        Pick anything that resonates. We use these signals to rank suggestions.
-      </Typography>
+    <Box
+      sx={{
+        mx: 'auto',
+        display: 'flex',
+        minHeight: 'calc(100vh - 4rem)',
+        maxWidth: 672,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        px: { xs: 2, sm: 3 },
+        py: 5,
+      }}
+    >
+      <Box>
+        <ProgressDots step={2} />
+        <Typography component="h1" sx={{ mt: 2, fontSize: '1.5rem', fontWeight: 700, color: 'text.primary' }}>
+          What&apos;s your vibe?
+        </Typography>
+        <Typography sx={{ mt: 0.75, fontSize: 14, color: 'text.secondary' }}>
+          Pick anything that resonates. We use these signals to rank suggestions.
+        </Typography>
 
-      <Box component="section" sx={{ mt: 3 }}>
+        <Box component="section" sx={{ mt: 3 }}>
         <Typography sx={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'text.secondary' }}>
           Interests
         </Typography>
@@ -200,6 +212,7 @@ export default function OnboardingTastePage() {
         </Typography>
         <ChipGroup options={BUDGETS} value={budget} onChange={setBudget} />
       </Box>
+      </Box>
 
       <Box
         sx={{
@@ -212,6 +225,7 @@ export default function OnboardingTastePage() {
           borderTop: '1px solid',
           borderColor: 'divider',
           pt: 3,
+          pb: 'env(safe-area-inset-bottom)',
         }}
       >
         <Box

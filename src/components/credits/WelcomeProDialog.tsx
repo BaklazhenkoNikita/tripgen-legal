@@ -16,9 +16,16 @@ interface Props {
   onClose: () => void;
   /** True once the webhook has confirmed Pro server-side. */
   confirmed: boolean;
+  /**
+   * Origin of the upgrade flow, echoed from the Stripe success_url
+   * `?from=...`. When this starts with `mcp_` we append a "head back to your
+   * AI assistant" line so users who came from Claude/ChatGPT know where to
+   * pick up.
+   */
+  from?: string;
 }
 
-export function WelcomeProDialog({ open, onClose, confirmed }: Props) {
+export function WelcomeProDialog({ open, onClose, confirmed, from }: Props) {
   // Show a brief "Confirming…" state until the webhook lands. After 8s of no
   // confirmation we celebrate anyway — webhooks usually arrive in <2s, but we
   // shouldn't leave the user staring at a spinner if relays lag.
@@ -50,9 +57,17 @@ export function WelcomeProDialog({ open, onClose, confirmed }: Props) {
         }),
       }}
     >
-      {showCelebration ? <Celebration onClose={onClose} /> : <Confirming />}
+      {showCelebration ? <Celebration onClose={onClose} from={from} /> : <Confirming />}
     </MuiDialog>
   );
+}
+
+function mcpHostFromSource(source: string | undefined): string | null {
+  if (!source || !source.startsWith('mcp_')) return null;
+  const host = source.slice('mcp_'.length).toLowerCase();
+  if (host === 'claude') return 'Claude';
+  if (host === 'chatgpt') return 'ChatGPT';
+  return 'your AI assistant';
 }
 
 function Confirming() {
@@ -76,7 +91,8 @@ function Confirming() {
   );
 }
 
-function Celebration({ onClose }: { onClose: () => void }) {
+function Celebration({ onClose, from }: { onClose: () => void; from?: string }) {
+  const mcpHost = mcpHostFromSource(from);
   const PERKS = [
     {
       icon: <InfinityIcon size={16} />,
@@ -102,8 +118,8 @@ function Celebration({ onClose }: { onClose: () => void }) {
           position: 'relative',
           backgroundImage:
             t.palette.mode === 'dark'
-              ? `linear-gradient(135deg, ${alpha('#f5b301', 0.22)}, ${alpha('#d97706', 0.12)} 60%, ${t.palette.background.paper})`
-              : `linear-gradient(135deg, ${alpha('#fef3c7', 0.95)}, ${alpha('#ffedd5', 0.7)} 55%, ${t.palette.background.paper})`,
+              ? `linear-gradient(135deg, ${alpha(t.palette.warning.main, 0.22)}, ${alpha(t.palette.warning.dark, 0.12)} 60%, ${t.palette.background.paper})`
+              : `linear-gradient(135deg, ${alpha(t.palette.warning.light, 0.5)}, ${alpha(t.palette.warning.main, 0.18)} 55%, ${t.palette.background.paper})`,
           px: 4,
           pt: 4.5,
           pb: 3,
@@ -122,18 +138,18 @@ function Celebration({ onClose }: { onClose: () => void }) {
           initial={{ scale: 0.4, rotate: -20, opacity: 0 }}
           animate={{ scale: 1, rotate: 0, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 240, damping: 16 }}
-          sx={{
+          sx={(t) => ({
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             width: 72,
             height: 72,
             borderRadius: 999,
-            backgroundImage: `linear-gradient(135deg, #fbbf24, #d97706)`,
-            color: '#fff',
-            boxShadow: '0 14px 30px -10px rgba(217,119,6,0.55)',
+            backgroundImage: `linear-gradient(135deg, ${t.palette.warning.light}, ${t.palette.warning.dark})`,
+            color: t.palette.warning.contrastText,
+            boxShadow: `0 14px 30px -10px ${alpha(t.palette.warning.dark, 0.55)}`,
             mb: 2,
-          }}
+          })}
         >
           <Crown size={34} strokeWidth={2.25} />
         </Box>
@@ -153,6 +169,18 @@ function Celebration({ onClose }: { onClose: () => void }) {
         <Typography sx={{ mt: 0.5, fontSize: 14, color: 'text.secondary' }}>
           Your subscription is active. Plan without limits.
         </Typography>
+        {mcpHost ? (
+          <Typography
+            sx={{
+              mt: 1.5,
+              fontSize: 13,
+              color: 'text.secondary',
+              fontWeight: 500,
+            }}
+          >
+            Head back to {mcpHost} — your next request will be Pro.
+          </Typography>
+        ) : null}
       </Box>
 
       <Stack spacing={1.25} sx={{ px: 3, pt: 2.5 }}>
@@ -167,9 +195,9 @@ function Celebration({ onClose }: { onClose: () => void }) {
                 width: 28,
                 height: 28,
                 borderRadius: 999,
-                color: t.palette.mode === 'dark' ? '#fcd34d' : '#92400e',
-                bgcolor: alpha('#f5b301', 0.18),
-                border: `1px solid ${alpha('#f5b301', 0.4)}`,
+                color: t.palette.mode === 'dark' ? t.palette.warning.light : t.palette.warning.dark,
+                bgcolor: alpha(t.palette.warning.main, 0.18),
+                border: `1px solid ${alpha(t.palette.warning.main, 0.4)}`,
                 flexShrink: 0,
               })}
             >
@@ -217,7 +245,7 @@ function Sparkle({
         position: 'absolute',
         top,
         left,
-        color: '#f5b301',
+        color: 'var(--tg-palette-warning-main)',
         pointerEvents: 'none',
       }}
     >

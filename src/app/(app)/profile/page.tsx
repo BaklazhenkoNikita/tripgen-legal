@@ -46,6 +46,7 @@ function ProfilePageInner() {
   const [editingPrefs, setEditingPrefs] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [welcomeOpen, setWelcomeOpen] = useState(false);
+  const [welcomeFrom, setWelcomeFrom] = useState<string | undefined>();
 
   // Land here from Stripe Checkout success redirect (`/profile?upgraded=1`).
   // Open the welcome dialog and start polling credits — the Stripe redirect
@@ -57,6 +58,7 @@ function ProfilePageInner() {
     if (searchParams.get('upgraded') !== '1') return;
     upgradeHandled.current = true;
     setWelcomeOpen(true);
+    setWelcomeFrom(searchParams.get('from') ?? undefined);
     router.replace('/profile');
     let attempts = 0;
     const tick = () => {
@@ -135,7 +137,7 @@ function ProfilePageInner() {
           border: '1px solid',
           borderColor: 'divider',
           backgroundImage: (t) =>
-            `linear-gradient(135deg, ${alpha(t.palette.primary.main, 0.12)}, ${t.palette.background.paper}, ${t.palette.action.hover})`,
+            `linear-gradient(135deg, ${alpha(t.palette.primary.main, t.palette.mode === 'dark' ? 0.18 : 0.10)}, ${t.palette.background.paper})`,
           p: 3,
         }}
       >
@@ -154,7 +156,7 @@ function ProfilePageInner() {
                 fontFamily: 'var(--font-display, inherit)',
                 fontSize: '1.25rem',
                 fontWeight: 600,
-                color: 'common.white',
+                color: 'primary.contrastText',
                 boxShadow: 'var(--tg-shadow-card)',
               }}
             >
@@ -454,6 +456,7 @@ function ProfilePageInner() {
       <WelcomeProDialog
         open={welcomeOpen}
         confirmed={subscription?.credits?.isPro ?? false}
+        from={welcomeFrom}
         onClose={() => setWelcomeOpen(false)}
       />
     </Box>
@@ -561,7 +564,7 @@ function SubscriptionSection() {
               py: 0.75,
               fontSize: 14,
               fontWeight: 600,
-              color: 'common.white',
+              color: 'primary.contrastText',
               textDecoration: 'none',
               '&:hover': { opacity: 0.9 },
             }}

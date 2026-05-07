@@ -3,6 +3,8 @@
  * where the user left off. Per-trip drawer chats use a separate key
  * (`tripgen_trip_chat_<tripId>`) — see ChatDrawer.tsx.
  */
+import { useSyncExternalStore } from 'react';
+
 export const LAST_CHAT_STORAGE_KEY = 'tripgen_last_chat_id';
 const LAST_CHAT_EVENT = 'tripgen:last-chat-change';
 
@@ -39,4 +41,13 @@ export function subscribeLastChatId(cb: () => void): () => void {
     window.removeEventListener('storage', handler);
     window.removeEventListener(LAST_CHAT_EVENT, handler);
   };
+}
+
+const getServerLastChatId = (): string | null => null;
+
+/** Reactive read of the last-viewed chat id. Updates synchronously in the
+ *  same tab when `writeLastChatId` fires the custom event, and across tabs
+ *  via the native `storage` event. SSR-safe (returns null on the server). */
+export function useLastChatId(): string | null {
+  return useSyncExternalStore(subscribeLastChatId, readLastChatId, getServerLastChatId);
 }

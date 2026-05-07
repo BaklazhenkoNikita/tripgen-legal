@@ -25,6 +25,7 @@ interface Props {
   focusPin?: { lat: number; lng: number } | null;
   onFullscreenToggle?: () => void;
   fullscreen?: boolean;
+  clusterThreshold?: number;
 }
 
 // Legend keys map to t.palette.category.<key> at render time so the dot color
@@ -40,6 +41,7 @@ export function HomeMap({
   focusPin,
   onFullscreenToggle,
   fullscreen,
+  clusterThreshold,
 }: Props) {
   return (
     <Box
@@ -61,6 +63,7 @@ export function HomeMap({
         focusPin={focusPin}
         onFullscreenToggle={onFullscreenToggle}
         fullscreen={fullscreen}
+        clusterThreshold={clusterThreshold}
       />
 
       {onClose ? (

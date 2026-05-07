@@ -330,6 +330,7 @@ export function DestinationView({ city }: Props) {
           onPinClick={handlePinClick}
           visible={mapVisible}
           onClose={() => setMapVisible(false)}
+          clusterThreshold={Number.POSITIVE_INFINITY}
         />
       </Box>
 

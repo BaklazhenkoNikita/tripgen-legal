@@ -91,14 +91,17 @@ export function Photo({
       )}
       {gradient ? (
         <Box
-          sx={{
+          sx={(t) => ({
             pointerEvents: 'none',
             position: 'absolute',
             insetInline: 0,
             bottom: 0,
             height: '50%',
-            background: 'linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0) 60%)',
-          }}
+            background:
+              t.palette.mode === 'dark'
+                ? 'linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0) 60%)'
+                : 'linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0) 60%)',
+          })}
         />
       ) : null}
     </Box>

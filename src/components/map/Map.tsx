@@ -50,6 +50,10 @@ interface Props {
   focusPin?: { lat: number; lng: number } | null;
   onFullscreenToggle?: () => void;
   fullscreen?: boolean;
+  // Override the pin-count threshold above which clustering kicks in.
+  // Pass Number.POSITIVE_INFINITY to disable clustering entirely (every
+  // pin renders at its exact lat/lng, no centroid teleport on zoom).
+  clusterThreshold?: number;
 }
 
 type LngLatBounds = [[number, number], [number, number]] | null;
@@ -82,6 +86,7 @@ export default function MapComponent({
   focusPin,
   onFullscreenToggle,
   fullscreen,
+  clusterThreshold,
 }: Props) {
   const { mode, systemMode } = useColorScheme();
   const theme: 'light' | 'dark' =
@@ -124,7 +129,7 @@ export default function MapComponent({
   }, [pins]);
 
   const dayGroups = useMemo(() => groupPinsByDay(pins), [pins]);
-  const useClustering = pins.length >= CLUSTER_THRESHOLD;
+  const useClustering = pins.length >= (clusterThreshold ?? CLUSTER_THRESHOLD);
 
   // ───────────────────────────────────────────────────── Map lifecycle ──
   // Single-shot init. Style swap on theme change happens in a separate
@@ -333,22 +338,27 @@ export default function MapComponent({
           const [lng, lat] = (f.geometry as Point).coordinates as [number, number];
 
           if ('cluster' in props && props.cluster) {
-            const id = `cluster-${props.cluster_id}`;
-            nextIds.add(id);
+            // Stable identity from the sorted leaf pin IDs — supercluster's
+            // cluster_id is reassigned at each getClusters() call, so keying
+            // off it tears down + recreates the marker on every zoom even
+            // when membership is unchanged.
             const leaves = clusterIndex.getLeaves(
               props.cluster_id,
               Infinity,
               0,
             );
-            const leafIds = new Set(
-              leaves.map((l) => (l.properties as PointProps).pinId),
-            );
-            clusterLeavesRef.current.set(id, leafIds);
+            const sortedLeafIds = leaves
+              .map((l) => (l.properties as PointProps).pinId)
+              .sort();
+            const id = `cluster-${sortedLeafIds.join('|')}`;
+            nextIds.add(id);
+            const leafIdSet = new Set(sortedLeafIds);
+            clusterLeavesRef.current.set(id, leafIdSet);
             const containsActive =
-              activeId != null && leafIds.has(activeId);
+              activeId != null && leafIdSet.has(activeId);
             const existing = markersRef.current.get(id);
             if (existing) {
-              existing.setLngLat([lng, lat]);
+              tweenMarkerLngLat(existing, [lng, lat]);
               applyClusterActiveClass(existing.getElement(), containsActive);
               continue;
             }
@@ -590,10 +600,14 @@ function buildPinEl(
   el.className = selected ? 'tg-pin tg-pin--selected' : 'tg-pin';
   el.style.setProperty('--tg-pin-color', color);
   el.title = pin.title;
+  // Inner wrapper carries our hover/selected scale transform so the
+  // root's transform stays exclusively under maplibre's control.
   el.innerHTML =
+    `<div class="tg-pin__inner">` +
     `<span class="tg-pin__halo" aria-hidden="true"></span>` +
     `<span class="tg-pin__core">${inner}</span>` +
-    `<span class="tg-pin__tail" aria-hidden="true"></span>`;
+    `<span class="tg-pin__tail" aria-hidden="true"></span>` +
+    `</div>`;
   return el;
 }
 
@@ -606,7 +620,12 @@ function buildClusterEl(count: number, theme: 'light' | 'dark'): HTMLDivElement 
   el.style.width = `${size}px`;
   el.style.height = `${size}px`;
   el.style.fontSize = `${fontSize}px`;
-  el.innerHTML = `<span class="tg-cluster__count">${count}</span>`;
+  // Inner bubble carries the visual styling + hover/active scale so the
+  // root's transform stays exclusively under maplibre's control.
+  el.innerHTML =
+    `<div class="tg-cluster__bubble">` +
+    `<span class="tg-cluster__count">${count}</span>` +
+    `</div>`;
   return el;
 }
 
@@ -618,6 +637,35 @@ function applySelectedClass(el: HTMLElement, selected: boolean): void {
 function applyClusterActiveClass(el: HTMLElement, active: boolean): void {
   if (active) el.classList.add('tg-cluster--active');
   else el.classList.remove('tg-cluster--active');
+}
+
+// Smoothly interpolate a reused cluster marker's centroid. Supercluster
+// recomputes geometric centroids per zoom; without a tween, persistent
+// clusters teleport on zoomend.
+function tweenMarkerLngLat(
+  marker: maplibregl.Marker,
+  to: [number, number],
+  durationMs = 250,
+): void {
+  const from = marker.getLngLat();
+  if (
+    Math.abs(from.lng - to[0]) < 1e-6 &&
+    Math.abs(from.lat - to[1]) < 1e-6
+  ) {
+    marker.setLngLat(to);
+    return;
+  }
+  const start = performance.now();
+  const step = (now: number) => {
+    const t = Math.min(1, (now - start) / durationMs);
+    const e = 1 - Math.pow(1 - t, 3); // ease-out cubic
+    marker.setLngLat([
+      from.lng + (to[0] - from.lng) * e,
+      from.lat + (to[1] - from.lat) * e,
+    ]);
+    if (t < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
 }
 
 function groupPinsByDay(pins: MapPinData[]): DayGroup[] {

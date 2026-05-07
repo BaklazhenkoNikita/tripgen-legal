@@ -45,9 +45,9 @@ const darkSecondaryDark = '#00A699';
 const darkSecondaryLight = '#5DE5D4';
 const darkText = '#F3EFE9';
 const darkMuted = '#B8AFA6';
-const darkSurface = '#1F1A16';
-const darkBackground = '#0A0807';
-const darkDivider = '#2B2724';
+const darkSurface = '#221C18';
+const darkBackground = '#15110E';
+const darkDivider = '#332C27';
 const darkHighlight = '#FFB44C';
 
 // Dark semantic colors — brightened so they stay legible on darkBackground.
@@ -306,13 +306,25 @@ export const theme = extendTheme({
       },
     },
     MuiAppBar: {
+      defaultProps: { color: 'default' },
       styleOverrides: {
         root: ({ theme: t }) => ({
-          backgroundColor: alpha(t.palette.background.paper, 0.92),
+          backgroundColor: alpha(t.palette.background.paper, 0.85),
           color: t.palette.text.primary,
           boxShadow: tgShadow(t, 'appBar'),
           backdropFilter: 'blur(18px)',
         }),
+        colorPrimary: ({ theme: t }) => ({
+          backgroundColor: alpha(t.palette.background.paper, 0.85),
+          color: t.palette.text.primary,
+        }),
+        colorDefault: ({ theme: t }) => ({
+          backgroundColor: alpha(t.palette.background.paper, 0.85),
+          color: t.palette.text.primary,
+        }),
+        colorTransparent: {
+          backgroundColor: 'transparent',
+        },
       },
     },
     MuiDivider: {

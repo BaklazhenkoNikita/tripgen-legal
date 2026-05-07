@@ -67,6 +67,19 @@ const nextConfig: NextConfig = {
       { protocol: 'http', hostname: '**' },
     ],
   },
+  // Next 15 ships with `staleTimes.dynamic = 0`, which discards the client
+  // Router Cache for dynamic routes immediately and forces a fresh RSC
+  // roundtrip on every back/forward or revisit. Restore the Next 14 defaults
+  // so /trip/[id], /chat/[id], /explore/[slug] feel snappy on revisit. Live
+  // data still flows through React Query (which has its own invalidation),
+  // and the trip RSC payload is shell-only after the Suspense refactor in
+  // src/app/(app)/trip/[searchId]/page.tsx.
+  experimental: {
+    staleTimes: {
+      dynamic: 30,
+      static: 180,
+    },
+  },
 };
 
 // Sentry wrap is a no-op when neither SENTRY_DSN nor SENTRY_AUTH_TOKEN are set;

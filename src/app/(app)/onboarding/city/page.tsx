@@ -33,112 +33,132 @@ export default function OnboardingCityPage() {
   };
 
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 512, px: { xs: 2, sm: 3 }, py: 6 }}>
-      <ProgressDots step={1} />
-      <Typography component="h1" sx={{ mt: 2, fontSize: '1.5rem', fontWeight: 700, color: 'text.primary' }}>
-        Where do you most want to go?
-      </Typography>
-      <Typography sx={{ mt: 0.75, fontSize: 14, color: 'text.secondary' }}>
-        We&apos;ll start exploring here. You can switch cities anytime.
-      </Typography>
+    <Box
+      sx={{
+        mx: 'auto',
+        display: 'flex',
+        minHeight: 'calc(100vh - 4rem)',
+        maxWidth: 512,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        px: { xs: 2, sm: 3 },
+        py: 6,
+      }}
+    >
+      <Box>
+        <ProgressDots step={1} />
+        <Typography component="h1" sx={{ mt: 2, fontSize: '1.5rem', fontWeight: 700, color: 'text.primary' }}>
+          Where do you most want to go?
+        </Typography>
+        <Typography sx={{ mt: 0.75, fontSize: 14, color: 'text.secondary' }}>
+          We&apos;ll start exploring here. You can switch cities anytime.
+        </Typography>
 
-      <Box sx={{ mt: 3 }}>
+        <Box sx={{ mt: 3 }}>
+          <Box
+            component="input"
+            type="text"
+            autoFocus
+            value={query}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+            placeholder="e.g. Tokyo, Lisbon, Mexico City…"
+            sx={{
+              width: '100%',
+              borderRadius: 1.5,
+              border: '1px solid',
+              borderColor: 'divider',
+              px: 2,
+              py: 1.5,
+              fontSize: 16,
+              bgcolor: 'background.paper',
+              color: 'text.primary',
+              '&:focus': {
+                outline: 'none',
+                borderColor: 'primary.main',
+                boxShadow: (t) => `0 0 0 1px ${t.palette.primary.main}`,
+              },
+            }}
+          />
+          {city ? (
+            <Typography sx={{ mt: 1, fontSize: 12, color: 'text.secondary' }}>
+              Currently set: <Box component="span" sx={{ fontWeight: 600, color: 'text.primary' }}>{city}</Box>
+            </Typography>
+          ) : null}
+        </Box>
+
         <Box
-          component="input"
-          type="text"
-          autoFocus
-          value={query}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
-          placeholder="e.g. Tokyo, Lisbon, Mexico City…"
+          component="ul"
           sx={{
-            width: '100%',
+            mt: 2,
+            maxHeight: 320,
+            overflowY: 'auto',
             borderRadius: 1.5,
             border: '1px solid',
             borderColor: 'divider',
-            px: 2,
-            py: 1.5,
-            fontSize: 16,
             bgcolor: 'background.paper',
-            color: 'text.primary',
-            '&:focus': {
-              outline: 'none',
-              borderColor: 'primary.main',
-              boxShadow: (t) => `0 0 0 1px ${t.palette.primary.main}`,
-            },
+            listStyle: 'none',
+            p: 0,
+            m: 0,
           }}
-        />
-        {city ? (
-          <Typography sx={{ mt: 1, fontSize: 12, color: 'text.secondary' }}>
-            Currently set: <Box component="span" sx={{ fontWeight: 600, color: 'text.primary' }}>{city}</Box>
-          </Typography>
-        ) : null}
+        >
+          {isLoading && debounced ? (
+            <Box component="li" sx={{ px: 2, py: 1.5, fontSize: 14, color: 'text.disabled' }}>Searching…</Box>
+          ) : results.length === 0 && debounced.length >= 2 ? (
+            <Box component="li" sx={{ px: 2, py: 1.5, fontSize: 14, color: 'text.disabled' }}>
+              No matches. Type a different city name.
+            </Box>
+          ) : (
+            results.map((r) => {
+              const cityName = r.city ?? r.name ?? '';
+              if (!cityName) return null;
+              return (
+                <Box
+                  component="li"
+                  key={cityName}
+                  sx={{
+                    borderTop: '1px solid',
+                    borderColor: 'divider',
+                    '&:first-of-type': { borderTop: 'none' },
+                  }}
+                >
+                  <Box
+                    component="button"
+                    type="button"
+                    onClick={() => select(cityName)}
+                    sx={{
+                      display: 'flex',
+                      width: '100%',
+                      alignItems: 'baseline',
+                      justifyContent: 'space-between',
+                      px: 2,
+                      py: 1.25,
+                      textAlign: 'left',
+                      border: 'none',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: 'action.hover' },
+                    }}
+                  >
+                    <Box component="span" sx={{ fontWeight: 500, color: 'text.primary' }}>{cityName}</Box>
+                    {r.country ? (
+                      <Box component="span" sx={{ fontSize: 12, color: 'text.secondary' }}>{r.country}</Box>
+                    ) : null}
+                  </Box>
+                </Box>
+              );
+            })
+          )}
+        </Box>
       </Box>
 
       <Box
-        component="ul"
         sx={{
-          mt: 2,
-          maxHeight: 320,
-          overflowY: 'auto',
-          borderRadius: 1.5,
-          border: '1px solid',
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
-          listStyle: 'none',
-          p: 0,
-          m: 0,
+          mt: 3,
+          display: 'flex',
+          justifyContent: 'space-between',
+          pb: 'env(safe-area-inset-bottom)',
         }}
       >
-        {isLoading && debounced ? (
-          <Box component="li" sx={{ px: 2, py: 1.5, fontSize: 14, color: 'text.disabled' }}>Searching…</Box>
-        ) : results.length === 0 && debounced.length >= 2 ? (
-          <Box component="li" sx={{ px: 2, py: 1.5, fontSize: 14, color: 'text.disabled' }}>
-            No matches. Type a different city name.
-          </Box>
-        ) : (
-          results.map((r) => {
-            const cityName = r.city ?? r.name ?? '';
-            if (!cityName) return null;
-            return (
-              <Box
-                component="li"
-                key={cityName}
-                sx={{
-                  borderTop: '1px solid',
-                  borderColor: 'divider',
-                  '&:first-of-type': { borderTop: 'none' },
-                }}
-              >
-                <Box
-                  component="button"
-                  type="button"
-                  onClick={() => select(cityName)}
-                  sx={{
-                    display: 'flex',
-                    width: '100%',
-                    alignItems: 'baseline',
-                    justifyContent: 'space-between',
-                    px: 2,
-                    py: 1.25,
-                    textAlign: 'left',
-                    border: 'none',
-                    background: 'transparent',
-                    cursor: 'pointer',
-                    '&:hover': { bgcolor: 'action.hover' },
-                  }}
-                >
-                  <Box component="span" sx={{ fontWeight: 500, color: 'text.primary' }}>{cityName}</Box>
-                  {r.country ? (
-                    <Box component="span" sx={{ fontSize: 12, color: 'text.secondary' }}>{r.country}</Box>
-                  ) : null}
-                </Box>
-              </Box>
-            );
-          })
-        )}
-      </Box>
-
-      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
         <Box
           component={Link}
           href="/onboarding"

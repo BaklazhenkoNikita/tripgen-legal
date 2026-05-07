@@ -3,7 +3,7 @@
 import Link, { useLinkStatus } from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { SignedIn, SignedOut, UserButton, useClerk } from '@clerk/nextjs';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown, Menu as MenuIcon, Sparkles, X } from 'lucide-react';
 import AppBar from '@mui/material/AppBar';
@@ -22,6 +22,8 @@ import { Badge } from '@/components/ui/Badge';
 import { ThemeToggle, ThemeTogglePopover } from '@/components/ui/ThemeToggle';
 import { tgShadow } from '@/theme/shadows';
 import { useSubscriptionOptional } from '@/contexts/SubscriptionContext';
+import { useActiveTripOptional } from '@/contexts/ActiveTripContext';
+import { useLastChatId } from '@/components/chat/lastChatStorage';
 
 const discoverLinks = [
   { href: '/community', label: 'Guides' },
@@ -31,15 +33,16 @@ const discoverLinks = [
 
 const DISCOVER_PATH_PREFIXES = ['/community', '/blog', '/faq'];
 
-// Stable, SSR-safe hrefs for the navbar pills. The destination pages
-// (/trip, /explore, /chat) handle redirecting to the canonical per-user
-// path so the link element doesn't flip mid-navigation and cancel the
-// in-flight transition.
-const primaryLinks = [
-  { href: '/trip', match: '/trip', label: 'Trip' },
-  { href: '/explore', match: '/explore', label: 'Explore' },
-  { href: '/chat', match: '/chat', label: 'Chat' },
-];
+// Match prefixes for the active-state pill highlighting. Hrefs are computed
+// per-render in the component below so the pills point directly at the
+// user's canonical destination (/trip/{activeTripId}, /chat/{lastChatId})
+// rather than the index pages that just redirect — skipping the second hop
+// makes the click feel instant.
+const PRIMARY_MATCHES = {
+  trip: '/trip',
+  explore: '/explore',
+  chat: '/chat',
+} as const;
 
 export function Navigation() {
   const pathname = usePathname() ?? '/';
@@ -51,6 +54,25 @@ export function Navigation() {
   const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   const isPro = useSubscriptionOptional()?.credits?.isPro ?? false;
+  const activeTripId = useActiveTripOptional()?.activeTripId ?? null;
+  const lastChatId = useLastChatId();
+
+  const primaryLinks = useMemo(
+    () => [
+      {
+        href: activeTripId ? `/trip/${activeTripId}` : '/trip',
+        match: PRIMARY_MATCHES.trip,
+        label: 'Trip',
+      },
+      { href: '/explore', match: PRIMARY_MATCHES.explore, label: 'Explore' },
+      {
+        href: lastChatId ? `/chat/${lastChatId}` : '/chat',
+        match: PRIMARY_MATCHES.chat,
+        label: 'Chat',
+      },
+    ],
+    [activeTripId, lastChatId],
+  );
 
   useEffect(() => {
     if (pendingHref && pathname.startsWith(pendingHref.split('?')[0])) {
@@ -58,16 +80,17 @@ export function Navigation() {
     }
   }, [pathname, pendingHref]);
 
-  // Warm the router cache for the canonical pill destinations + discover
-  // links as soon as the navbar mounts. `<Link prefetch>` only fires on
-  // viewport intersection, which on a cold marketing → app click is too late
-  // — the user pays the full RSC + bundle fetch on the first hop. Calling
-  // router.prefetch on mount kicks the prefetch off immediately so by the
-  // time they click the destination's loading.tsx + page chunk are cached.
+  // Warm the router cache for every pill destination (including the
+  // dynamic /trip/{id} and /chat/{id} variants). `<Link prefetch>` only
+  // fires on viewport intersection, which on a cold marketing → app click
+  // is too late — the user pays the full RSC + bundle fetch on the first
+  // hop. Calling router.prefetch on mount kicks the prefetch off
+  // immediately so by the time they click the destination's loading.tsx +
+  // page chunk are cached.
   useEffect(() => {
     for (const link of primaryLinks) router.prefetch(link.href);
     for (const link of discoverLinks) router.prefetch(link.href);
-  }, [router]);
+  }, [router, primaryLinks]);
 
   const isActiveSection = (match: string, href: string) =>
     pendingHref === href || pathname.startsWith(match);

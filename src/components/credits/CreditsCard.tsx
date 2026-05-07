@@ -21,12 +21,14 @@ const cardSx = {
 const proCardSx = {
   borderRadius: 2,
   border: '1px solid',
-  borderColor: (t: { palette: { mode: string } }) =>
-    t.palette.mode === 'dark' ? alpha('#f5b301', 0.32) : alpha('#f5b301', 0.45),
-  backgroundImage: (t: { palette: { mode: string; background: { paper: string } } }) =>
+  borderColor: (t: { palette: { mode: string; warning: { main: string } } }) =>
     t.palette.mode === 'dark'
-      ? `linear-gradient(135deg, ${alpha('#f5b301', 0.12)}, ${t.palette.background.paper} 60%)`
-      : `linear-gradient(135deg, ${alpha('#fef3c7', 0.7)}, ${alpha('#ffedd5', 0.5)} 50%, ${t.palette.background.paper})`,
+      ? alpha((t.palette.warning as { main: string }).main, 0.32)
+      : alpha((t.palette.warning as { main: string }).main, 0.45),
+  backgroundImage: (t: { palette: { mode: string; background: { paper: string }; warning: { main: string; light: string } } }) =>
+    t.palette.mode === 'dark'
+      ? `linear-gradient(135deg, ${alpha(t.palette.warning.main, 0.14)}, ${t.palette.background.paper} 60%)`
+      : `linear-gradient(135deg, ${alpha(t.palette.warning.light, 0.35)}, ${alpha(t.palette.warning.main, 0.10)} 50%, ${t.palette.background.paper})`,
   p: 2.5,
 } as const;
 
@@ -68,14 +70,14 @@ export function CreditsCard() {
       <Box sx={proCardSx}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Sparkles size={14} aria-hidden style={{ color: '#d97706' }} />
+            <Sparkles size={14} aria-hidden style={{ color: 'var(--tg-palette-warning-dark)' }} />
             <Typography
               sx={{
                 fontSize: 11,
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '0.04em',
-                color: (t) => (t.palette.mode === 'dark' ? '#fcd34d' : '#92400e'),
+                color: (t) => (t.palette.mode === 'dark' ? t.palette.warning.light : t.palette.warning.dark),
               }}
             >
               AI credits

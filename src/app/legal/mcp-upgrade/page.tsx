@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Box from '@mui/material/Box';
@@ -5,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import { Navigation } from '@/components/layout/Navigation';
 import { Footer } from '@/components/layout/Footer';
 import { McpUpgradeBadges } from './McpUpgradeBadges';
+import { McpUpgradeCheckout } from './McpUpgradeCheckout';
 
 export const metadata: Metadata = {
   title: 'Periplo — Unlock unlimited trips',
@@ -128,6 +130,10 @@ export default function McpUpgradePage() {
           them with travel partners.
         </Typography>
 
+        <Suspense fallback={<Box sx={{ height: 280, mb: 3 }} />}>
+          <McpUpgradeCheckout />
+        </Suspense>
+
         <Box
           component="section"
           sx={{
@@ -140,6 +146,19 @@ export default function McpUpgradePage() {
             boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
           }}
         >
+          <Typography
+            component="h2"
+            sx={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: 'text.disabled',
+              mb: 2,
+            }}
+          >
+            What you unlock
+          </Typography>
           <Box
             component="ul"
             sx={{
@@ -202,20 +221,35 @@ export default function McpUpgradePage() {
               </Box>
             ))}
           </Box>
+        </Box>
 
-          <McpUpgradeBadges />
-
+        <Box
+          component="section"
+          sx={{
+            bgcolor: 'background.paper',
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 2.5,
+            p: { xs: 2.5, md: 3.5 },
+            mb: 2.5,
+          }}
+        >
           <Typography
-            component="p"
+            component="h2"
             sx={{
-              fontSize: '0.8125rem',
-              color: 'text.disabled',
-              mt: 3,
+              fontSize: '0.9375rem',
+              fontWeight: 600,
+              color: 'text.primary',
+              mb: 0.5,
             }}
           >
-            Subscriptions are managed in-app via the App Store / Google Play.
-            Free credits regenerate every 4 hours &mdash; feel free to come back.
+            On iPhone or Android?
           </Typography>
+          <Typography sx={{ fontSize: '0.875rem', color: 'text.secondary', mb: 1.5 }}>
+            Subscribe inside the Periplo mobile app — same Pro perks, billed
+            through the App Store / Google Play.
+          </Typography>
+          <McpUpgradeBadges />
         </Box>
 
         <Box

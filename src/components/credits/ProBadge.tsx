@@ -21,27 +21,23 @@ export function ProBadge({ size = 'md', children = 'Pro' }: Props) {
   return (
     <Box
       component="span"
-      sx={(t) => {
-        const gold = '#f5b301';
-        const goldDeep = '#d97706';
-        return {
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: s.gap,
-          px: s.px,
-          py: s.py,
-          fontSize: s.fontSize,
-          fontWeight: 600,
-          lineHeight: 1,
-          letterSpacing: '0.02em',
-          borderRadius: 999,
-          color: t.palette.mode === 'dark' ? '#fde68a' : '#7c2d12',
-          backgroundImage: `linear-gradient(135deg, ${alpha(gold, 0.28)}, ${alpha(goldDeep, 0.18)})`,
-          border: `1px solid ${alpha(gold, 0.45)}`,
-          boxShadow: `0 1px 0 ${alpha('#fff', 0.4)} inset, 0 0 0 1px ${alpha(gold, 0.08)}`,
-          whiteSpace: 'nowrap',
-        };
-      }}
+      sx={(t) => ({
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: s.gap,
+        px: s.px,
+        py: s.py,
+        fontSize: s.fontSize,
+        fontWeight: 600,
+        lineHeight: 1,
+        letterSpacing: '0.02em',
+        borderRadius: 999,
+        color: t.palette.mode === 'dark' ? t.palette.warning.light : t.palette.warning.dark,
+        backgroundImage: `linear-gradient(135deg, ${alpha(t.palette.warning.main, 0.28)}, ${alpha(t.palette.warning.dark, 0.18)})`,
+        border: `1px solid ${alpha(t.palette.warning.main, 0.45)}`,
+        boxShadow: `0 1px 0 ${alpha(t.palette.common.white, 0.4)} inset, 0 0 0 1px ${alpha(t.palette.warning.main, 0.08)}`,
+        whiteSpace: 'nowrap',
+      })}
     >
       <Crown size={s.iconSize} aria-hidden style={{ flexShrink: 0 }} />
       {children}

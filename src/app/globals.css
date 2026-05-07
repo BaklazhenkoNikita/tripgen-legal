@@ -56,15 +56,25 @@ body {
 /* attached to the map via maplibregl.Marker({ element }).            */
 /* ------------------------------------------------------------------ */
 .tg-pin {
+  /* Maplibre is the only writer of `transform` on this element — it
+   * sets style.transform to translate(Xpx, Ypx) every animation frame to
+   * position the marker. Do NOT add `transition: transform` or scale
+   * transforms here, or the pin will lag behind the map during pan/zoom.
+   * Hover / selected scale animations live on .tg-pin__inner. */
   position: absolute;
   width: 36px;
   height: 44px;
   display: block;
   cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.tg-pin__inner {
+  position: absolute;
+  inset: 0;
   transform-origin: 50% 90%;
   transition: transform 180ms ease-out, filter 180ms ease-out;
   will-change: transform;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .tg-pin__halo {
@@ -135,7 +145,7 @@ body {
   color: #fff;
 }
 
-.tg-pin:hover { transform: translateY(-1px) scale(1.04); }
+.tg-pin:hover .tg-pin__inner { transform: translateY(-1px) scale(1.04); }
 .tg-pin:hover .tg-pin__halo {
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.12),
@@ -148,9 +158,9 @@ body {
     0 10px 22px rgba(0, 0, 0, 0.55);
 }
 
-.tg-pin--selected {
+.tg-pin--selected { z-index: 1000; }
+.tg-pin--selected .tg-pin__inner {
   transform: translateY(-3px) scale(1.12);
-  z-index: 1000;
 }
 .tg-pin--selected .tg-pin__halo {
   background: var(--tg-palette-background-paper);
@@ -189,7 +199,18 @@ body {
  * background/color use auto-switching palette vars; only the border
  * tint and shadow differ per mode. Shadow is centralised through
  * --tg-shadow-cluster (emitted from theme/MuiCssBaseline). */
+/* Maplibre owns transform on .tg-cluster (positioning). Visual bubble +
+ * hover/active scale live on .tg-cluster__bubble so transitions don't
+ * fight maplibre's per-frame transform updates. */
 .tg-cluster {
+  display: block;
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.tg-cluster__bubble {
+  width: 100%;
+  height: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -197,22 +218,20 @@ body {
   background: var(--tg-palette-background-paper);
   color: var(--tg-palette-text-primary);
   font-weight: 700;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   border: 2px solid rgba(255, 255, 255, 0.95);
   box-shadow: var(--tg-shadow-cluster);
   transition: transform 160ms ease-out;
-  cursor: pointer;
 }
-.tg-cluster:hover { transform: scale(1.06); }
-.tg-cluster[data-tg-cluster-theme="dark"],
-[data-tg-color-scheme="dark"] .tg-cluster {
+
+.tg-cluster:hover .tg-cluster__bubble { transform: scale(1.06); }
+.tg-cluster[data-tg-cluster-theme="dark"] .tg-cluster__bubble,
+[data-tg-color-scheme="dark"] .tg-cluster .tg-cluster__bubble {
   border-color: rgba(255, 255, 255, 0.16);
 }
 
 /* Cluster contains the currently-hovered card → light it up so the
  * user sees the affordance even when their target is collapsed. */
-.tg-cluster--active,
-.tg-cluster--active.tg-cluster {
+.tg-cluster--active .tg-cluster__bubble {
   transform: scale(1.12);
   background: var(--tg-palette-primary-main);
   color: #fff;
@@ -221,8 +240,7 @@ body {
     0 0 0 2px var(--tg-palette-primary-main),
     0 6px 18px rgba(0, 0, 0, 0.18);
 }
-[data-tg-color-scheme="dark"] .tg-cluster--active,
-[data-tg-color-scheme="dark"] .tg-cluster--active.tg-cluster {
+[data-tg-color-scheme="dark"] .tg-cluster--active .tg-cluster__bubble {
   box-shadow:
     0 0 0 2px var(--tg-palette-primary-main),
     0 6px 18px rgba(0, 0, 0, 0.6);

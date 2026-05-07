@@ -4,15 +4,13 @@ import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Check, Sparkles, AlertTriangle } from 'lucide-react';
-import { useAuth, useClerk } from '@clerk/nextjs';
 import { toast } from 'sonner';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 import { Button } from '@/components/ui/Button';
 import { useSubscriptionOptional } from '@/contexts/SubscriptionContext';
-
-type Plan = 'monthly' | 'annual';
+import { useStripeCheckout, type Plan } from '@/hooks/useStripeCheckout';
 
 interface PlanCard {
   id: Plan;
@@ -58,56 +56,32 @@ export default function PricingPage() {
 }
 
 function PricingInner() {
-  const { isSignedIn, isLoaded } = useAuth();
-  const { openSignIn } = useClerk();
   const subscription = useSubscriptionOptional();
   const isPro = subscription?.credits?.isPro ?? false;
   const searchParams = useSearchParams();
   const cancelled = searchParams.get('cancelled') === '1';
-  const [pending, setPending] = useState<Plan | 'portal' | null>(null);
-
-  const startCheckout = async (plan: Plan) => {
-    if (!isLoaded) return;
-    if (!isSignedIn) {
-      openSignIn({
-        fallbackRedirectUrl: '/pricing',
-      });
-      return;
-    }
-    setPending(plan);
-    try {
-      const res = await fetch('/api/stripe/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan }),
-      });
-      const data = (await res.json()) as { url?: string; error?: string };
-      if (!res.ok || !data.url) {
-        toast.error(data.error ?? 'Could not start checkout.');
-        setPending(null);
-        return;
-      }
-      window.location.href = data.url;
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not start checkout.');
-      setPending(null);
-    }
-  };
+  const { startCheckout, pending: checkoutPending } = useStripeCheckout({
+    signInReturnTo: '/pricing',
+  });
+  const [portalPending, setPortalPending] = useState(false);
+  const pending: Plan | 'portal' | null = portalPending
+    ? 'portal'
+    : checkoutPending;
 
   const openPortal = async () => {
-    setPending('portal');
+    setPortalPending(true);
     try {
       const res = await fetch('/api/stripe/portal', { method: 'POST' });
       const data = (await res.json()) as { url?: string; error?: string };
       if (!res.ok || !data.url) {
         toast.error(data.error ?? 'Could not open billing portal.');
-        setPending(null);
+        setPortalPending(false);
         return;
       }
       window.location.href = data.url;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not open billing portal.');
-      setPending(null);
+      setPortalPending(false);
     }
   };
 
