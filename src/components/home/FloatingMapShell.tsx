@@ -48,6 +48,16 @@ export function FloatingMapShell({
   const [previewItemId, setPreviewItemId] = useState<string | null>(null);
   const [focusPin, setFocusPin] = useState<{ lat: number; lng: number } | null>(null);
   const stashedSize = useRef<Size | null>(null);
+  // Fire once per mount, the first time the map is visible with pins. Lets
+  // users land on a concrete first activity without overriding any later
+  // actions (filter changes, card clicks, day toggles).
+  const didInitialFocus = useRef(false);
+  useEffect(() => {
+    if (didInitialFocus.current || !visible || pins.length === 0) return;
+    didInitialFocus.current = true;
+    const first = pins[0];
+    setFocusPin({ lat: first.lat, lng: first.lng });
+  }, [visible, pins]);
 
   // Initialize size on mount (client-only).
   useEffect(() => {

@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import type { DayPlan, TravelActivity } from '@/types';
 import type { MapPinData } from '@/components/map/Map';
@@ -72,6 +72,18 @@ export function TripMap({
     return out;
   }, [days, activityPool, activeDayNumber]);
 
+  // Fly to the first activity once on initial load. Subsequent day-toggles
+  // keep the existing fitBounds behavior — this fires exactly once per
+  // mount, when pins first become non-empty.
+  const [focusPin, setFocusPin] = useState<{ lat: number; lng: number } | null>(null);
+  const didInitialFocus = useRef(false);
+  useEffect(() => {
+    if (didInitialFocus.current || pins.length === 0) return;
+    didInitialFocus.current = true;
+    const first = pins[0];
+    setFocusPin({ lat: first.lat, lng: first.lng });
+  }, [pins]);
+
   if (pins.length === 0) return null;
 
   return (
@@ -98,6 +110,7 @@ export function TripMap({
         activePinId={null}
         onPinClick={onActivityClick}
         connectByDay={showRoute}
+        focusPin={focusPin}
       />
     </Box>
   );
