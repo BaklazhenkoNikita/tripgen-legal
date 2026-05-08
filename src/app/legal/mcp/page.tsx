@@ -35,7 +35,7 @@ function Pill({ tone, children }: { tone: PillTone; children: ReactNode }) {
               color: '#4A6B4D',
             }
           : {
-              bgcolor: 'rgba(196, 96, 58, 0.15)',
+              bgcolor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.15)',
               color: 'primary.main',
             }),
       }}
@@ -193,6 +193,44 @@ export default function McpPage() {
           prefer the three tools above.
         </p>
       </ToolCard>
+
+      <h2>Examples</h2>
+      <p>
+        Three concrete prompts and the tool each one routes to. Drop them into
+        Claude or ChatGPT after you&apos;ve connected Periplo (next section) to
+        see the interactive widgets render inline.
+      </p>
+
+      <h3>Exploring a city</h3>
+      <CodeBlock>Long weekend in Tokyo — what should I do?</CodeBlock>
+      <p>
+        Routes to <code>explore_destination</code>. The widget shows an
+        interactive map of curated sights, neighborhoods, restaurants, and
+        bookable tours; tap any pin for a photo card and a deep link into the
+        Periplo app. Same path for &ldquo;trip to Barcelona&rdquo;,
+        &ldquo;best of Lisbon&rdquo;, or just naming a city.
+      </p>
+
+      <h3>Building a multi-day itinerary</h3>
+      <CodeBlock>Build me a 3-day itinerary for Lisbon, foodie focus</CodeBlock>
+      <p>
+        Routes to <code>build_itinerary</code>. The widget renders a day-by-day
+        plan with a recommended route between activities, plus flat pools of
+        activities and restaurants the host can re-shuffle. Triggered by
+        phrasings that pair a duration with an itinerary/plan/schedule word
+        (&ldquo;plan out my 4 days in Porto&rdquo;, &ldquo;weekend in Rome
+        itinerary&rdquo;).
+      </p>
+
+      <h3>Understanding a place</h3>
+      <CodeBlock>Tell me about the history and culture of Kyoto</CodeBlock>
+      <p>
+        Routes to <code>destination_info</code>. The widget renders a
+        magazine-style overview — description, history, culture, currency,
+        language, climate, and hero photos. Use this for &ldquo;what is X
+        like&rdquo; questions where the user wants to <em>understand</em> a
+        place rather than visit it.
+      </p>
 
       <h2>Connecting</h2>
 

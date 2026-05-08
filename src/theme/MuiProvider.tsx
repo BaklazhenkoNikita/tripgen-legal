@@ -9,7 +9,13 @@ import { theme } from './index';
 export function MuiProvider({ children }: { children: ReactNode }) {
   return (
     <AppRouterCacheProvider options={{ key: 'tg' }}>
-      <CssVarsProvider theme={theme} defaultMode="system" disableTransitionOnChange>
+      <CssVarsProvider
+        theme={theme}
+        defaultMode="system"
+        modeStorageKey="tg-mode"
+        colorSchemeStorageKey="tg-color-scheme"
+        disableTransitionOnChange
+      >
         <CssBaseline />
         {children}
       </CssVarsProvider>

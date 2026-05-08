@@ -243,7 +243,9 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
               textShadow: '0 1px 2px rgba(0,0,0,0.45)',
             }}
           >
-            <Star size={12} fill="#FF9500" stroke="#FF9500" aria-hidden />
+            <Box sx={{ color: 'warning.main', display: 'inline-flex' }}>
+              <Star size={12} fill="currentColor" stroke="currentColor" aria-hidden />
+            </Box>
             {meta.rating.toFixed(1)}
           </Box>
         ) : null}

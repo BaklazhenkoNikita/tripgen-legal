@@ -232,7 +232,8 @@ function StripCard({
               alignItems: 'center',
               gap: 0.5,
               borderRadius: 999,
-              bgcolor: (t) => alpha(t.palette.background.paper, 0.92),
+              bgcolor: (t) =>
+                alpha(t.palette.background.paper, t.palette.mode === 'dark' ? 0.78 : 0.92),
               color: 'text.primary',
               px: 1.25,
               py: 0.5,

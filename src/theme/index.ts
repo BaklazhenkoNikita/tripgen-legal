@@ -36,18 +36,30 @@ const lightError = '#DC2626';
 const lightErrorDark = '#B91C1C';
 const lightErrorLight = '#F87171';
 
-// Dark palette — brighter terracotta family for dark surfaces.
-const darkPrimary = '#E58866';
+// Dark palette — aligned with the mobile app theme
+// (trip_gen_mobile/mobile/src/config/theme.ts) so brand reads consistently
+// across web and native. Warm cream text + burnt-terracotta primary, with
+// borders/dividers expressed as cream-channel RGBA so a single divider
+// composes nicely on whichever surface it lands.
+const darkPrimary = '#D4724A';
 const darkPrimaryDark = '#C4603A';
-const darkPrimaryLight = '#F0AC8E';
+const darkPrimaryLight = '#E0A080';
 const darkSecondary = '#2ACEBA';
 const darkSecondaryDark = '#00A699';
 const darkSecondaryLight = '#5DE5D4';
-const darkText = '#F3EFE9';
-const darkMuted = '#B8AFA6';
-const darkSurface = '#221C18';
-const darkBackground = '#15110E';
-const darkDivider = '#332C27';
+const darkText = '#EDE0D4';
+const darkMuted = '#B0A090';
+// Tertiary text — between secondary and primary. Used for card meta (dates,
+// duration, country) where text.secondary felt too dim on long rows.
+const darkTertiary = '#C4B8AD';
+// Three-step elevation. Page floor (default) → card surface (paper) →
+// elevated (nested cards, expanded sections, modals).
+const darkBackground = '#131210';
+const darkSurface = '#1E1A17';
+const darkElevated = '#3A3530';
+// Cream-tinted RGBA divider — composes against whichever surface; warmer
+// than a solid hex grey. Matches mobile's `border` / `divider` tokens.
+const darkDivider = 'rgba(237, 224, 212, 0.12)';
 const darkHighlight = '#FFB44C';
 
 // Dark semantic colors — brightened so they stay legible on darkBackground.
@@ -63,6 +75,11 @@ const darkErrorLight = '#FCA5A5';
 
 export const theme = extendTheme({
   cssVarPrefix: 'tg',
+  // Match the attribute set by <InitColorSchemeScript attribute="data-tg-color-scheme">
+  // so MUI emits `[data-tg-color-scheme="dark"]` selectors instead of
+  // `@media (prefers-color-scheme: dark)`. Without this the ThemeToggle's
+  // setMode() call is a no-op and dark mode only ever follows OS preference.
+  colorSchemeSelector: 'data-tg-color-scheme',
   colorSchemes: {
     light: {
       palette: {
@@ -104,10 +121,16 @@ export const theme = extendTheme({
         background: {
           default: hoodwiseBackground,
           paper: hoodwiseSurface,
+          // In light mode the third tier maps back to plain paper — the
+          // surface contrast naturally separates without an extra step.
+          elevated: hoodwiseSurface,
         },
         text: {
           primary: hoodwiseCharcoal,
           secondary: hoodwiseMuted,
+          // In light mode tertiary just inherits secondary; the dark palette
+          // gets a brighter dedicated value where the gap actually matters.
+          tertiary: hoodwiseMuted,
         },
         divider: hoodwiseDivider,
         action: {
@@ -165,10 +188,22 @@ export const theme = extendTheme({
         background: {
           default: darkBackground,
           paper: darkSurface,
+          // `elevated` is a third tier above `paper`. Use for nested cards,
+          // expanded panel content, or modals/sheets that need to sit on top
+          // of an already-paper surface. Reach via `theme.palette.background.elevated`.
+          elevated: darkElevated,
         },
         text: {
           primary: darkText,
           secondary: darkMuted,
+          // Tertiary — brighter than secondary but dimmer than primary. Used
+          // for card meta (dates, duration, country, "5 DAYS"). MUI doesn't
+          // include this slot by default; the augmentation at the bottom of
+          // this file lets `color: 'text.tertiary'` resolve in sx.
+          tertiary: darkTertiary,
+          // MUI defaults to rgba(255,255,255,0.5) which clashes with the warm
+          // cream darkText. Use the same warm tone at a faded alpha for hierarchy.
+          disabled: alpha(darkText, 0.42),
         },
         divider: darkDivider,
         action: {
@@ -230,7 +265,7 @@ export const theme = extendTheme({
         },
         '*::selection': {
           backgroundColor: 'var(--tg-palette-primary-main)',
-          color: '#fff',
+          color: 'var(--tg-palette-primary-contrastText)',
         },
         // Emit shadow tokens as CSS vars so:
         // - non-React surfaces (Leaflet div-icons, popups, transit labels in
@@ -308,18 +343,29 @@ export const theme = extendTheme({
     MuiAppBar: {
       defaultProps: { color: 'default' },
       styleOverrides: {
+        // Dark surfaces at 0.85 alpha look opaque/muddy; lighter chrome lets
+        // the page texture (image hero, gradient) show through the blur.
         root: ({ theme: t }) => ({
-          backgroundColor: alpha(t.palette.background.paper, 0.85),
+          backgroundColor: alpha(
+            t.palette.background.paper,
+            t.palette.mode === 'dark' ? 0.72 : 0.85,
+          ),
           color: t.palette.text.primary,
           boxShadow: tgShadow(t, 'appBar'),
           backdropFilter: 'blur(18px)',
         }),
         colorPrimary: ({ theme: t }) => ({
-          backgroundColor: alpha(t.palette.background.paper, 0.85),
+          backgroundColor: alpha(
+            t.palette.background.paper,
+            t.palette.mode === 'dark' ? 0.72 : 0.85,
+          ),
           color: t.palette.text.primary,
         }),
         colorDefault: ({ theme: t }) => ({
-          backgroundColor: alpha(t.palette.background.paper, 0.85),
+          backgroundColor: alpha(
+            t.palette.background.paper,
+            t.palette.mode === 'dark' ? 0.72 : 0.85,
+          ),
           color: t.palette.text.primary,
         }),
         colorTransparent: {
@@ -339,7 +385,10 @@ export const theme = extendTheme({
         root: ({ theme: t }) => ({
           fontWeight: 500,
           color: t.palette.text.primary,
-          backgroundColor: alpha(t.palette.background.paper, 0.9),
+          backgroundColor: alpha(
+            t.palette.background.paper,
+            t.palette.mode === 'dark' ? 0.85 : 0.9,
+          ),
           borderRadius: 999,
         }),
       },
@@ -369,5 +418,14 @@ declare module '@mui/material/styles' {
   }
   interface PaletteOptions {
     category?: CategoryPalette;
+  }
+  // Custom slots beyond MUI's defaults — `text.tertiary` for card meta and
+  // `background.elevated` for the third surface tier (modals, expanded
+  // sections, nested cards on top of paper).
+  interface TypeText {
+    tertiary: string;
+  }
+  interface TypeBackground {
+    elevated: string;
   }
 }

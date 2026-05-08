@@ -86,7 +86,9 @@ export function Photo({
                 : `linear-gradient(135deg, ${t.palette.primary.main} 0%, ${t.palette.primary.light} 100%)`,
           })}
         >
-          <ImageOff size={20} aria-hidden style={{ color: '#fff', opacity: 0.85 }} />
+          <Box sx={{ color: 'common.white', opacity: 0.85, display: 'inline-flex' }}>
+            <ImageOff size={20} aria-hidden />
+          </Box>
         </Box>
       )}
       {gradient ? (
@@ -99,7 +101,7 @@ export function Photo({
             height: '50%',
             background:
               t.palette.mode === 'dark'
-                ? 'linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0) 60%)'
+                ? 'linear-gradient(to top, rgba(0,0,0,0.72), rgba(0,0,0,0) 60%)'
                 : 'linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0) 60%)',
           })}
         />

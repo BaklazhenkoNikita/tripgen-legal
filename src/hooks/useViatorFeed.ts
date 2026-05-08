@@ -5,6 +5,7 @@ import { api } from '@/lib/api/client';
 import { endpoints } from '@/lib/api/endpoints';
 import { queryKeys } from '@/lib/query/keys';
 import type { FeedItem } from '@/hooks/useHomeFeed';
+import { feedHasPendingImages } from '@/lib/feed/imageReadiness';
 
 export interface ViatorFeedResponse {
   city: string;
@@ -36,6 +37,18 @@ export function useViatorFeed(city: string | null | undefined) {
     },
     enabled: !!city,
     staleTime: 60 * 60 * 1000, // 1h — Viator results don't change frequently
+    // Viator is ingested asynchronously; poll briefly while empty so the row
+    // fills in without a manual refresh. Cap so a truly tour-less city stops
+    // hammering the endpoint.
+    refetchInterval: (query) => {
+      const d = query.state.data as ViatorFeedResponse | null | undefined;
+      if (!d) return false;
+      if (d.viator_activities.length === 0 && query.state.dataUpdateCount < 8) return 4000;
+      // Keep polling while images are still attaching, capped.
+      if (feedHasPendingImages(d.viator_activities) && query.state.dataUpdateCount < 12) return 4000;
+      return false;
+    },
+    refetchIntervalInBackground: false,
   });
 }
 

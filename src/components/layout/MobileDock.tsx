@@ -68,7 +68,8 @@ export function MobileDock() {
           bottom: 0,
           zIndex: (t) => t.zIndex.appBar,
           borderTop: (t) => `1px solid ${t.palette.divider}`,
-          bgcolor: (t) => alpha(t.palette.background.paper, 0.95),
+          bgcolor: (t) =>
+            alpha(t.palette.background.paper, t.palette.mode === 'dark' ? 0.82 : 0.95),
           backdropFilter: 'blur(12px)',
           pb: 'env(safe-area-inset-bottom)',
           display: { xs: 'block', md: 'none' },

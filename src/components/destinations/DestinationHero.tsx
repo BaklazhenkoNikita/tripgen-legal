@@ -21,8 +21,13 @@ interface Props {
 }
 
 const SWIPE_THRESHOLD = 40;
-const HERO_GRADIENT =
+// Hero overlay gradient — strengthened in dark mode so cream-cream city
+// labels stay legible over a dark page background bleeding through any
+// translucent areas of the photo.
+const HERO_GRADIENT_LIGHT =
   'linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.55) 72%, rgba(0,0,0,0.8) 100%)';
+const HERO_GRADIENT_DARK =
+  'linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.7) 72%, rgba(0,0,0,0.9) 100%)';
 
 /** Shared overlay-style hero used on both the destination explore page and the
  *  trip detail page. Image fills a fixed-height container; country/city/
@@ -149,12 +154,12 @@ export function DestinationHero({
       {/* Overlay gradient for text legibility. */}
       <Box
         aria-hidden
-        sx={{
+        sx={(t) => ({
           pointerEvents: 'none',
           position: 'absolute',
           inset: 0,
-          background: HERO_GRADIENT,
-        }}
+          background: t.palette.mode === 'dark' ? HERO_GRADIENT_DARK : HERO_GRADIENT_LIGHT,
+        })}
       />
 
       {hasMany ? (
@@ -333,7 +338,7 @@ export function DestinationHero({
               fontSize: 14,
               fontWeight: 500,
               color: 'common.white',
-              textShadow: '0 1px 6px rgba(0,0,0,0.7)',
+              textShadow: '0 2px 12px rgba(0,0,0,0.85)',
             }}
           >
             {facts.map((f, i) => (

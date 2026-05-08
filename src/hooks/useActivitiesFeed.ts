@@ -5,6 +5,7 @@ import { api } from '@/lib/api/client';
 import { endpoints } from '@/lib/api/endpoints';
 import { queryKeys } from '@/lib/query/keys';
 import type { FeedItem } from './useHomeFeed';
+import { feedHasPendingImages } from '@/lib/feed/imageReadiness';
 
 export interface ActivitiesFeedResponse {
   city: string;
@@ -29,5 +30,14 @@ export function useActivitiesFeed(
     },
     enabled: !!city,
     staleTime: 15 * 60 * 1000,
+    refetchInterval: (query) => {
+      const d = query.state.data as ActivitiesFeedResponse | null | undefined;
+      if (!d) return false;
+      const items = d.activities ?? [];
+      if (items.length === 0 && query.state.dataUpdateCount < 8) return 4000;
+      if (feedHasPendingImages(items) && query.state.dataUpdateCount < 12) return 4000;
+      return false;
+    },
+    refetchIntervalInBackground: false,
   });
 }

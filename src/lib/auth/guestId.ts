@@ -17,11 +17,12 @@ let memoryId: string | null = null;
 
 function generateId(): string {
   // RFC 4122 v4-ish — good enough for a client-side correlation id.
+  // Underscore prefix matches the mobile client + backend `guest_id.startswith("guest_")` check.
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-    return `guest-${crypto.randomUUID()}`;
+    return `guest_${crypto.randomUUID()}`;
   }
   const rand = Math.random().toString(36).slice(2, 10);
-  return `guest-${Date.now().toString(36)}-${rand}`;
+  return `guest_${Date.now().toString(36)}_${rand}`;
 }
 
 export function getGuestId(): string {
@@ -36,8 +37,14 @@ export function getGuestId(): string {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      memoryId = stored;
-      return stored;
+      // Older builds wrote `guest-…` ids that the backend rejects with 400 on
+      // /api/profiles/merge. Rewrite in place so existing visitors recover.
+      const fixed = stored.startsWith('guest-')
+        ? `guest_${stored.slice('guest-'.length).replace(/-/g, '_')}`
+        : stored;
+      if (fixed !== stored) localStorage.setItem(STORAGE_KEY, fixed);
+      memoryId = fixed;
+      return fixed;
     }
     const fresh = generateId();
     localStorage.setItem(STORAGE_KEY, fresh);

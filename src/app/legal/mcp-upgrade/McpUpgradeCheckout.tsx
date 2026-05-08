@@ -76,8 +76,8 @@ export function McpUpgradeCheckout() {
           mb: 3,
           borderRadius: 2.5,
           border: '1px solid',
-          borderColor: 'rgba(196, 96, 58, 0.25)',
-          bgcolor: 'rgba(196, 96, 58, 0.08)',
+          borderColor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.25)',
+          bgcolor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.08)',
           p: { xs: 2.5, md: 3 },
         }}
       >

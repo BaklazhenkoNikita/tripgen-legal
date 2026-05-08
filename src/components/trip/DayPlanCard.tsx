@@ -43,7 +43,7 @@ export function DayPlanCard({
           ? {
               borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.5),
               boxShadow: (t: Theme) =>
-                `0 6px 20px ${alpha(t.palette.primary.main, t.palette.mode === 'dark' ? 0.28 : 0.12)}`,
+                `0 6px 20px ${alpha(t.palette.primary.main, t.palette.mode === 'dark' ? 0.4 : 0.12)}`,
             }
           : {
               borderColor: 'divider',

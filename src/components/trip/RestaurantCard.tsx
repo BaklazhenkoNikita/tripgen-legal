@@ -135,7 +135,9 @@ export function RestaurantCard({ restaurant: r, photoMap }: Props) {
               textShadow: '0 1px 2px rgba(0,0,0,0.45)',
             }}
           >
-            <Star size={12} fill="#FF9500" stroke="#FF9500" aria-hidden />
+            <Box sx={{ color: 'warning.main', display: 'inline-flex' }}>
+              <Star size={12} fill="currentColor" stroke="currentColor" aria-hidden />
+            </Box>
             {r.rating.toFixed(1)}
           </Box>
         ) : null}

@@ -19,7 +19,7 @@ export function useDestinationsAutocomplete(query: string | null | undefined) {
     queryKey: ['destinationsAutocomplete', query ?? ''],
     queryFn: async (): Promise<AutocompleteResponse | null> => {
       if (!query) return null;
-      const params = new URLSearchParams({ query });
+      const params = new URLSearchParams({ q: query });
       return api.get<AutocompleteResponse>(
         `${endpoints.destinationAutocomplete}?${params.toString()}`,
       );

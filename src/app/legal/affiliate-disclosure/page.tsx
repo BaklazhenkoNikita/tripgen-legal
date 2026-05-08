@@ -15,7 +15,7 @@ export default function AffiliateDisclosurePage() {
     <LegalLayout title="Affiliate Disclosure" lastUpdated="April 19, 2026">
       <Box
         sx={{
-          bgcolor: 'rgba(196, 96, 58, 0.08)',
+          bgcolor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.08)',
           borderLeft: '3px solid',
           borderColor: 'primary.main',
           borderRadius: '0 12px 12px 0',

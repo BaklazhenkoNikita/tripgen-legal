@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api/client';
 import { endpoints } from '@/lib/api/endpoints';
 import { queryKeys } from '@/lib/query/keys';
+import { feedHasPendingImages } from '@/lib/feed/imageReadiness';
 
 /** One card returned by any v4 feed endpoint. `item` is loosely typed because
  *  the shape varies by entity type — home surfaces only read common fields. */
@@ -72,5 +73,24 @@ export function useHomeFeed(city: string | null | undefined) {
     },
     enabled: !!city,
     staleTime: 15 * 60 * 1000,
+    refetchInterval: (query) => {
+      const d = query.state.data as HomeFeedResponse | null | undefined;
+      if (!d) return false;
+      if (d.generating || d.events_generating) return 4000;
+      // Backend attaches images on a separate async pipeline that runs after
+      // `generating` flips to false. Keep polling briefly so cards swap from
+      // placeholder to real images without a manual refresh; cap to avoid
+      // forever-polling cities with genuinely imageless entities.
+      const all = [
+        ...(d.exploration ?? []),
+        ...(d.activities ?? []),
+        ...(d.events ?? []),
+        ...(d.restaurants ?? []),
+        ...(d.for_you ?? []),
+      ];
+      if (feedHasPendingImages(all) && query.state.dataUpdateCount < 12) return 4000;
+      return false;
+    },
+    refetchIntervalInBackground: false,
   });
 }

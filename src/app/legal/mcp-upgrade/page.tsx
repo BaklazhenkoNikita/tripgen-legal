@@ -87,10 +87,10 @@ export default function McpUpgradePage() {
             px: 1.5,
             py: 0.75,
             borderRadius: 999,
-            bgcolor: 'rgba(196, 96, 58, 0.10)',
+            bgcolor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.10)',
             color: 'primary.main',
             border: '1px solid',
-            borderColor: 'rgba(196, 96, 58, 0.25)',
+            borderColor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.25)',
             fontSize: 12,
             fontWeight: 600,
             letterSpacing: '0.04em',
@@ -137,9 +137,10 @@ export default function McpUpgradePage() {
         <Box
           component="section"
           sx={{
-            background: 'linear-gradient(135deg, rgba(196, 96, 58, 0.10) 0%, var(--tg-palette-background-paper) 100%)',
+            background:
+              'linear-gradient(135deg, rgb(var(--tg-palette-primary-mainChannel) / 0.10) 0%, var(--tg-palette-background-paper) 100%)',
             border: '1px solid',
-            borderColor: 'rgba(196, 96, 58, 0.18)',
+            borderColor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.18)',
             borderRadius: 2.5,
             p: { xs: 2.5, md: 3.5 },
             mb: 2.5,

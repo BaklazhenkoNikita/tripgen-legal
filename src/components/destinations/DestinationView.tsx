@@ -3,7 +3,7 @@
 import { useCallback, useId, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Map as MapIcon } from 'lucide-react';
+import { Map as MapIcon, Loader2 } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -186,6 +186,33 @@ export function DestinationView({ city }: Props) {
         />
       </Box>
 
+      {feed?.generating && !feed?.has_content ? (
+        <Box
+          sx={(t) => ({
+            mt: 3,
+            mb: -1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            px: 1.5,
+            py: 1,
+            borderRadius: 1.5,
+            border: '1px solid',
+            borderColor: 'divider',
+            bgcolor: alpha(t.palette.primary.main, 0.06),
+            color: 'text.secondary',
+            fontSize: 13,
+            '& .spin': { animation: 'destview-spin 1s linear infinite' },
+            '@keyframes destview-spin': { to: { transform: 'rotate(360deg)' } },
+          })}
+        >
+          <Box component="span" className="spin" sx={{ display: 'inline-flex' }} aria-hidden>
+            <Loader2 size={14} />
+          </Box>
+          Building your {city} experience — this can take a few seconds.
+        </Box>
+      ) : null}
+
       <Box
         sx={{
           position: 'sticky',
@@ -196,7 +223,8 @@ export function DestinationView({ city }: Props) {
           mt: 3,
           borderBottom: '1px solid',
           borderColor: 'divider',
-          bgcolor: (t) => alpha(t.palette.background.default, 0.85),
+          bgcolor: (t) =>
+            alpha(t.palette.background.default, t.palette.mode === 'dark' ? 0.7 : 0.85),
           px: { xs: 2, sm: 3 },
           py: 1.5,
           backdropFilter: 'blur(12px)',
@@ -221,6 +249,7 @@ export function DestinationView({ city }: Props) {
             title={`Must See in ${city}`}
             items={sections.mustSee}
             isLoading={isLoading}
+            isGenerating={feed?.generating}
             activeItemId={activeItemId}
             onHoverItem={setActiveItemId}
             onCardClick={setOpenItem}
@@ -260,6 +289,7 @@ export function DestinationView({ city }: Props) {
             title="Where to Eat"
             items={sections.eat}
             isLoading={isLoading}
+            isGenerating={feed?.generating}
             activeItemId={activeItemId}
             onHoverItem={setActiveItemId}
             onCardClick={setOpenItem}
@@ -291,6 +321,7 @@ export function DestinationView({ city }: Props) {
               key={category}
               city={city}
               category={category}
+              isGenerating={feed?.generating}
               activeItemId={activeItemId}
               onHoverItem={setActiveItemId}
               onCardClick={setOpenItem}

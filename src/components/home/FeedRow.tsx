@@ -121,7 +121,7 @@ export function FeedRow({
         ) : null}
       </Box>
 
-      {isLoading ? (
+      {isLoading || (isEmpty && isGenerating) ? (
         <SkeletonRail count={4} />
       ) : isEmpty ? (
         <EmptyState title={emptyTitle} description={emptyDescription} variant="subtle" />
