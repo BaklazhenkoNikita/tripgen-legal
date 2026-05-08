@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { blogPosts } from '@/data/blogPosts';
+import { breadcrumbListJsonLd, stringifyJsonLd } from '@/lib/seo/jsonld';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -20,13 +21,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: post.title,
     description: post.metaDescription,
+    alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       title: post.title,
       description: post.metaDescription,
+      url: `/blog/${slug}`,
       type: 'article',
       publishedTime: post.date,
       authors: [post.author],
       images: [{ url: post.heroImage, width: 800, height: 500 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.metaDescription,
+      images: [post.heroImage],
     },
   };
 }
@@ -39,6 +48,14 @@ export default async function BlogPostPage({ params }: Props) {
   const relatedPosts = post.relatedSlugs
     .map((s) => blogPosts.find((p) => p.slug === s))
     .filter(Boolean);
+
+  const breadcrumbLd = stringifyJsonLd(
+    breadcrumbListJsonLd([
+      { name: 'Home', url: '/' },
+      { name: 'Blog', url: '/blog' },
+      { name: post.title, url: `/blog/${slug}` },
+    ]),
+  );
 
   return (
     <>
@@ -241,6 +258,10 @@ export default async function BlogPostPage({ params }: Props) {
             description: post.metaDescription,
             image: post.heroImage,
             datePublished: post.date,
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': `https://periploapp.com/blog/${slug}`,
+            },
             author: {
               '@type': 'Organization',
               name: post.author,
@@ -249,10 +270,20 @@ export default async function BlogPostPage({ params }: Props) {
               '@type': 'Organization',
               name: 'Periplo',
               url: 'https://periploapp.com',
+              logo: {
+                '@type': 'ImageObject',
+                url: 'https://periploapp.com/favicon-512x512.png',
+              },
             },
           }),
         }}
       />
+      {breadcrumbLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumbLd }}
+        />
+      )}
     </>
   );
 }

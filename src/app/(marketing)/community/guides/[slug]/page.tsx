@@ -17,12 +17,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const dest = destinations.find((d) => d.slug === slug);
   if (!dest) return {};
+  // Canonicalize the static guide to /explore/[slug] — that's the canonical
+  // surface for each destination and consolidates ranking signals so Google
+  // doesn't treat the two pages as duplicate content.
   return {
     title: dest.metaTitle,
     description: dest.metaDescription,
+    alternates: { canonical: `/explore/${slug}` },
     openGraph: {
       title: dest.metaTitle,
       description: dest.metaDescription,
+      url: `/explore/${slug}`,
       images: [{ url: dest.heroImage, width: 800, height: 500 }],
     },
   };
