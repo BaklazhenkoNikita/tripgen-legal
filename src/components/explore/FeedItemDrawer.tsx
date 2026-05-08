@@ -2,11 +2,10 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
 import { Maximize2 } from 'lucide-react';
 import type { FeedItem } from '@/hooks/useHomeFeed';
 import { Sheet } from '@/components/ui/Sheet';
+import { Button } from '@/components/ui/Button';
 import { normalizeFeedItem } from '@/lib/feed/itemAdapter';
 import { destinationSlug } from '@/lib/destinationSlug';
 import { placeSlugWithId } from '@/lib/placeSlug';
@@ -29,6 +28,14 @@ export function FeedItemDrawer({ item, city, onClose }: Props) {
     return `/explore/${citySlug}/${placeSlug}`;
   }, [detail, city]);
 
+  const topAction = fullscreenHref ? (
+    <Button asChild variant="secondary" size="sm" iconLeft={<Maximize2 size={14} />}>
+      <Link href={fullscreenHref} target="_blank" rel="noopener noreferrer" aria-label="Open full page">
+        Open full page
+      </Link>
+    </Button>
+  ) : undefined;
+
   return (
     <Sheet
       open={item !== null}
@@ -37,41 +44,9 @@ export function FeedItemDrawer({ item, city, onClose }: Props) {
       }}
       side="right"
       size="lg"
+      topAction={topAction}
     >
-      {detail ? (
-        <Box sx={{ position: 'relative' }}>
-          {fullscreenHref ? (
-            <Box
-              component={Link}
-              href={fullscreenHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Open full page"
-              sx={{
-                position: 'absolute',
-                top: 12,
-                left: 12,
-                zIndex: 3,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 32,
-                width: 32,
-                borderRadius: 999,
-                bgcolor: (t) => alpha(t.palette.common.black, 0.45),
-                color: 'common.white',
-                backdropFilter: 'blur(4px)',
-                textDecoration: 'none',
-                transition: 'background-color 150ms',
-                '&:hover': { bgcolor: (t) => alpha(t.palette.common.black, 0.6) },
-              }}
-            >
-              <Maximize2 size={14} />
-            </Box>
-          ) : null}
-          <PlaceDetailContent detail={detail} city={city} layout="drawer" />
-        </Box>
-      ) : null}
+      {detail ? <PlaceDetailContent detail={detail} city={city} layout="drawer" /> : null}
     </Sheet>
   );
 }

@@ -20,6 +20,10 @@ export interface SheetProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'full';
   hideTitle?: boolean;
+  /** Optional slot rendered on the left side of the top header bar.
+   *  When provided, the header (with the close button) is shown even
+   *  if there is no visible title. */
+  topAction?: ReactNode;
 }
 
 const widthFor = (size: NonNullable<SheetProps['size']>) => {
@@ -41,8 +45,10 @@ export function Sheet({
   className,
   size = 'md',
   hideTitle = false,
+  topAction,
 }: SheetProps) {
-  const showVisibleHeader = !hideTitle && (title || description);
+  const hasTitleBlock = !hideTitle && (title || description);
+  const showVisibleHeader = Boolean(hasTitleBlock || topAction);
   const isHorizontal = side === 'left' || side === 'right';
 
   return (
@@ -78,29 +84,40 @@ export function Sheet({
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'flex-start',
+            alignItems: 'center',
             justifyContent: 'space-between',
             gap: 2,
             borderBottom: (t) => `1px solid ${t.palette.divider}`,
             px: 2.5,
-            py: 2,
+            py: hasTitleBlock ? 2 : 1.25,
           }}
         >
-          <Box sx={{ minWidth: 0 }}>
-            {title ? (
-              <Typography component="h2" sx={{ fontSize: 18, fontWeight: 600, lineHeight: 1.3 }}>
-                {title}
-              </Typography>
-            ) : null}
-            {description ? (
-              <Typography sx={{ mt: 0.5, fontSize: 14, color: 'text.secondary' }}>
-                {description}
-              </Typography>
+          <Box sx={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
+            {topAction ? <Box sx={{ minWidth: 0 }}>{topAction}</Box> : null}
+            {hasTitleBlock ? (
+              <Box sx={{ minWidth: 0 }}>
+                {title ? (
+                  <Typography component="h2" sx={{ fontSize: 18, fontWeight: 600, lineHeight: 1.3 }}>
+                    {title}
+                  </Typography>
+                ) : null}
+                {description ? (
+                  <Typography sx={{ mt: 0.5, fontSize: 14, color: 'text.secondary' }}>
+                    {description}
+                  </Typography>
+                ) : null}
+              </Box>
             ) : null}
           </Box>
           <IconButton aria-label="Close" onClick={() => onOpenChange(false)} size="small">
             <X size={16} aria-hidden />
           </IconButton>
+          {!hasTitleBlock ? (
+            <Box component="span" sx={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
+              {title ?? 'Dialog'}
+              {description}
+            </Box>
+          ) : null}
         </Box>
       ) : (
         <Box component="span" sx={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
