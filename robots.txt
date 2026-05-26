@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /mcp-upgrade
-
-Sitemap: https://periploapp.com/sitemap.xml
