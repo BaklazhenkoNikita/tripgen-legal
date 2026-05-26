@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#C4603A">
+  <title>2 Days in London — Itinerary & Day-by-Day Plan | Periplo</title>
+  <meta name="description" content="2-day London itinerary: day-by-day attractions, restaurants, and a walkable route. Customize in the Periplo iPhone app.">
+  <link rel="canonical" href="https://periploapp.com/itineraries/london-uk-2-day/">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://periploapp.com/itineraries/london-uk-2-day/">
+  <meta property="og:title" content="2 Days in London — Itinerary & Day-by-Day Plan | Periplo">
+  <meta property="og:description" content="2-day London itinerary: day-by-day attractions, restaurants, and a walkable route. Customize in the Periplo iPhone app.">
+  <meta property="og:image" content="https://www.jasminealley.com/wp-content/uploads/2024/08/big-ben-arch-view-london.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="2 Days in London — Itinerary & Day-by-Day Plan | Periplo">
+  <meta name="twitter:description" content="2-day London itinerary: day-by-day attractions, restaurants, and a walkable route. Customize in the Periplo iPhone app.">
+  <meta name="twitter:image" content="https://www.jasminealley.com/wp-content/uploads/2024/08/big-ben-arch-view-london.jpg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #FDFCF9; --bg-soft: #F5F2ED; --bg-dark: #1A1612;
+      --surface: #FFFFFF; --text: #1A1612; --text-secondary: #3A3330;
+      --text-tertiary: #8C7E74; --border: #F0EDE8; --accent: #C4603A;
+      --accent-hover: #A94E2C; --accent-soft: #F5E2D8;
+      --radius: 12px; --radius-lg: 20px; --max-w: 1040px; --max-w-read: 720px;
+      --font-display: 'DM Serif Display', ui-serif, Georgia, serif;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { display: block; max-width: 100%; height: auto; }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+    .container--read { max-width: var(--max-w-read); }
+    nav.site-nav { position: sticky; top: 0; z-index: 10; background: rgba(253, 252, 249, 0.92); backdrop-filter: saturate(1.2) blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; max-width: var(--max-w); margin: 0 auto; }
+    .logo { display: flex; align-items: center; gap: 10px; color: var(--text); font-family: var(--font-display); font-size: 1.25rem; }
+    .logo:hover { text-decoration: none; }
+    .logo img { width: 28px; height: 28px; border-radius: 6px; }
+    .nav-links a { color: var(--text-secondary); font-size: 0.95rem; font-weight: 500; margin-left: 24px; }
+    .nav-cta { background: var(--accent); color: #fff !important; padding: 8px 16px; border-radius: 999px; font-weight: 600; font-size: 0.9rem; margin-left: 24px; }
+    .nav-cta:hover { background: var(--accent-hover); text-decoration: none; }
+    .breadcrumbs { padding: 16px 24px 0; max-width: var(--max-w); margin: 0 auto; font-size: 0.875rem; color: var(--text-tertiary); }
+    .breadcrumbs a { color: var(--text-tertiary); }
+    .breadcrumbs a:hover { color: var(--accent); }
+    .hero-wrap { padding: 32px 0 24px; }
+    .hero-photo { width: 100%; height: 360px; object-fit: cover; border-radius: var(--radius-lg); margin-bottom: 32px; background: var(--bg-soft); }
+    h1.page-title { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; margin-bottom: 16px; }
+    p.lead { font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 28px; max-width: 720px; }
+    section.block { padding: 32px 0; }
+    section.block + section.block { border-top: 1px solid var(--border); }
+    h2.block-title { font-family: var(--font-display); font-size: 1.75rem; margin-bottom: 16px; }
+    h3.card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-top: 16px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+    .card-photo { width: 100%; height: 180px; object-fit: cover; background: var(--bg-soft); }
+    .card-body { padding: 16px; }
+    .card-desc { color: var(--text-secondary); font-size: 0.92rem; margin-top: 6px; }
+    .card-meta { color: var(--text-tertiary); font-size: 0.82rem; margin-top: 10px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .pill { display: inline-block; background: var(--accent-soft); color: var(--accent-hover); padding: 2px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 20px; }
+    .info-cell { background: var(--bg-soft); padding: 16px; border-radius: var(--radius); }
+    .info-label { font-size: 0.78rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .info-value { font-size: 1.02rem; color: var(--text); font-weight: 500; }
+    .faq details { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 10px; }
+    .faq summary { font-weight: 600; cursor: pointer; }
+    .faq p { color: var(--text-secondary); margin-top: 8px; }
+    .day-block { margin-top: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+    .day-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .day-num { background: var(--accent); color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: var(--font-display); }
+    .day-title { font-family: var(--font-display); font-size: 1.4rem; }
+    .stop { display: flex; gap: 16px; padding: 14px 0; border-top: 1px solid var(--border); }
+    .stop:first-of-type { border-top: 0; }
+    .stop-photo { width: 96px; height: 96px; border-radius: var(--radius); object-fit: cover; flex-shrink: 0; background: var(--bg-soft); }
+    .stop-body h4 { font-size: 1rem; margin-bottom: 4px; }
+    .stop-body p { color: var(--text-secondary); font-size: 0.9rem; }
+    .related { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .related a { background: var(--bg-soft); padding: 8px 14px; border-radius: 999px; font-size: 0.9rem; color: var(--text); }
+    .related a:hover { background: var(--accent-soft); color: var(--accent-hover); text-decoration: none; }
+    .cta-block { background: var(--bg-dark); color: #fff; border-radius: var(--radius-lg); padding: 40px 32px; text-align: center; margin: 48px 0; }
+    .cta-block h2 { font-family: var(--font-display); font-size: 1.75rem; margin-bottom: 12px; }
+    .cta-block p { color: rgba(255,255,255,0.78); margin-bottom: 20px; }
+    .cta-badge { display: inline-flex; align-items: center; gap: 10px; background: #fff; color: #000; padding: 10px 20px; border-radius: var(--radius); font-weight: 600; }
+    .cta-badge:hover { text-decoration: none; }
+    footer.site-footer { border-top: 1px solid var(--border); margin-top: 64px; padding: 32px 24px; color: var(--text-tertiary); font-size: 0.88rem; }
+    .footer-inner { max-width: var(--max-w); margin: 0 auto; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; }
+    .footer-links a { color: var(--text-tertiary); margin-right: 16px; }
+    .footer-links a:hover { color: var(--accent); }
+    .disclosure { font-size: 0.8rem; color: var(--text-tertiary); margin-top: 24px; padding-top: 18px; border-top: 1px dashed var(--border); }
+    .index-list { columns: 2; column-gap: 32px; margin-top: 20px; }
+    .index-list a { display: block; padding: 6px 0; color: var(--text); }
+    .index-list a:hover { color: var(--accent); }
+    @media (max-width: 720px) {
+      .hero-photo { height: 240px; }
+      .stop-photo { width: 72px; height: 72px; }
+      .index-list { columns: 1; }
+    }
+  </style>
+  <script type="application/ld+json">
+  {"@context": "https://schema.org", "@type": "TouristTrip", "name": "2 Days in London — Itinerary", "description": "2-day London itinerary: day-by-day attractions, restaurants, and a walkable route. Customize in the Periplo iPhone app.", "url": "https://periploapp.com/itineraries/london-uk-2-day/", "touristType": "Leisure", "itinerary": {"@type": "ItemList", "numberOfItems": 2}, "subjectOf": {"@type": "TravelDestination", "name": "London", "address": {"@type": "PostalAddress", "addressCountry": "Uk"}}}
+  </script>
+  <script type="application/ld+json">
+  {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Periplo", "item": "https://periploapp.com/"}, {"@type": "ListItem", "position": 2, "name": "Itineraries", "item": "https://periploapp.com/itineraries/"}, {"@type": "ListItem", "position": 3, "name": "London 2-day", "item": "https://periploapp.com/itineraries/london-uk-2-day/"}]}
+  </script>
+
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="logo" href="/" aria-label="Periplo home">
+        <img src="/assets/logo-terra.png" alt="Periplo logo" width="28" height="28">
+        <span>Periplo</span>
+      </a>
+      <div>
+        <a class="nav-links" href="/destinations/">Destinations</a>
+        <a class="nav-links" href="/itineraries/">Itineraries</a>
+        <a class="nav-links" href="/help">Help</a>
+        <a class="nav-cta" href="https://apps.apple.com/app/id6761609896">Get the app</a>
+      </div>
+    </div>
+  </nav>
+  <div class="breadcrumbs">
+        <a href="https://periploapp.com/">Periplo</a> ›
+        <a href="https://periploapp.com/itineraries/">Itineraries</a> ›
+        <span>London 2-day</span>
+  </div>
+
+  <main>
+  
+<div class="container">
+
+  <div class="hero-wrap">
+    <img class="hero-photo" src="https://www.jasminealley.com/wp-content/uploads/2024/08/big-ben-arch-view-london.jpg" alt="London 2-day itinerary" loading="eager">
+    <h1 class="page-title">2 Days in London — A Travel Itinerary</h1>
+    <p class="lead">A 2-day London itinerary covering 49 hand-picked attractions and restaurants — grouped by neighborhood, paced for actual humans, not tour buses.</p>
+  </div>
+
+  <section class="block">
+    <h2 class="block-title">How this itinerary is built</h2>
+    <p>This 2-day London itinerary groups attractions by neighborhood and a walkable route, so you cover ground efficiently without sprinting. Restaurant picks are anchored near each day's activities. Built from cached destination data — confirm opening hours, prices, and ticket availability before you go.</p>
+  </section>
+  <section class="day-block">
+    <div class="day-header">
+      <div class="day-num">1</div>
+      <div>
+        <div class="day-title">Day 1</div>
+        <div style="color: var(--text-tertiary); font-size: 0.92rem;">8 stops · walkable route</div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://res.cloudinary.com/dtljonz0f/image/upload/c_auto,ar_1:1,w_3840,g_auto/f_auto/q_auto/v1/gc-v1/london/LMC_o2_Day_27_Digital%20Only-2-2-2?_a=BAVAZGDY0" alt="Up at The O2" loading="lazy">
+      <div class="stop-body">
+        <h4>Up at The O2</h4>
+        <p>For a bit of adventure, climb over the roof of the iconic O2 Arena. The views of the city skyline from the top are genuinely breathtaking, especially if you time it for sunset.</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1.5 hours</span><span>💶 £35-45 per person</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://hirespace.com/images/spaces/192561/lxijvwivnmh.jpg" alt="Fairgame Canary Wharf" loading="lazy">
+      <div class="stop-body">
+        <h4>Fairgame Canary Wharf</h4>
+        <p>This is an adult-only, high-tech take on a traditional British seaside funfair. Think whack-a-mole and duck shoots, but with craft beer, cocktails, and gourmet street food served…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2 hours</span><span>💶 £15-£25 entry</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://luxurylondon.co.uk/wp-content/uploads/2025/04/Clays-KAI-Interiors-shot-by-John-McDavid_5.jpg" alt="Clays Canary Wharf" loading="lazy">
+      <div class="stop-body">
+        <h4>Clays Canary Wharf</h4>
+        <p>Clays brings the traditional sport of clay pigeon shooting indoors using massive digital screens and hyper-accurate sensors. It’s surprisingly addictive and perfect for a rainy…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 90 minutes</span><span>💶 £30-£40 per peg</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://peter-moore.co.uk/wp-content/uploads/2013/03/Prospect-of-Whitby.jpg" alt="The Prospect of Whitby" loading="lazy">
+      <div class="stop-body">
+        <h4>The Prospect of Whitby</h4>
+        <p>This is one of London's oldest riverside pubs, dating back to 1520. It's full of history, has a great beer garden overlooking the Thames, and is a proper local gem.</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2 hours</span><span>💶 £10-30 per person</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://thatslondonbaby.com/wp-content/uploads/2016/07/wp-1469966499535.jpg" alt="Midnight Apothecary at the Brunel Museum" loading="lazy">
+      <div class="stop-body">
+        <h4>Midnight Apothecary at the Brunel Museum</h4>
+        <p>This is a seasonal pop-up garden bar located on top of an old Victorian tunnel shaft. They serve botanical cocktails made with herbs grown on-site and offer guided tours of the…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2-3 hours</span><span>💶 £10-£20</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://static.independent.co.uk/2025/03/14/05/Britain_Beer_Mile_Photo_Gallery_52671.jpg" alt="The Bermondsey Beer Mile" loading="lazy">
+      <div class="stop-body">
+        <h4>The Bermondsey Beer Mile</h4>
+        <p>This is a pilgrimage for craft beer lovers, stretching along the railway arches of Bermondsey. You can spend an entire Saturday hopping between independent micro-breweries, each…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 4-6 hours</span><span>💶 Pay per drink</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://wideworldofwine.co/wp-content/uploads/2018/10/a403e90f-b928-490d-befb-ae2df2be54ac.jpeg" alt="Maltby Street Market" loading="lazy">
+      <div class="stop-body">
+        <h4>Maltby Street Market</h4>
+        <p>Tucked away under railway arches, this is the cooler, more intimate sibling to Borough Market. It's packed with incredible independent traders serving up gourmet treats in a…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1-2 hours</span><span>💶 Free entry, food prices vary</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://images.squarespace-cdn.com/content/v1/67a74865610a88774386fe2c/1739248674931-WY5DARA0GN2C2AXJH51W/IMG_7204.jpg" alt="Borough Market" loading="lazy">
+      <div class="stop-body">
+        <h4>Borough Market</h4>
+        <p>This is the absolute heart of London's food scene and a must-visit for any foodie. Wander through the historic stalls to grab everything from fresh oysters and artisan cheeses to…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2-3 hours</span><span>💶 Free entry, food prices vary</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="day-block">
+    <div class="day-header">
+      <div class="day-num">2</div>
+      <div>
+        <div class="day-title">Day 2</div>
+        <div style="color: var(--text-tertiary); font-size: 0.92rem;">41 stops · walkable route</div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://images.divisare.com//images/c_limit,f_auto,h_2000,q_auto,w_3000/v1505897111/oetacugzjhlk8wxkknth/carl-turner-architects-tim-crocker-magnificent-container.jpg" alt="The Pottery Parlour at Hackney City Farm" loading="lazy">
+      <div class="stop-body">
+        <h4>The Pottery Parlour at Hackney City Farm</h4>
+        <p>Get your hands dirty at this cozy pottery workshop located right on a working city farm. It’s a super relaxing way to spend an afternoon, and you get to take home whatever you…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2 hours</span><span>💶 £35-£45</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://www.plant-lore.com/wp-content/uploads/2022/12/P1120768-scaled.jpg" alt="Columbia Road Flower Market" loading="lazy">
+      <div class="stop-body">
+        <h4>Columbia Road Flower Market</h4>
+        <p>Every Sunday, this street transforms into a riot of color and scent as independent flower sellers take over. It’s chaotic, loud, and quintessentially London, with great coffee…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1-2 hours</span><span>💶 Free entry</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://img.peerspace.com/image/upload/f_auto,q_auto,dpr_auto,w_3840/xbkc9mz6p30f5aidak9h" alt="Skandihus" loading="lazy">
+      <div class="stop-body">
+        <h4>Skandihus</h4>
+        <p>Get your hands dirty with a pottery taster class. It's a super relaxing and creative way to spend a few hours, and you'll leave with a little something you made yourself.</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2-3 hours</span><span>💶 £60-80 per person</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://londondrinksguide.com/cont/blog/imagePot/LondonDrinksGuide-01202021094841000000-6007fc7921865.jpg" alt="Hacha Agaveria Dalston" loading="lazy">
+      <div class="stop-body">
+        <h4>Hacha Agaveria Dalston</h4>
+        <p>This is the place to go if you want to get serious about agave spirits beyond the usual tequila shots. Their 'Mirror Margarita' is legendary for a reason, and the staff are…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1-2 hours</span><span>💶 £12-£20 per drink</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://stuckattheairport.com/wp-content/uploads/2019/02/London-curiosity-museum.jpg" alt="The Viktor Wynd Museum's 'Curio' Cocktail Bar" loading="lazy">
+      <div class="stop-body">
+        <h4>The Viktor Wynd Museum's 'Curio' Cocktail Bar</h4>
+        <p>While the museum is famous, the tiny, moody bar downstairs is where the real magic happens. It’s an eccentric, taxidermy-filled den that serves some of the most unique botanical…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2 hours</span><span>💶 £12-£18 per drink</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://stuckattheairport.com/wp-content/uploads/2019/02/London-curiosity-museum.jpg" alt="The Viktor Wynd Museum of Curiosities" loading="lazy">
+      <div class="stop-body">
+        <h4>The Viktor Wynd Museum of Curiosities</h4>
+        <p>If you like your museums weird, dark, and slightly unsettling, this is your spot. It’s a tiny, packed basement filled with everything from shrunken heads to celebrity…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 45 minutes</span><span>💶 £10</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://www.forbiddenfiberco.com/cdn/shop/files/DND-IG_MK.jpg?v=1775771710" alt="Gods and Monsters at The Last Tuesday Society" loading="lazy">
+      <div class="stop-body">
+        <h4>Gods and Monsters at The Last Tuesday Society</h4>
+        <p>This isn't just a bar; it's a theatrical experience where the decor is as intoxicating as the drinks. They host regular taxidermy workshops and lectures that are as fascinating…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2-3 hours</span><span>💶 £15-£20 per cocktail</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://cdn.prod.website-files.com/61ed5af27741bb6ff8f64481/66d99c41c2c58d0ae8f8bd11_652d4009a3494dedacf49d41_652ac7e1d18b1427623252dc_Copy%252520of%25252020220614-184736-2-HDR.jpeg" alt="The London Buddhist Centre" loading="lazy">
+      <div class="stop-body">
+        <h4>The London Buddhist Centre</h4>
+        <p>Need a break from the city's frantic pace? This center offers drop-in meditation classes that are open to everyone, regardless of experience level. It’s a beautiful, quiet space…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1 hour</span><span>💶 Donation-based</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://i8.amplience.net/i/liberty/000818883-R595085006-1?$medium$&qlt=90&fmt=auto&strip=true" alt="Pick & Mix at The Biscuiteers" loading="lazy">
+      <div class="stop-body">
+        <h4>Pick & Mix at The Biscuiteers</h4>
+        <p>Get hands-on with a biscuit icing class in their adorable Belgravia boutique. You’ll learn the professional techniques to decorate your own set of biscuits to take home.</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2 hours</span><span>💶 £80+</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://images.squarespace-cdn.com/content/v1/5704e43d555986fff4bead2b/4b0eb750-3d8f-4cd4-9158-e9d3ff8a1b86/15.+Conservatory%2C+Barbican+Centre%2C+CREDIT+Max+Colson.jpg" alt="Barbican Conservatory" loading="lazy">
+      <div class="stop-body">
+        <h4>Barbican Conservatory</h4>
+        <p>This brutalist concrete jungle hides a massive, lush tropical conservatory inside. It’s a surreal contrast between 1970s architecture and thousands of exotic plants that feels…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1 hour</span><span>💶 Free</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://www.collater.al/wp-content/uploads/2018/11/Gods-Own-Junkyard-Collater.al-9g.jpg" alt="God's Own Junk Yard" loading="lazy">
+      <div class="stop-body">
+        <h4>God's Own Junk Yard</h4>
+        <p>This is a neon-drenched wonderland tucked away in an industrial estate in Walthamstow. It’s an absolute sensory overload of vintage signs and movie props that feels like stepping…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1 hour</span><span>💶 Free</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://www.solosophie.com/wp-content/uploads/2026/02/covent-market-neals-yard-scaled.jpg" alt="Neal's Yard" loading="lazy">
+      <div class="stop-body">
+        <h4>Neal's Yard</h4>
+        <p>This colorful, hidden courtyard in Covent Garden is like stepping into a storybook. It's packed with independent cafes and shops, and it's one of the most photogenic spots in…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1 hour</span><span>💶 Free</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://i0.wp.com/www.sara-sees.com/wp-content/uploads/2024/02/Brick-Lane_Square.png?fit=2268%2C2268&ssl=1" alt="Brick Lane Market" loading="lazy">
+      <div class="stop-body">
+        <h4>Brick Lane Market</h4>
+        <p>Head here on a Sunday for the ultimate East London experience. It's a chaotic, vibrant mix of vintage clothes, quirky bric-a-brac, street performers, and some of the best curry…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 3-4 hours</span><span>💶 Free entry, food prices vary</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://cdn.ca.emap.com/wp-content/uploads/sites/12/2018/02/dsc0322edit_0.jpg" alt="The Garden Museum" loading="lazy">
+      <div class="stop-body">
+        <h4>The Garden Museum</h4>
+        <p>Located in a deconsecrated church, this museum celebrates British gardening history. The real highlight is the stunning knot garden and the tower climb, which offers a unique…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1-2 hours</span><span>💶 £12-£15</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vMmRkZTVjNmI5OGI1NzdiODM0Nzg5NjE5MGM4OTJlZjcwODIxOTIyMy5qcGc=" alt="The Jazz Cafe" loading="lazy">
+      <div class="stop-body">
+        <h4>The Jazz Cafe</h4>
+        <p>This is one of the best spots in Camden to catch live music. It's intimate, the sound is great, and they host everything from jazz legends to up-and-coming soul and hip-hop…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 3-4 hours</span><span>💶 £20-50 per person</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://www.tonianapolano.com/en/wp-content/uploads/sites/2/2021/09/st-dunstan-church-london-uk.jpg" alt="St Dunstan in the East" loading="lazy">
+      <div class="stop-body">
+        <h4>St Dunstan in the East</h4>
+        <p>This is a beautiful, tranquil ruined church turned public garden right in the middle of the City of London. It's a perfect, quiet spot to escape the noise and grab a coffee.</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 30-60 minutes</span><span>💶 Free</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://cdn.cheapoguides.com/wp-content/uploads/sites/4/2024/11/GettyImages-1455549869.jpg" alt="Postman's Park" loading="lazy">
+      <div class="stop-body">
+        <h4>Postman's Park</h4>
+        <p>A quiet, moving little park near St. Paul's that houses the Watts' Memorial to Heroic Self-Sacrifice. It's a beautiful, somber place to reflect on the stories of ordinary people…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 30 minutes</span><span>💶 Free</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://sites.udel.edu/globalblog/files/2018/02/Afternoon-Tea-Emma-Engel-18W-London-ENGL-THEA-1ajdaiv.jpg" alt="Afternoon Tea at The Wallace Collection" loading="lazy">
+      <div class="stop-body">
+        <h4>Afternoon Tea at The Wallace Collection</h4>
+        <p>Skip the crowded hotel teas and head to the glass-roofed courtyard of this stunning art museum. It feels like a secret garden in the middle of Marylebone, and the scones are…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1.5 hours</span><span>💶 £35-£45</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://www.solosophie.com/wp-content/uploads/2019/02/garden_at_120.jpg" alt="The Garden at 120" loading="lazy">
+      <div class="stop-body">
+        <h4>The Garden at 120</h4>
+        <p>Forget the Sky Garden queues; this is a stunning, lesser-known rooftop garden with panoramic views of the City. It’s a peaceful, lush escape high above the concrete jungle that…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 30-45 minutes</span><span>💶 Free</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://i.redd.it/my-dad-turned-tacos-al-pastor-into-mezcal-v0-2nfba6vuawff1.jpg?width=3024&format=pjpg&auto=webp&s=ca839b993ac123eb393bd9ce13bc8e9602548641" alt="Mezcal Tasting at El Pastor" loading="lazy">
+      <div class="stop-body">
+        <h4>Mezcal Tasting at El Pastor</h4>
+        <p>Forget the tequila shots; head to the basement bar at El Pastor for a proper mezcal flight. The staff are incredibly knowledgeable and will walk you through the smoky, complex…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1 hour</span><span>💶 £25-£40</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://www.soccerbible.com/media/89576/7-hackney-wick-kit.jpg" alt="The Wickers at Hackney Wick" loading="lazy">
+      <div class="stop-body">
+        <h4>The Wickers at Hackney Wick</h4>
+        <p>Explore the gritty, artistic heart of East London by wandering through the street art-covered warehouses of Hackney Wick. It’s a vibrant, ever-changing outdoor gallery that feels…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2-3 hours</span><span>💶 Free</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://images.squarespace-cdn.com/content/v1/5bd60c12815512a2d195a4b1/1552094041300-IXIZZI8MME3FOYNEXAK5/IMG_0879.JPG" alt="Wild Swimming at Hampstead Heath Ponds" loading="lazy">
+      <div class="stop-body">
+        <h4>Wild Swimming at Hampstead Heath Ponds</h4>
+        <p>For the brave, the swimming ponds at Hampstead Heath are a London institution. It’s cold, it’s refreshing, and it’s the most authentic way to connect with nature while still…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1-2 hours</span><span>💶 £4-£5</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://i.guim.co.uk/img/media/806c5338d45992b4d3ce6cc4528fe43dd6f2af29/180_42_4942_2966/master/4942.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&precrop=40:21,offset-x50,offset-y0&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdG8tYWdlLTIwMTcucG5n&s=0e32871cc65d6ed8b0f5849aa349f28a" alt="The London Shell Co. Supper Cruise" loading="lazy">
+      <div class="stop-body">
+        <h4>The London Shell Co. Supper Cruise</h4>
+        <p>Dine on fresh, sustainable British seafood while cruising along the Regent's Canal. It’s an incredibly intimate and romantic way to see a different, quieter side of London.</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 3 hours</span><span>💶 £75-£100</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://cdn.prod.website-files.com/61b90defe354e5660486c19b/62ac760eed8b74506dca90de_210724_FABRIC_ReOpening_JakeDavis_%40jakephilipdavis_%40khromacollective-3844.jpg" alt="fabric" loading="lazy">
+      <div class="stop-body">
+        <h4>fabric</h4>
+        <p>If you want to experience legendary London nightlife, this is the place. It's an institution for electronic music, with a world-class sound system and a vibe that keeps going…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 4-6 hours</span><span>💶 £20-40 per person</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://cdn-imgix.headout.com/media/images/99042ac939d18ae3d1bf2eaa62b01a11-29170-london--lift-109-entry-ticket-at-battersea-power-station-08.jpg?w=1041.6000000000001&h=651&crop=faces&auto=compress%2Cformat&fit=min" alt="Battersea Power Station Lift 109" loading="lazy">
+      <div class="stop-body">
+        <h4>Battersea Power Station Lift 109</h4>
+        <p>Take a glass elevator up the inside of one of the iconic chimneys for a 360-degree view of London. It’s a unique piece of engineering that gives you a perspective you can't get…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 45 minutes</span><span>💶 £17-£25</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://cdn.cheapoguides.com/wp-content/uploads/sites/4/2022/08/IMG-5064.jpg" alt="The Vault at Milroy's of Soho" loading="lazy">
+      <div class="stop-body">
+        <h4>The Vault at Milroy's of Soho</h4>
+        <p>This is the quintessential hidden speakeasy. You walk through a bookcase in a whisky shop to get into a dark, moody basement bar that serves some of the best cocktails in Soho.</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2 hours</span><span>💶 £15-£20 per drink</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://ik.imagekit.io/goboat/production/prod/sites/6/2022/11/25111142/Family-GoBoat-trip-Canary-Wharf-scaled.jpg?tr=w-3840,q=75" alt="GoBoat London - Paddington" loading="lazy">
+      <div class="stop-body">
+        <h4>GoBoat London - Paddington</h4>
+        <p>You get to be the captain of your own electric boat, cruising down the Regent's Canal at your own pace. It’s a brilliant way to see the city from the water without the noise and…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1-3 hours</span><span>💶 £95-£150 per boat</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://www.thecityofldn.com/wp-content/uploads/2023/04/Leadenhall-65-Luisa-Tona-reduced-scaled.jpg" alt="Leadenhall Market Architecture Tour" loading="lazy">
+      <div class="stop-body">
+        <h4>Leadenhall Market Architecture Tour</h4>
+        <p>While people know it as a Harry Potter filming location, the Victorian architecture here is genuinely stunning. Taking a guided walk helps you spot the hidden details and history…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1 hour</span><span>💶 £15-£20</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://london.danslenoir.com/media/cache/resolve/image_full/llm31-67e15e20b6507.jpg" alt="Dans Le Noir ?" loading="lazy">
+      <div class="stop-body">
+        <h4>Dans Le Noir ?</h4>
+        <p>This is a dining experience like no other where you eat your entire meal in complete darkness. It forces you to focus entirely on the flavors and textures of the food, and the…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2 hours</span><span>💶 £70-100 per person</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://the-crystal-maze.com/media/pqadrvwg/cm_2017_aztec_main_063-1.jpg" alt="The Crystal Maze LIVE Experience" loading="lazy">
+      <div class="stop-body">
+        <h4>The Crystal Maze LIVE Experience</h4>
+        <p>If you grew up watching the 90s game show, this is an absolute must-do. It’s a high-energy, immersive team challenge that forces you to run between zones and solve puzzles before…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1.5 hours</span><span>💶 £50-£70</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://wwd.com/wp-content/uploads/2019/09/selfridges-cinema_inside-a-screening-room-and-customer_selfridges-illustration_hr.jpg" alt="The Cinema at Selfridges" loading="lazy">
+      <div class="stop-body">
+        <h4>The Cinema at Selfridges</h4>
+        <p>Catching a movie here feels like a luxury retreat from the chaos of Oxford Street. It’s a boutique cinema with incredibly comfy seating and a curated selection of indie films and…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2-3 hours</span><span>💶 £15-£20</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://i.redd.it/bnsuv5pkx8r81.jpg" alt="The Cinema at the Power Station (Outdoor Screenings)" loading="lazy">
+      <div class="stop-body">
+        <h4>The Cinema at the Power Station (Outdoor Screenings)</h4>
+        <p>While the indoor cinema is well-known, the seasonal outdoor pop-up screenings on the lawn at Battersea Power Station are the real local move. Grab a blanket, some takeaway from…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2-3 hours</span><span>💶 £15-£25</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://beaire.com/sites/default/files/RESERVA_BG_AIRE.jpg" alt="AIRE Ancient Baths London" loading="lazy">
+      <div class="stop-body">
+        <h4>AIRE Ancient Baths London</h4>
+        <p>Escape the city madness in this stunning, candlelit subterranean spa hidden beneath Covent Garden. It's inspired by Roman bathing traditions and is the perfect place to just…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2-3 hours</span><span>💶 £90-150 per person</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://www.crowdfunder.co.uk/uploads/project_images/41/66/928715/1602605682_francesco-zavattari-cinema-museum-london-timeless-frameless_97.jpg" alt="The Cinema Museum" loading="lazy">
+      <div class="stop-body">
+        <h4>The Cinema Museum</h4>
+        <p>Tucked away in a former workhouse (where Charlie Chaplin once lived), this museum is a love letter to the history of cinema. It’s packed with memorabilia and run by passionate…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1.5 hours</span><span>💶 £10-£15</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://images.squarespace-cdn.com/content/v1/6370de20b20ae968f9436d07/1732298394355-2LXAYTV1MKTALV653BDK/Botanical%2Btableware%2Bin%2Bthe%2Bmaking%2Bwinter%2B2024.jpg" alt="Ceramics Workshop at Turning Earth" loading="lazy">
+      <div class="stop-body">
+        <h4>Ceramics Workshop at Turning Earth</h4>
+        <p>Get your hands dirty at this community-focused pottery studio in Leyton. They offer one-off 'taster' sessions that are perfect for visitors who want to create something tangible…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2-3 hours</span><span>💶 £60-£80</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://media.cntraveller.com/photos/64240328dcbc06a88e9d7549/master/pass/Re-Sound%20at%20Re-Mind%20Studio-mar23-pr-global2.jpeg" alt="Sound Bath at Re:Mind Studio" loading="lazy">
+      <div class="stop-body">
+        <h4>Sound Bath at Re:Mind Studio</h4>
+        <p>Escape the London noise with a restorative sound healing session in a beautiful, minimalist space in Victoria. It’s the ultimate reset button for a busy travel itinerary.</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1 hour</span><span>💶 £25-£30</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://res.cloudinary.com/dtljonz0f/image/upload/c_auto,ar_1:1,w_3840,g_auto/f_auto/q_auto/v1/gc-v1/london/regents_canal_non-ed_shutterstock_428519911_ryu3kv?_a=BAVAZGDY0" alt="Little Venice" loading="lazy">
+      <div class="stop-body">
+        <h4>Little Venice</h4>
+        <p>Take a relaxing canal boat ride from Little Venice to Camden. It's a completely different side of London, peaceful and picturesque, and a great way to see the city from the water.</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1-2 hours</span><span>💶 £10-20 per person</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://thevendry.com/cdn-cgi/image/width=3840,quality=75,fit=contain,metadata=none,format=auto/https%3A%2F%2Fs3.us-east-1.amazonaws.com%2Fuploads.thevendry.co%2F23052%2F1685541852678_2.jpg" alt="Pachamama East" loading="lazy">
+      <div class="stop-body">
+        <h4>Pachamama East</h4>
+        <p>This spot brings a cool, modern Peruvian-Asian fusion vibe to Shoreditch that feels incredibly fresh. The small plates are designed for sharing, and the pisco-based cocktails are…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 1.5-2 hours</span><span>💶 £30-£50</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1c/f0/5c/18/cinema-two.jpg?w=900&h=500&s=1" alt="The Cinema in the Arches at Battersea Power Station" loading="lazy">
+      <div class="stop-body">
+        <h4>The Cinema in the Arches at Battersea Power Station</h4>
+        <p>Forget the big chains; this boutique cinema tucked into the railway arches offers a super intimate, high-end viewing experience. It’s perfect for catching the latest indie…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2-3 hours</span><span>💶 £15-£25</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://i.redd.it/mvou2skmqwje1.jpeg" alt="Kayaking the River Thames (London Kayak Company)" loading="lazy">
+      <div class="stop-body">
+        <h4>Kayaking the River Thames (London Kayak Company)</h4>
+        <p>See the city from the waterline with a guided kayak tour. Paddling past the Houses of Parliament or under Tower Bridge is a completely different experience than seeing them from…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 2-3 hours</span><span>💶 £50-£70</span>
+        </div>
+      </div>
+    </div>
+    <div class="stop"><img class="stop-photo" src="https://southlondon.co.uk/wp-content/uploads/2024/01/interior-supperclub.tube-1-scaled.jpg.webp" alt="Supperclub.tube" loading="lazy">
+      <div class="stop-body">
+        <h4>Supperclub.tube</h4>
+        <p>Ever wanted to dine inside a decommissioned 1967 London Underground carriage? This unique spot in Walthamstow serves up a fantastic six-course Colombian tasting menu in a setting…</p>
+        <div class="card-meta"><span class="pill">Attraction</span><span>⏱ 3 hours</span><span>💶 £60-80 per person</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block-title">Other London itineraries</h2>
+    <div class="related">
+      <a href="https://periploapp.com/itineraries/london-uk-3-day/">3-day plan</a>
+      <a href="https://periploapp.com/itineraries/london-uk-5-day/">5-day plan</a>
+      <a href="https://periploapp.com/itineraries/london-uk-7-day/">7-day plan</a>
+      <a href="https://periploapp.com/destinations/london-uk/">Full London guide</a>
+    </div>
+  </section>
+
+  <div class="cta-block">
+    <h2>Customize this London trip in 30 seconds</h2>
+    <p>Open Periplo to swap stops, add a day, change the vibe, and download offline. Built around your taste.</p>
+    <a class="cta-badge" href="https://apps.apple.com/app/id6761609896?utm_source=web&amp;utm_medium=itinerary&amp;utm_campaign=london-uk-2-day">
+      Download on the App Store
+    </a>
+  </div>
+
+</div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <strong>Periplo</strong> — AI travel planning. Operated by Nikita Baklazhenko.
+        <p>&copy; 2026 Periplo. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/help">Help</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/affiliate-disclosure">Affiliate disclosure</a>
+        <a href="/ai-disclosure">AI disclosure</a>
+      </div>
+    </div>
+    <div class="footer-inner disclosure">
+      Content is generated from cached destination data and may contain links to affiliate partners.
+      Always confirm opening hours, prices, and ticket availability before you go. See our
+      <a href="/ai-disclosure">AI disclosure</a> and <a href="/affiliate-disclosure">affiliate disclosure</a>.
+    </div>
+  </footer>
+
+</body>
+</html>

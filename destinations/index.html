@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#C4603A">
+  <title>All Destinations — 169 Travel Guides | Periplo</title>
+  <meta name="description" content="Explore 169 city travel guides with attractions, restaurants, and ready itineraries — from the Periplo travel database.">
+  <link rel="canonical" href="https://periploapp.com/destinations/">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://periploapp.com/destinations/">
+  <meta property="og:title" content="All Destinations — 169 Travel Guides | Periplo">
+  <meta property="og:description" content="Explore 169 city travel guides with attractions, restaurants, and ready itineraries — from the Periplo travel database.">
+  <meta property="og:image" content="https://periploapp.com/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="All Destinations — 169 Travel Guides | Periplo">
+  <meta name="twitter:description" content="Explore 169 city travel guides with attractions, restaurants, and ready itineraries — from the Periplo travel database.">
+  <meta name="twitter:image" content="https://periploapp.com/assets/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #FDFCF9; --bg-soft: #F5F2ED; --bg-dark: #1A1612;
+      --surface: #FFFFFF; --text: #1A1612; --text-secondary: #3A3330;
+      --text-tertiary: #8C7E74; --border: #F0EDE8; --accent: #C4603A;
+      --accent-hover: #A94E2C; --accent-soft: #F5E2D8;
+      --radius: 12px; --radius-lg: 20px; --max-w: 1040px; --max-w-read: 720px;
+      --font-display: 'DM Serif Display', ui-serif, Georgia, serif;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { display: block; max-width: 100%; height: auto; }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+    .container--read { max-width: var(--max-w-read); }
+    nav.site-nav { position: sticky; top: 0; z-index: 10; background: rgba(253, 252, 249, 0.92); backdrop-filter: saturate(1.2) blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; max-width: var(--max-w); margin: 0 auto; }
+    .logo { display: flex; align-items: center; gap: 10px; color: var(--text); font-family: var(--font-display); font-size: 1.25rem; }
+    .logo:hover { text-decoration: none; }
+    .logo img { width: 28px; height: 28px; border-radius: 6px; }
+    .nav-links a { color: var(--text-secondary); font-size: 0.95rem; font-weight: 500; margin-left: 24px; }
+    .nav-cta { background: var(--accent); color: #fff !important; padding: 8px 16px; border-radius: 999px; font-weight: 600; font-size: 0.9rem; margin-left: 24px; }
+    .nav-cta:hover { background: var(--accent-hover); text-decoration: none; }
+    .breadcrumbs { padding: 16px 24px 0; max-width: var(--max-w); margin: 0 auto; font-size: 0.875rem; color: var(--text-tertiary); }
+    .breadcrumbs a { color: var(--text-tertiary); }
+    .breadcrumbs a:hover { color: var(--accent); }
+    .hero-wrap { padding: 32px 0 24px; }
+    .hero-photo { width: 100%; height: 360px; object-fit: cover; border-radius: var(--radius-lg); margin-bottom: 32px; background: var(--bg-soft); }
+    h1.page-title { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; margin-bottom: 16px; }
+    p.lead { font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 28px; max-width: 720px; }
+    section.block { padding: 32px 0; }
+    section.block + section.block { border-top: 1px solid var(--border); }
+    h2.block-title { font-family: var(--font-display); font-size: 1.75rem; margin-bottom: 16px; }
+    h3.card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-top: 16px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+    .card-photo { width: 100%; height: 180px; object-fit: cover; background: var(--bg-soft); }
+    .card-body { padding: 16px; }
+    .card-desc { color: var(--text-secondary); font-size: 0.92rem; margin-top: 6px; }
+    .card-meta { color: var(--text-tertiary); font-size: 0.82rem; margin-top: 10px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .pill { display: inline-block; background: var(--accent-soft); color: var(--accent-hover); padding: 2px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 20px; }
+    .info-cell { background: var(--bg-soft); padding: 16px; border-radius: var(--radius); }
+    .info-label { font-size: 0.78rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .info-value { font-size: 1.02rem; color: var(--text); font-weight: 500; }
+    .faq details { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 10px; }
+    .faq summary { font-weight: 600; cursor: pointer; }
+    .faq p { color: var(--text-secondary); margin-top: 8px; }
+    .day-block { margin-top: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+    .day-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .day-num { background: var(--accent); color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: var(--font-display); }
+    .day-title { font-family: var(--font-display); font-size: 1.4rem; }
+    .stop { display: flex; gap: 16px; padding: 14px 0; border-top: 1px solid var(--border); }
+    .stop:first-of-type { border-top: 0; }
+    .stop-photo { width: 96px; height: 96px; border-radius: var(--radius); object-fit: cover; flex-shrink: 0; background: var(--bg-soft); }
+    .stop-body h4 { font-size: 1rem; margin-bottom: 4px; }
+    .stop-body p { color: var(--text-secondary); font-size: 0.9rem; }
+    .related { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .related a { background: var(--bg-soft); padding: 8px 14px; border-radius: 999px; font-size: 0.9rem; color: var(--text); }
+    .related a:hover { background: var(--accent-soft); color: var(--accent-hover); text-decoration: none; }
+    .cta-block { background: var(--bg-dark); color: #fff; border-radius: var(--radius-lg); padding: 40px 32px; text-align: center; margin: 48px 0; }
+    .cta-block h2 { font-family: var(--font-display); font-size: 1.75rem; margin-bottom: 12px; }
+    .cta-block p { color: rgba(255,255,255,0.78); margin-bottom: 20px; }
+    .cta-badge { display: inline-flex; align-items: center; gap: 10px; background: #fff; color: #000; padding: 10px 20px; border-radius: var(--radius); font-weight: 600; }
+    .cta-badge:hover { text-decoration: none; }
+    footer.site-footer { border-top: 1px solid var(--border); margin-top: 64px; padding: 32px 24px; color: var(--text-tertiary); font-size: 0.88rem; }
+    .footer-inner { max-width: var(--max-w); margin: 0 auto; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; }
+    .footer-links a { color: var(--text-tertiary); margin-right: 16px; }
+    .footer-links a:hover { color: var(--accent); }
+    .disclosure { font-size: 0.8rem; color: var(--text-tertiary); margin-top: 24px; padding-top: 18px; border-top: 1px dashed var(--border); }
+    .index-list { columns: 2; column-gap: 32px; margin-top: 20px; }
+    .index-list a { display: block; padding: 6px 0; color: var(--text); }
+    .index-list a:hover { color: var(--accent); }
+    @media (max-width: 720px) {
+      .hero-photo { height: 240px; }
+      .stop-photo { width: 72px; height: 72px; }
+      .index-list { columns: 1; }
+    }
+  </style>
+  <script type="application/ld+json">
+  {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Periplo", "item": "https://periploapp.com/"}, {"@type": "ListItem", "position": 2, "name": "Destinations", "item": "https://periploapp.com/destinations/"}]}
+  </script>
+
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="logo" href="/" aria-label="Periplo home">
+        <img src="/assets/logo-terra.png" alt="Periplo logo" width="28" height="28">
+        <span>Periplo</span>
+      </a>
+      <div>
+        <a class="nav-links" href="/destinations/">Destinations</a>
+        <a class="nav-links" href="/itineraries/">Itineraries</a>
+        <a class="nav-links" href="/help">Help</a>
+        <a class="nav-cta" href="https://apps.apple.com/app/id6761609896">Get the app</a>
+      </div>
+    </div>
+  </nav>
+  <div class="breadcrumbs">
+        <a href="https://periploapp.com/">Periplo</a> ›
+        <span>Destinations</span>
+  </div>
+
+  <main>
+  
+<div class="container">
+  <div class="hero-wrap">
+    <h1 class="page-title">All destinations</h1>
+    <p class="lead">Curated travel guides for 169 cities — attractions, restaurants, and ready-made itineraries pulled from the Periplo travel database.</p>
+  </div>
+
+  <section class="block">
+    <div class="index-list">
+      <a href="https://periploapp.com/destinations/abu-dhabi-united-arab-emirates/">Abu Dhabi, United Arab Emirates</a>
+      <a href="https://periploapp.com/destinations/agra-india/">Agra, India</a>
+      <a href="https://periploapp.com/destinations/alanya-turkey/">Alanya, Turkey</a>
+      <a href="https://periploapp.com/destinations/almaty-kazakhstan/">Almaty, Kazakhstan</a>
+      <a href="https://periploapp.com/destinations/amalfi-italy/">Amalfi, Italy</a>
+      <a href="https://periploapp.com/destinations/amman-jordan/">Amman, Jordan</a>
+      <a href="https://periploapp.com/destinations/amsterdam-netherlands/">Amsterdam, Netherlands</a>
+      <a href="https://periploapp.com/destinations/ankara-turkiye/">Ankara, Türkiye</a>
+      <a href="https://periploapp.com/destinations/antalya-turkey/">Antalya, Turkey</a>
+      <a href="https://periploapp.com/destinations/antigua-guatemala-guatemala/">Antigua Guatemala, Guatemala</a>
+      <a href="https://periploapp.com/destinations/athens-greece/">Athens, Greece</a>
+      <a href="https://periploapp.com/destinations/auckland-new-zealand/">Auckland, New Zealand</a>
+      <a href="https://periploapp.com/destinations/bali-indonesia/">Bali, Indonesia</a>
+      <a href="https://periploapp.com/destinations/bangkok-thailand/">Bangkok, Thailand</a>
+      <a href="https://periploapp.com/destinations/barcelona-spain/">Barcelona, Spain</a>
+      <a href="https://periploapp.com/destinations/bath-united-kingdom/">Bath, United Kingdom</a>
+      <a href="https://periploapp.com/destinations/batumi-georgia/">Batumi, Georgia</a>
+      <a href="https://periploapp.com/destinations/beijing-china/">Beijing, China</a>
+      <a href="https://periploapp.com/destinations/bergen-norway/">Bergen, Norway</a>
+      <a href="https://periploapp.com/destinations/berlin-germany/">Berlin, Germany</a>
+      <a href="https://periploapp.com/destinations/bilbao-spain/">Bilbao, Spain</a>
+      <a href="https://periploapp.com/destinations/bogota-colombia/">Bogotá, Colombia</a>
+      <a href="https://periploapp.com/destinations/bologna-italy/">Bologna, Italy</a>
+      <a href="https://periploapp.com/destinations/bordeaux-france/">Bordeaux, France</a>
+      <a href="https://periploapp.com/destinations/boston-united-states/">Boston, United States</a>
+      <a href="https://periploapp.com/destinations/bratislava-slovakia/">Bratislava, Slovakia</a>
+      <a href="https://periploapp.com/destinations/brussels-belgium/">Brussels, Belgium</a>
+      <a href="https://periploapp.com/destinations/buenos-aires-argentina/">Buenos Aires, Argentina</a>
+      <a href="https://periploapp.com/destinations/busan-south-korea/">Busan, South Korea</a>
+      <a href="https://periploapp.com/destinations/cabo-san-lucas-mexico/">Cabo San Lucas, Mexico</a>
+      <a href="https://periploapp.com/destinations/cairo-egypt/">Cairo, Egypt</a>
+      <a href="https://periploapp.com/destinations/cancun-mexico/">Cancún, Mexico</a>
+      <a href="https://periploapp.com/destinations/casablanca-morocco/">Casablanca, Morocco</a>
+      <a href="https://periploapp.com/destinations/chiang-mai-thailand/">Chiang Mai, Thailand</a>
+      <a href="https://periploapp.com/destinations/chicago-united-states/">Chicago, United States</a>
+      <a href="https://periploapp.com/destinations/cologne-germany/">Cologne, Germany</a>
+      <a href="https://periploapp.com/destinations/colombo-sri-lanka/">Colombo, Sri Lanka</a>
+      <a href="https://periploapp.com/destinations/da-nang-vietnam/">Da Nang, Vietnam</a>
+      <a href="https://periploapp.com/destinations/delhi-india/">Delhi, India</a>
+      <a href="https://periploapp.com/destinations/doha-qatar/">Doha, Qatar</a>
+      <a href="https://periploapp.com/destinations/donostia-san-sebastian-spain/">Donostia-San Sebastián, Spain</a>
+      <a href="https://periploapp.com/destinations/dortmund-germany/">Dortmund, Germany</a>
+      <a href="https://periploapp.com/destinations/dresden-germany/">Dresden, Germany</a>
+      <a href="https://periploapp.com/destinations/dusseldorf-germany/">Düsseldorf, Germany</a>
+      <a href="https://periploapp.com/destinations/essaouira-morocco/">Essaouira, Morocco</a>
+      <a href="https://periploapp.com/destinations/fez-morocco/">Fez, Morocco</a>
+      <a href="https://periploapp.com/destinations/florence-italy/">Florence, Italy</a>
+      <a href="https://periploapp.com/destinations/frankfurt-am-main-germany/">Frankfurt am Main, Germany</a>
+      <a href="https://periploapp.com/destinations/gold-coast-australia/">Gold Coast, Australia</a>
+      <a href="https://periploapp.com/destinations/granada-spain/">Granada, Spain</a>
+      <a href="https://periploapp.com/destinations/goreme-turkey/">Göreme, Turkey</a>
+      <a href="https://periploapp.com/destinations/hamburg-germany/">Hamburg, Germany</a>
+      <a href="https://periploapp.com/destinations/helsinki-finland/">Helsinki, Finland</a>
+      <a href="https://periploapp.com/destinations/heraklion-greece/">Heraklion, Greece</a>
+      <a href="https://periploapp.com/destinations/hiroshima-japan/">Hiroshima, Japan</a>
+      <a href="https://periploapp.com/destinations/ho-chi-minh-city-vietnam/">Ho Chi Minh City, Vietnam</a>
+      <a href="https://periploapp.com/destinations/hong-kong-china/">Hong Kong, China</a>
+      <a href="https://periploapp.com/destinations/honolulu-united-states/">Honolulu, United States</a>
+      <a href="https://periploapp.com/destinations/hyderabad-india/">Hyderabad, India</a>
+      <a href="https://periploapp.com/destinations/interlaken-switzerland/">Interlaken, Switzerland</a>
+      <a href="https://periploapp.com/destinations/istanbul-turkey/">Istanbul, Turkey</a>
+      <a href="https://periploapp.com/destinations/jaipur-india/">Jaipur, India</a>
+      <a href="https://periploapp.com/destinations/jerusalem-israel/">Jerusalem, Israel</a>
+      <a href="https://periploapp.com/destinations/kaliningrad-russia/">Kaliningrad, Russia</a>
+      <a href="https://periploapp.com/destinations/karagandy-kazakhstan/">Karagandy, Kazakhstan</a>
+      <a href="https://periploapp.com/destinations/kathmandu-nepal/">Kathmandu, Nepal</a>
+      <a href="https://periploapp.com/destinations/kazan-russia/">Kazan, Russia</a>
+      <a href="https://periploapp.com/destinations/konyaalt-turkey/">Konyaaltı, Turkey</a>
+      <a href="https://periploapp.com/destinations/kotor-montenegro/">Kotor, Montenegro</a>
+      <a href="https://periploapp.com/destinations/krakow-poland/">Kraków, Poland</a>
+      <a href="https://periploapp.com/destinations/kuala-lumpur-malaysia/">Kuala Lumpur, Malaysia</a>
+      <a href="https://periploapp.com/destinations/kutaisi-georgia/">Kutaisi, Georgia</a>
+      <a href="https://periploapp.com/destinations/lagos-de-moreno-mexico/">Lagos de Moreno, Mexico</a>
+      <a href="https://periploapp.com/destinations/larnaca-cyprus/">Larnaca, Cyprus</a>
+      <a href="https://periploapp.com/destinations/las-vegas-united-states/">Las Vegas, United States</a>
+      <a href="https://periploapp.com/destinations/lima-peru/">Lima, Peru</a>
+      <a href="https://periploapp.com/destinations/lisbon-portugal/">Lisbon, Portugal</a>
+      <a href="https://periploapp.com/destinations/liverpool-united-kingdom/">Liverpool, United Kingdom</a>
+      <a href="https://periploapp.com/destinations/ljubljana-slovenia/">Ljubljana, Slovenia</a>
+      <a href="https://periploapp.com/destinations/london-uk/">London, Uk</a>
+      <a href="https://periploapp.com/destinations/los-angeles-usa/">Los Angeles, Usa</a>
+      <a href="https://periploapp.com/destinations/luang-prabang-laos/">Luang Prabang, Laos</a>
+      <a href="https://periploapp.com/destinations/lucerne-switzerland/">Lucerne, Switzerland</a>
+      <a href="https://periploapp.com/destinations/luxor-egypt/">Luxor, Egypt</a>
+      <a href="https://periploapp.com/destinations/lyon-france/">Lyon, France</a>
+      <a href="https://periploapp.com/destinations/madrid-spain/">Madrid, Spain</a>
+      <a href="https://periploapp.com/destinations/manchester-united-kingdom/">Manchester, United Kingdom</a>
+      <a href="https://periploapp.com/destinations/marrakech-morocco/">Marrakech, Morocco</a>
+      <a href="https://periploapp.com/destinations/marseille-france/">Marseille, France</a>
+      <a href="https://periploapp.com/destinations/melbourne-australia/">Melbourne, Australia</a>
+      <a href="https://periploapp.com/destinations/mexico-city-mexico/">Mexico City, Mexico</a>
+      <a href="https://periploapp.com/destinations/miami-united-states/">Miami, United States</a>
+      <a href="https://periploapp.com/destinations/milan-italy/">Milan, Italy</a>
+      <a href="https://periploapp.com/destinations/montevideo-uruguay/">Montevideo, Uruguay</a>
+      <a href="https://periploapp.com/destinations/montreal-canada/">Montreal, Canada</a>
+      <a href="https://periploapp.com/destinations/moreno-valley-united-states/">Moreno Valley, United States</a>
+      <a href="https://periploapp.com/destinations/moscow-russia/">Moscow, Russia</a>
+      <a href="https://periploapp.com/destinations/mountain-view-united-states/">Mountain View, United States</a>
+      <a href="https://periploapp.com/destinations/mumbai-india/">Mumbai, India</a>
+      <a href="https://periploapp.com/destinations/munich-germany/">Munich, Germany</a>
+      <a href="https://periploapp.com/destinations/muscat-oman/">Muscat, Oman</a>
+      <a href="https://periploapp.com/destinations/mykonos-greece/">Mykonos, Greece</a>
+      <a href="https://periploapp.com/destinations/malaga-spain/">Málaga, Spain</a>
+      <a href="https://periploapp.com/destinations/nairobi-kenya/">Nairobi, Kenya</a>
+      <a href="https://periploapp.com/destinations/naples-italy/">Naples, Italy</a>
+      <a href="https://periploapp.com/destinations/nashville-united-states/">Nashville, United States</a>
+      <a href="https://periploapp.com/destinations/new-orleans-united-states/">New Orleans, United States</a>
+      <a href="https://periploapp.com/destinations/new-york-city-usa/">New York City, Usa</a>
+      <a href="https://periploapp.com/destinations/oaxaca-mexico/">Oaxaca, Mexico</a>
+      <a href="https://periploapp.com/destinations/osaka-japan/">Osaka, Japan</a>
+      <a href="https://periploapp.com/destinations/oslo-norway/">Oslo, Norway</a>
+      <a href="https://periploapp.com/destinations/palermo-italy/">Palermo, Italy</a>
+      <a href="https://periploapp.com/destinations/palma-de-mallorca-spain/">Palma de Mallorca, Spain</a>
+      <a href="https://periploapp.com/destinations/paris-france/">Paris, France</a>
+      <a href="https://periploapp.com/destinations/penang-malaysia/">Penang, Malaysia</a>
+      <a href="https://periploapp.com/destinations/phnom-penh-cambodia/">Phnom Penh, Cambodia</a>
+      <a href="https://periploapp.com/destinations/phuket-thailand/">Phuket, Thailand</a>
+      <a href="https://periploapp.com/destinations/porto-portugal/">Porto, Portugal</a>
+      <a href="https://periploapp.com/destinations/prague-czech-republic/">Prague, Czech Republic</a>
+      <a href="https://periploapp.com/destinations/puducherry-india/">Puducherry, India</a>
+      <a href="https://periploapp.com/destinations/puerto-vallarta-mexico/">Puerto Vallarta, Mexico</a>
+      <a href="https://periploapp.com/destinations/quito-ecuador/">Quito, Ecuador</a>
+      <a href="https://periploapp.com/destinations/reykjavik-iceland/">Reykjavik, Iceland</a>
+      <a href="https://periploapp.com/destinations/rhodes-greece/">Rhodes, Greece</a>
+      <a href="https://periploapp.com/destinations/riga-latvia/">Riga, Latvia</a>
+      <a href="https://periploapp.com/destinations/rome-italy/">Rome, Italy</a>
+      <a href="https://periploapp.com/destinations/rotterdam-netherlands/">Rotterdam, Netherlands</a>
+      <a href="https://periploapp.com/destinations/rovaniemi-finland/">Rovaniemi, Finland</a>
+      <a href="https://periploapp.com/destinations/salzburg-austria/">Salzburg, Austria</a>
+      <a href="https://periploapp.com/destinations/san-diego-united-states/">San Diego, United States</a>
+      <a href="https://periploapp.com/destinations/san-francisco-usa/">San Francisco, Usa</a>
+      <a href="https://periploapp.com/destinations/san-juan-puerto-rico/">San Juan, Puerto Rico</a>
+      <a href="https://periploapp.com/destinations/san-sebastian-spain/">San Sebastián, Spain</a>
+      <a href="https://periploapp.com/destinations/santa-clara-cuba/">Santa Clara, Cuba</a>
+      <a href="https://periploapp.com/destinations/santiago-chile/">Santiago, Chile</a>
+      <a href="https://periploapp.com/destinations/seattle-united-states/">Seattle, United States</a>
+      <a href="https://periploapp.com/destinations/shanghai-china/">Shanghai, China</a>
+      <a href="https://periploapp.com/destinations/siem-reap-cambodia/">Siem Reap, Cambodia</a>
+      <a href="https://periploapp.com/destinations/sitges-spain/">Sitges, Spain</a>
+      <a href="https://periploapp.com/destinations/sochi-russia/">Sochi, Russia</a>
+      <a href="https://periploapp.com/destinations/sofia-bulgaria/">Sofia, Bulgaria</a>
+      <a href="https://periploapp.com/destinations/split-croatia/">Split, Croatia</a>
+      <a href="https://periploapp.com/destinations/st-petersburg-russia/">St. Petersburg, Russia</a>
+      <a href="https://periploapp.com/destinations/stockholm-sweden/">Stockholm, Sweden</a>
+      <a href="https://periploapp.com/destinations/strasbourg-france/">Strasbourg, France</a>
+      <a href="https://periploapp.com/destinations/taipei-taiwan/">Taipei, Taiwan</a>
+      <a href="https://periploapp.com/destinations/tallinn-estonia/">Tallinn, Estonia</a>
+      <a href="https://periploapp.com/destinations/tangier-morocco/">Tangier, Morocco</a>
+      <a href="https://periploapp.com/destinations/tashkent-uzbekistan/">Tashkent, Uzbekistan</a>
+      <a href="https://periploapp.com/destinations/tbilisi-georgia/">Tbilisi, Georgia</a>
+      <a href="https://periploapp.com/destinations/tel-aviv-israel/">Tel Aviv, Israel</a>
+      <a href="https://periploapp.com/destinations/the-hague-netherlands/">The Hague, Netherlands</a>
+      <a href="https://periploapp.com/destinations/tirana-albania/">Tirana, Albania</a>
+      <a href="https://periploapp.com/destinations/tokyo-japan/">Tokyo, Japan</a>
+      <a href="https://periploapp.com/destinations/toronto-canada/">Toronto, Canada</a>
+      <a href="https://periploapp.com/destinations/tulum-mexico/">Tulum, Mexico</a>
+      <a href="https://periploapp.com/destinations/turku-finland/">Turku, Finland</a>
+      <a href="https://periploapp.com/destinations/utrecht-netherlands/">Utrecht, Netherlands</a>
+      <a href="https://periploapp.com/destinations/valencia-spain/">Valencia, Spain</a>
+      <a href="https://periploapp.com/destinations/valletta-malta/">Valletta, Malta</a>
+      <a href="https://periploapp.com/destinations/varanasi-india/">Varanasi, India</a>
+      <a href="https://periploapp.com/destinations/venice-italy/">Venice, Italy</a>
+      <a href="https://periploapp.com/destinations/vienna-austria/">Vienna, Austria</a>
+      <a href="https://periploapp.com/destinations/vilnius-lithuania/">Vilnius, Lithuania</a>
+      <a href="https://periploapp.com/destinations/warsaw-poland/">Warsaw, Poland</a>
+      <a href="https://periploapp.com/destinations/washington-d-c-united-states/">Washington, D.C., United States</a>
+      <a href="https://periploapp.com/destinations/yerevan-armenia/">Yerevan, Armenia</a>
+      <a href="https://periploapp.com/destinations/yogyakarta-indonesia/">Yogyakarta, Indonesia</a>
+      <a href="https://periploapp.com/destinations/zurich-switzerland/">Zurich, Switzerland</a>
+    </div>
+  </section>
+
+  <div class="cta-block">
+    <h2>Travel planning, made effortless</h2>
+    <p>Periplo turns any city into a day-by-day plan. Maps, restaurants, bookings — all in one place.</p>
+    <a class="cta-badge" href="https://apps.apple.com/app/id6761609896?utm_source=web&amp;utm_medium=destinations_index&amp;utm_campaign=seo">
+      Download on the App Store
+    </a>
+  </div>
+</div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <strong>Periplo</strong> — AI travel planning. Operated by Nikita Baklazhenko.
+        <p>&copy; 2026 Periplo. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/help">Help</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/affiliate-disclosure">Affiliate disclosure</a>
+        <a href="/ai-disclosure">AI disclosure</a>
+      </div>
+    </div>
+    <div class="footer-inner disclosure">
+      Content is generated from cached destination data and may contain links to affiliate partners.
+      Always confirm opening hours, prices, and ticket availability before you go. See our
+      <a href="/ai-disclosure">AI disclosure</a> and <a href="/affiliate-disclosure">affiliate disclosure</a>.
+    </div>
+  </footer>
+
+</body>
+</html>
