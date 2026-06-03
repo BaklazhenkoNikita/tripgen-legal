@@ -157,7 +157,7 @@ export default function McpPage() {
       </ToolCard>
 
       <ToolCard
-        name="build_itinerary"
+        name="plan_trip"
         pill={{ tone: 'write', label: 'Generates content' }}
       >
         <p>
@@ -214,7 +214,7 @@ export default function McpPage() {
       <h3>Building a multi-day itinerary</h3>
       <CodeBlock>Build me a 3-day itinerary for Lisbon, foodie focus</CodeBlock>
       <p>
-        Routes to <code>build_itinerary</code>. The widget renders a day-by-day
+        Routes to <code>plan_trip</code>. The widget renders a day-by-day
         plan with a recommended route between activities, plus flat pools of
         activities and restaurants the host can re-shuffle. Triggered by
         phrasings that pair a duration with an itinerary/plan/schedule word
@@ -283,7 +283,7 @@ export default function McpPage() {
       <ul>
         <li>
           <strong>Free</strong>: 1,000 destination lookups per day.{' '}
-          <code>build_itinerary</code> only debits the counter on a cache miss;
+          <code>plan_trip</code> only debits the counter on a cache miss;
           warm cities are free.
         </li>
         <li>

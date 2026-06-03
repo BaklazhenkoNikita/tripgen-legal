@@ -27,7 +27,7 @@
     </div>
 
     <div class="tool-card">
-      <code>build_itinerary</code><span class="pill write">Generates content</span>
+      <code>plan_trip</code><span class="pill write">Generates content</span>
       <p>Multi-day day-by-day schedule with activities, restaurants, and a recommended split across days. Use when you want a structured itinerary, not just exploration.</p>
     </div>
 
@@ -61,7 +61,7 @@
 
     <h2>Rate limits</h2>
     <ul>
-      <li><strong>Free</strong>: 1,000 destination lookups per day. <code>build_itinerary</code> only debits the counter on a cache miss; warm cities are free.</li>
+      <li><strong>Free</strong>: 1,000 destination lookups per day. <code>plan_trip</code> only debits the counter on a cache miss; warm cities are free.</li>
       <li><strong>Pro</strong>: a much higher cap, plus priority on long-tail city generation. <a href="https://periploapp.com/mcp-upgrade">Upgrade →</a></li>
     </ul>
     <p>When you hit the cap, the tool returns a structured <code>rate_limited</code> response with an upgrade link rather than failing — your host can render that gracefully.</p>

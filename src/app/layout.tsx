@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { Analytics } from '@vercel/analytics/next';
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { QueryProvider } from '@/lib/query/provider';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
@@ -136,6 +137,7 @@ export default function RootLayout({
           />
         )}
         {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
+        <Analytics />
       </body>
     </html>
   );
