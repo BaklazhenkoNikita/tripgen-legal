@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { Play } from 'lucide-react';
 import { LegalLayout } from '@/components/layout/LegalLayout';
 
 export const metadata: Metadata = {
@@ -84,6 +85,156 @@ function ToolCard({
   );
 }
 
+/** Placeholder shown until the demo recording URL is dropped in. */
+const DEMO_VIDEO_URL: string | null = null; // TODO: set to the recording URL once available
+
+function DemoVideo() {
+  const aspectRatio = '16/9';
+
+  if (DEMO_VIDEO_URL) {
+    return (
+      <Box
+        sx={{
+          position: 'relative',
+          width: '100%',
+          aspectRatio,
+          borderRadius: 2,
+          overflow: 'hidden',
+          bgcolor: '#000',
+          my: 3,
+          boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
+        }}
+      >
+        <Box
+          component="video"
+          src={DEMO_VIDEO_URL}
+          controls
+          playsInline
+          preload="metadata"
+          sx={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }}
+          aria-label="Periplo MCP demo recording"
+        />
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        position: 'relative',
+        width: '100%',
+        aspectRatio,
+        borderRadius: 2,
+        overflow: 'hidden',
+        my: 3,
+        background:
+          'linear-gradient(135deg, #1a1410 0%, #2a1f16 40%, #1e1a28 100%)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2,
+        boxShadow: '0 4px 32px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.08)',
+      }}
+    >
+      {/* Subtle background grid */}
+      <Box
+        aria-hidden
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Glow behind the play button */}
+      <Box
+        aria-hidden
+        sx={{
+          position: 'absolute',
+          width: 220,
+          height: 220,
+          borderRadius: '50%',
+          background:
+            'radial-gradient(circle, rgba(196,96,58,0.22) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Play button */}
+      <Box
+        sx={{
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 72,
+          height: 72,
+          borderRadius: '50%',
+          bgcolor: 'rgba(196,96,58,0.90)',
+          boxShadow:
+            '0 0 0 12px rgba(196,96,58,0.15), 0 8px 24px rgba(196,96,58,0.40)',
+        }}
+      >
+        <Play size={28} color="#fff" fill="#fff" aria-hidden />
+      </Box>
+
+      <Box sx={{ position: 'relative', textAlign: 'center', px: 3 }}>
+        <Typography
+          sx={{
+            color: 'rgba(255,255,255,0.90)',
+            fontWeight: 600,
+            fontSize: { xs: '1rem', sm: '1.1rem' },
+            letterSpacing: '-0.01em',
+          }}
+        >
+          Demo: Periplo MCP in action
+        </Typography>
+        <Typography
+          sx={{
+            mt: 0.75,
+            color: 'rgba(255,255,255,0.45)',
+            fontSize: '0.875rem',
+          }}
+        >
+          Recording coming soon — explore_destination, plan_trip &amp; destination_info across Claude, ChatGPT, and mobile
+        </Typography>
+      </Box>
+
+      {/* "Coming soon" badge */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 14,
+          right: 14,
+          bgcolor: 'rgba(255,255,255,0.10)',
+          border: '1px solid rgba(255,255,255,0.14)',
+          backdropFilter: 'blur(6px)',
+          borderRadius: 999,
+          px: 1.5,
+          py: '3px',
+        }}
+      >
+        <Typography
+          sx={{
+            color: 'rgba(255,255,255,0.65)',
+            fontSize: '0.72rem',
+            fontWeight: 600,
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+          }}
+        >
+          Coming soon
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
 function CodeBlock({ children }: { children: ReactNode }) {
   return (
     <Box
@@ -125,6 +276,9 @@ export default function McpPage() {
         a destination &mdash; get a curated map, an itinerary, or a
         magazine-style overview rendered inline.
       </Typography>
+
+      {/* ── Video demo ───────────────────────────────────────────────── */}
+      <DemoVideo />
 
       <h2>What it does</h2>
       <p>
