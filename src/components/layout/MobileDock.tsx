@@ -3,7 +3,7 @@
 import Link, { useLinkStatus } from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { SignedIn } from '@clerk/nextjs';
-import { Compass, Sparkles, Map as MapIcon, type LucideIcon } from 'lucide-react';
+import { Compass, House, Sparkles, Map as MapIcon, type LucideIcon } from 'lucide-react';
 import { memo, useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -29,6 +29,7 @@ export function MobileDock() {
   // active trip so we skip the index-page redirect hop.
   const items = useMemo<readonly DockItem[]>(
     () => [
+      { href: '/explore', match: '/explore', label: 'Home', icon: House },
       { href: '/discover', match: '/discover', label: 'Discover', icon: Compass },
       {
         href: activeTripId ? `/trip/${activeTripId}` : '/trip',

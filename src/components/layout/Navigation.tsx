@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { SignedIn, SignedOut, UserButton, useClerk } from '@clerk/nextjs';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, Menu as MenuIcon, Sparkles, X } from 'lucide-react';
+import { ChevronDown, House, Menu as MenuIcon, Sparkles, X, type LucideIcon } from 'lucide-react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
@@ -55,6 +55,16 @@ const PRIMARY_MATCHES = {
   chat: '/chat',
 } as const;
 
+// The /explore page is the primary entry point, so it leads the nav as
+// "Home" (house icon). The URL stays /explore — the /explore/[slug] SEO
+// pages and sitemap depend on it.
+const homeLink = {
+  href: '/explore',
+  match: PRIMARY_MATCHES.explore,
+  label: 'Home',
+  icon: House,
+} as const;
+
 export function Navigation() {
   const pathname = usePathname() ?? '/';
   const router = useRouter();
@@ -69,17 +79,16 @@ export function Navigation() {
   const activeTripId = useActiveTripOptional()?.activeTripId ?? null;
   const lastChatId = useLastChatId();
 
-  const primaryLinks = useMemo(
-    () => [
-      { href: '/explore', match: PRIMARY_MATCHES.explore, label: 'Explore' },
-      {
-        href: lastChatId ? `/chat/${lastChatId}` : '/chat',
-        match: PRIMARY_MATCHES.chat,
-        label: 'Chat',
-      },
-    ],
+  const chatLink = useMemo(
+    () => ({
+      href: lastChatId ? `/chat/${lastChatId}` : '/chat',
+      match: PRIMARY_MATCHES.chat,
+      label: 'Chat',
+    }),
     [lastChatId],
   );
+
+  const primaryLinks = useMemo(() => [homeLink, chatLink], [chatLink]);
 
   const tripLinks = useMemo(() => buildTripLinks(activeTripId), [activeTripId]);
 
@@ -193,21 +202,26 @@ export function Navigation() {
             gap: 0.5,
           }}
         >
+          <NavLink
+            href={homeLink.href}
+            icon={homeLink.icon}
+            active={isActiveSection(homeLink.match, homeLink.href)}
+            onNavigate={setPendingHref}
+          >
+            {homeLink.label}
+          </NavLink>
           <TripDropdown
             links={tripLinks}
             active={tripActive}
             onNavigate={setPendingHref}
           />
-          {primaryLinks.map((link) => (
-            <NavLink
-              key={link.match}
-              href={link.href}
-              active={isActiveSection(link.match, link.href)}
-              onNavigate={setPendingHref}
-            >
-              {link.label}
-            </NavLink>
-          ))}
+          <NavLink
+            href={chatLink.href}
+            active={isActiveSection(chatLink.match, chatLink.href)}
+            onNavigate={setPendingHref}
+          >
+            {chatLink.label}
+          </NavLink>
           <DiscoverDropdown active={discoverActive} onNavigate={setPendingHref} />
         </Box>
 
@@ -357,6 +371,17 @@ export function Navigation() {
                 </Box>
               )}
             </SignedIn>
+            <MobileLink
+              href={homeLink.href}
+              icon={homeLink.icon}
+              active={isActiveSection(homeLink.match, homeLink.href)}
+              onClick={() => {
+                setPendingHref(homeLink.href);
+                closeMobile();
+              }}
+            >
+              {homeLink.label}
+            </MobileLink>
             <Box
               component="button"
               type="button"
@@ -427,19 +452,16 @@ export function Navigation() {
                 ))}
               </Box>
             ) : null}
-            {primaryLinks.map((link) => (
-              <MobileLink
-                key={link.match}
-                href={link.href}
-                active={isActiveSection(link.match, link.href)}
-                onClick={() => {
-                  setPendingHref(link.href);
-                  closeMobile();
-                }}
-              >
-                {link.label}
-              </MobileLink>
-            ))}
+            <MobileLink
+              href={chatLink.href}
+              active={isActiveSection(chatLink.match, chatLink.href)}
+              onClick={() => {
+                setPendingHref(chatLink.href);
+                closeMobile();
+              }}
+            >
+              {chatLink.label}
+            </MobileLink>
             <Box
               component="button"
               type="button"
@@ -567,11 +589,13 @@ const NavLink = memo(function NavLink({
   href,
   active,
   onNavigate,
+  icon: Icon,
   children,
 }: {
   href: string;
   active: boolean;
   onNavigate?: (href: string) => void;
+  icon?: LucideIcon;
   children: React.ReactNode;
 }) {
   const theme = useTheme();
@@ -601,6 +625,7 @@ const NavLink = memo(function NavLink({
         },
       }}
     >
+      {Icon ? <Icon size={16} aria-hidden style={{ marginRight: 6 }} /> : null}
       {children}
       <LinkPendingDot />
     </Box>
@@ -781,11 +806,13 @@ const MobileLink = memo(function MobileLink({
   href,
   active,
   onClick,
+  icon: Icon,
   children,
 }: {
   href: string;
   active: boolean;
   onClick: () => void;
+  icon?: LucideIcon;
   children: React.ReactNode;
 }) {
   return (
@@ -814,6 +841,7 @@ const MobileLink = memo(function MobileLink({
             }),
       }}
     >
+      {Icon ? <Icon size={16} aria-hidden style={{ marginRight: 6 }} /> : null}
       {children}
       <LinkPendingDot />
     </Box>
