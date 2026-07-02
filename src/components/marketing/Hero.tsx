@@ -40,16 +40,7 @@ export function Hero() {
               AI-powered travel planning
             </Badge>
           </Box>
-          <Typography
-            component="h1"
-            sx={{
-              fontWeight: 700,
-              fontSize: 'clamp(2.5rem, 4vw, 3.75rem)',
-              lineHeight: 0.98,
-              letterSpacing: '-0.025em',
-              color: 'text.primary',
-            }}
-          >
+          <Typography variant="h1" sx={{ color: 'text.primary' }}>
             Plan your perfect trip,
             <br />
             <Box
@@ -70,8 +61,6 @@ export function Hero() {
               mx: { xs: 'auto', md: 0 },
               mt: 3,
               maxWidth: 540,
-              fontSize: 17,
-              lineHeight: 1.6,
               color: 'text.secondary',
             }}
           >
@@ -95,7 +84,7 @@ export function Hero() {
               color="primary"
               size="large"
               endIcon={<ArrowRight size={16} />}
-              sx={{ borderRadius: 999, px: 3, py: 1.25, fontSize: 16 }}
+              sx={{ borderRadius: 999, px: 3, py: 1.25 }}
             >
               Start planning
             </Button>
@@ -109,7 +98,6 @@ export function Hero() {
                 borderRadius: 999,
                 px: 3,
                 py: 1.25,
-                fontSize: 16,
                 borderColor: 'divider',
                 color: 'text.primary',
                 '&:hover': { bgcolor: 'action.hover', borderColor: 'text.disabled' },

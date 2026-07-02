@@ -169,7 +169,7 @@ export function Navigation() {
             alignItems: 'center',
             gap: 1,
             fontWeight: 600,
-            fontSize: 20,
+            fontSize: '1.25rem',
             color: 'text.primary',
             textDecoration: 'none',
           }}
@@ -341,7 +341,7 @@ export function Navigation() {
                     px: 1.5,
                     py: 1,
                     mb: 0.5,
-                    fontSize: 14,
+                    fontSize: '0.875rem',
                     fontWeight: 600,
                     textDecoration: 'none',
                     color: 'primary.contrastText',
@@ -394,7 +394,7 @@ export function Navigation() {
                 borderRadius: 1.5,
                 px: 1.5,
                 py: 1.25,
-                fontSize: 14,
+                fontSize: '0.875rem',
                 fontWeight: tripActive ? 600 : 500,
                 background: 'transparent',
                 border: 0,
@@ -474,7 +474,7 @@ export function Navigation() {
                 borderRadius: 1.5,
                 px: 1.5,
                 py: 1.25,
-                fontSize: 14,
+                fontSize: '0.875rem',
                 fontWeight: discoverActive ? 600 : 500,
                 background: 'transparent',
                 border: 0,
@@ -544,7 +544,7 @@ export function Navigation() {
             >
               <Typography
                 sx={{
-                  fontSize: 11,
+                  fontSize: '0.6875rem',
                   textTransform: 'uppercase',
                   letterSpacing: '0.08em',
                   color: 'text.disabled',
@@ -611,7 +611,7 @@ const NavLink = memo(function NavLink({
         alignItems: 'center',
         borderRadius: 999,
         px: 1.75,
-        fontSize: 14,
+        fontSize: '0.875rem',
         fontWeight: active ? 600 : 500,
         textDecoration: 'none',
         transition: 'color 0.15s, background-color 0.15s',
@@ -658,7 +658,7 @@ const TripDropdown = memo(function TripDropdown({
           height: 36,
           borderRadius: 999,
           px: 1.75,
-          fontSize: 14,
+          fontSize: '0.875rem',
           fontWeight: active ? 600 : 500,
           background: 'transparent',
           border: 0,
@@ -707,7 +707,7 @@ const TripDropdown = memo(function TripDropdown({
               onNavigate?.(link.href);
               setAnchor(null);
             }}
-            sx={{ borderRadius: 1, fontSize: 14, py: 1, px: 1.5 }}
+            sx={{ borderRadius: 1, fontSize: '0.875rem', py: 1, px: 1.5 }}
           >
             {link.label}
             <LinkPendingDot />
@@ -742,7 +742,7 @@ const DiscoverDropdown = memo(function DiscoverDropdown({
           height: 36,
           borderRadius: 999,
           px: 1.75,
-          fontSize: 14,
+          fontSize: '0.875rem',
           fontWeight: active ? 600 : 500,
           background: 'transparent',
           border: 0,
@@ -791,7 +791,7 @@ const DiscoverDropdown = memo(function DiscoverDropdown({
               onNavigate?.(link.href);
               setAnchor(null);
             }}
-            sx={{ borderRadius: 1, fontSize: 14, py: 1, px: 1.5 }}
+            sx={{ borderRadius: 1, fontSize: '0.875rem', py: 1, px: 1.5 }}
           >
             {link.label}
             <LinkPendingDot />
@@ -827,7 +827,7 @@ const MobileLink = memo(function MobileLink({
         borderRadius: 1.5,
         px: 1.5,
         py: 1.25,
-        fontSize: 14,
+        fontSize: '0.875rem',
         fontWeight: active ? 600 : 500,
         textDecoration: 'none',
         ...(active

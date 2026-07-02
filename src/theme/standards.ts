@@ -28,6 +28,26 @@ export const textScale = {
     lineHeight: 1.5,
     letterSpacing: '0.01em',
   },
+  // Small UI steps — tokens for the sizes components were hand-setting as
+  // raw numbers (18/14/12px). Use these instead of numeric fontSize in sx.
+  title: {
+    fontWeight: 600,
+    fontSize: '1.125rem',
+    lineHeight: 1.35,
+    letterSpacing: '-0.005em',
+  },
+  label: {
+    fontWeight: 600,
+    fontSize: '0.875rem',
+    lineHeight: 1.4,
+    letterSpacing: '0em',
+  },
+  meta: {
+    fontWeight: 500,
+    fontSize: '0.75rem',
+    lineHeight: 1.4,
+    letterSpacing: '0.01em',
+  },
 } as const;
 
 export const sectionPadding = {

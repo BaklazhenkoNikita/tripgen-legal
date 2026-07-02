@@ -53,7 +53,7 @@ export function CreditsCard() {
   if (!credits) {
     return (
       <Box sx={cardSx}>
-        <Typography sx={{ fontSize: 14, color: 'text.secondary' }}>
+        <Typography sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>
           {error ? `Couldn't load credits: ${error}` : 'Credits unavailable.'}
         </Typography>
         <Box sx={{ mt: 1.5 }}>
@@ -73,7 +73,7 @@ export function CreditsCard() {
             <Sparkles size={14} aria-hidden style={{ color: 'var(--tg-palette-warning-dark)' }} />
             <Typography
               sx={{
-                fontSize: 11,
+                fontSize: '0.6875rem',
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '0.04em',
@@ -96,7 +96,7 @@ export function CreditsCard() {
           <Typography
             component="span"
             sx={{
-              fontSize: 28,
+              fontSize: '1.75rem',
               fontWeight: 600,
               color: 'text.primary',
               lineHeight: 1,
@@ -106,12 +106,12 @@ export function CreditsCard() {
           </Typography>
         </Stack>
 
-        <Typography sx={{ mt: 1.5, fontSize: 13, color: 'text.secondary' }}>
+        <Typography sx={{ mt: 1.5, fontSize: '0.8125rem', color: 'text.secondary' }}>
           Generate as many trips, chats, and itineraries as you want.
         </Typography>
 
         {credits.proExpiresAt ? (
-          <Typography sx={{ mt: 1, fontSize: 12, color: 'text.secondary' }}>
+          <Typography sx={{ mt: 1, fontSize: '0.75rem', color: 'text.secondary' }}>
             {credits.proWillRenew ? 'Renews' : 'Ends'} on{' '}
             {new Date(credits.proExpiresAt).toLocaleDateString()}
           </Typography>
@@ -132,7 +132,7 @@ export function CreditsCard() {
           <Sparkles size={14} aria-hidden style={{ color: 'var(--mui-palette-primary-main)' }} />
           <Typography
             sx={{
-              fontSize: 11,
+              fontSize: '0.6875rem',
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.04em',
@@ -148,7 +148,7 @@ export function CreditsCard() {
         <Typography
           component="span"
           sx={{
-            fontSize: 36,
+            fontSize: '2.25rem',
             fontWeight: 600,
             fontVariantNumeric: 'tabular-nums',
             color: 'text.primary',
@@ -157,7 +157,7 @@ export function CreditsCard() {
         >
           {credits.credits}
         </Typography>
-        <Typography component="span" sx={{ fontSize: 14, color: 'text.disabled' }}>
+        <Typography component="span" sx={{ fontSize: '0.875rem', color: 'text.disabled' }}>
           / {credits.maxCredits}
         </Typography>
       </Stack>
@@ -183,7 +183,7 @@ export function CreditsCard() {
       </Box>
 
       {credits.nextRegenAt ? (
-        <Typography sx={{ mt: 1.5, fontSize: 12, color: 'text.secondary' }}>
+        <Typography sx={{ mt: 1.5, fontSize: '0.75rem', color: 'text.secondary' }}>
           Next credit at {new Date(credits.nextRegenAt).toLocaleString()}
         </Typography>
       ) : null}

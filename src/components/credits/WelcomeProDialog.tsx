@@ -157,7 +157,6 @@ function Celebration({ onClose, from }: { onClose: () => void; from?: string }) 
         <Typography
           component="h2"
           sx={{
-            fontFamily: 'var(--font-display, inherit)',
             fontSize: '1.5rem',
             fontWeight: 700,
             letterSpacing: '-0.02em',

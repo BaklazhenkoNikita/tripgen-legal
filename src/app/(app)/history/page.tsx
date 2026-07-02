@@ -53,7 +53,6 @@ export default function HistoryPage() {
           <Typography
             component="h1"
             sx={{
-              fontFamily: 'var(--font-display, inherit)',
               fontSize: '2.25rem',
               fontWeight: 600,
               letterSpacing: '-0.02em',
@@ -198,7 +197,6 @@ export default function HistoryPage() {
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
-                                fontFamily: 'var(--font-display, inherit)',
                                 fontSize: 16,
                                 fontWeight: 600,
                                 color: 'text.primary',

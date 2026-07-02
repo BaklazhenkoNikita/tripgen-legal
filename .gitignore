@@ -43,3 +43,6 @@ trace-*.json
 
 # Read-only mobile reference — lives locally but not tracked in this repo's history
 trip_gen_mobile/
+
+# clerk configuration (can include secrets)
+/.clerk/

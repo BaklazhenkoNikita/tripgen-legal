@@ -168,7 +168,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
           {detail.title}
         </Typography>
         {detail.subtitle ? (
-          <Typography sx={{ mt: 0.5, fontSize: 14, color: 'text.secondary' }}>
+          <Typography sx={{ mt: 0.5, fontSize: '0.875rem', color: 'text.secondary' }}>
             {detail.subtitle}
           </Typography>
         ) : null}
@@ -180,7 +180,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
               display: 'inline-flex',
               alignItems: 'flex-start',
               gap: 0.75,
-              fontSize: 14,
+              fontSize: '0.875rem',
               color: 'text.secondary',
             }}
           >
@@ -356,7 +356,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
               </Box>
             ) : (
               <Typography
-                sx={{ mt: 1.5, fontSize: 14, color: 'text.disabled' }}
+                sx={{ mt: 1.5, fontSize: '0.875rem', color: 'text.disabled' }}
               >
                 No additional context yet.
               </Typography>
@@ -398,7 +398,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 0.5,
-                    fontSize: 13,
+                    fontSize: '0.8125rem',
                     fontWeight: 500,
                     color: 'primary.main',
                     textDecoration: 'none',
@@ -437,7 +437,7 @@ function RelatedViator({
     <Box sx={{ mt: 3 }}>
       <SectionHeading>Popular nearby</SectionHeading>
       <Typography
-        sx={{ mt: 0.25, mb: 1.25, fontSize: 12, color: 'text.disabled' }}
+        sx={{ mt: 0.25, mb: 1.25, fontSize: '0.75rem', color: 'text.disabled' }}
       >
         Bookable experiences related to this place
       </Typography>
@@ -507,7 +507,7 @@ function RelatedViator({
                       WebkitLineClamp: 2,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
-                      fontSize: 11,
+                      fontSize: '0.6875rem',
                       fontWeight: 600,
                       lineHeight: 1.25,
                       color: 'text.primary',
@@ -522,7 +522,7 @@ function RelatedViator({
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       gap: 0.5,
-                      fontSize: 10,
+                      fontSize: '0.625rem',
                       color: 'text.disabled',
                     }}
                   >
@@ -585,7 +585,7 @@ function Chip({
         bgcolor: 'action.hover',
         px: 1.25,
         py: 0.5,
-        fontSize: 12,
+        fontSize: '0.75rem',
         fontWeight: 500,
         color: tone === 'warning' ? 'warning.main' : 'text.secondary',
       }}
@@ -608,7 +608,7 @@ function SectionHeading({
       component="h3"
       sx={[
         {
-          fontSize: 11,
+          fontSize: '0.6875rem',
           fontWeight: 600,
           textTransform: 'uppercase',
           letterSpacing: '0.16em',
@@ -648,7 +648,7 @@ function List({
             sx={{
               display: 'flex',
               gap: 1,
-              fontSize: 14,
+              fontSize: '0.875rem',
               lineHeight: 1.6,
               color: 'text.secondary',
             }}

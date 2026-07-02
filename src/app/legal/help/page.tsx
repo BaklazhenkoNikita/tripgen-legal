@@ -27,7 +27,6 @@ function FaqItem({ question, children }: { question: string; children: ReactNode
       <Typography
         component="h3"
         sx={{
-          fontFamily: 'var(--font-display), Georgia, "Times New Roman", serif',
           fontWeight: 400,
           fontSize: '1.05rem',
           lineHeight: 1.35,

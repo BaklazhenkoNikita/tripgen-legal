@@ -78,7 +78,6 @@ export default function DiscoverPage() {
           component="h1"
           sx={{
             mt: 1.5,
-            fontFamily: 'var(--font-display, inherit)',
             fontSize: '2.25rem',
             fontWeight: 600,
             letterSpacing: '-0.02em',
@@ -276,7 +275,6 @@ function ResultCard({ result }: { result: DiscoverResult }) {
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
-            fontFamily: 'var(--font-display, inherit)',
             fontSize: 15,
             fontWeight: 600,
             lineHeight: 1.35,

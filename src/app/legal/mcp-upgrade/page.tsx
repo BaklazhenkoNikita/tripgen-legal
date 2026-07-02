@@ -268,7 +268,6 @@ export default function McpUpgradePage() {
           <Typography
             component="h2"
             sx={{
-              fontFamily: 'var(--font-display), Georgia, "Times New Roman", serif',
               fontSize: '1.375rem',
               lineHeight: 1.25,
               mb: 1.5,

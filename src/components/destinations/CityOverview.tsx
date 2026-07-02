@@ -148,7 +148,7 @@ export function CityOverviewDetails({
                   <Typography
                     sx={{
                       mt: info.climate ? 1.25 : 0,
-                      fontSize: 14,
+                      fontSize: '0.875rem',
                       lineHeight: 1.65,
                       color: 'text.secondary',
                     }}
@@ -262,7 +262,7 @@ function SectionTitle({ children }: { children: ReactNode }) {
       sx={{
         m: 0,
         mb: 1,
-        fontSize: 16,
+        fontSize: '1rem',
         fontWeight: 600,
         lineHeight: 1.3,
         color: 'text.primary',
@@ -279,7 +279,7 @@ function SectionLabel({ children }: { children: ReactNode }) {
       component="h3"
       sx={{
         m: 0,
-        fontSize: 11,
+        fontSize: '0.6875rem',
         fontWeight: 600,
         textTransform: 'uppercase',
         letterSpacing: '0.12em',
@@ -296,7 +296,7 @@ function BodyText({ children }: { children: ReactNode }) {
     <Typography
       sx={{
         whiteSpace: 'pre-line',
-        fontSize: 15,
+        fontSize: '0.9375rem',
         lineHeight: 1.6,
         color: 'text.secondary',
       }}
@@ -321,7 +321,7 @@ function ClampedText({
   return (
     <Typography
       sx={{
-        fontSize: 15,
+        fontSize: '0.9375rem',
         lineHeight: 1.6,
         color: 'text.secondary',
         display: '-webkit-box',
@@ -369,7 +369,7 @@ function ListRow({
         display: 'flex',
         alignItems: 'flex-start',
         gap: 1,
-        fontSize: 14,
+        fontSize: '0.875rem',
         lineHeight: 1.55,
         color: 'text.secondary',
       }}
@@ -439,7 +439,7 @@ function ToggleButton({
         alignItems: 'center',
         gap: 0.5,
         fontWeight: 500,
-        fontSize: 13,
+        fontSize: '0.8125rem',
         fontFamily: 'inherit',
         color: 'primary.main',
         cursor: 'pointer',
@@ -458,7 +458,7 @@ function ToggleButton({
 
 function PracticalRow({ label, value }: { label: string; value: string }) {
   return (
-    <Box sx={{ display: 'flex', gap: 2, fontSize: 13 }}>
+    <Box sx={{ display: 'flex', gap: 2, fontSize: '0.8125rem' }}>
       <Box sx={{ width: 110, flexShrink: 0, color: 'text.secondary' }}>{label}</Box>
       <Box sx={{ color: 'text.primary' }}>{value}</Box>
     </Box>

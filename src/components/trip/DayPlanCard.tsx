@@ -87,7 +87,7 @@ export function DayPlanCard({
           <Box
             component="span"
             sx={{
-              fontSize: 10,
+              fontSize: '0.625rem',
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.04em',
@@ -98,7 +98,7 @@ export function DayPlanCard({
           </Box>
           <Box
             component="span"
-            sx={{ fontSize: 24, fontWeight: 600, lineHeight: 1 }}
+            sx={{ fontSize: '1.5rem', fontWeight: 600, lineHeight: 1 }}
           >
             {dayNumber}
           </Box>
@@ -109,7 +109,7 @@ export function DayPlanCard({
             <Typography
               component="h3"
               sx={{
-                fontSize: 18,
+                fontSize: '1.125rem',
                 fontWeight: 600,
                 color: 'text.primary',
                 m: 0,
@@ -136,7 +136,7 @@ export function DayPlanCard({
               alignItems: 'center',
               columnGap: 1,
               rowGap: 0.25,
-              fontSize: 12,
+              fontSize: '0.75rem',
               color: 'text.disabled',
             }}
           >
@@ -173,7 +173,7 @@ export function DayPlanCard({
             bgcolor: (t: Theme) => alpha(t.palette.text.primary, 0.04),
             px: 1.5,
             py: 1,
-            fontSize: 12,
+            fontSize: '0.75rem',
             color: 'text.secondary',
           }}
         >
@@ -219,7 +219,7 @@ export function DayPlanCard({
                 borderColor: 'divider',
                 py: 3,
                 textAlign: 'center',
-                fontSize: 14,
+                fontSize: '0.875rem',
                 color: 'text.disabled',
               }}
             >
@@ -235,7 +235,7 @@ export function DayPlanCard({
                 bgcolor: 'background.paper',
                 px: 1.5,
                 py: 1.25,
-                fontSize: 12,
+                fontSize: '0.75rem',
                 color: 'text.secondary',
               }}
             >

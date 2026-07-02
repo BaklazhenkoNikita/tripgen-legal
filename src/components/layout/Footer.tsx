@@ -113,8 +113,7 @@ export function Footer() {
             <Box
               component="span"
               sx={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 20,
+                fontSize: '1.25rem',
                 fontWeight: 400,
                 letterSpacing: '-0.01em',
               }}
@@ -151,7 +150,7 @@ export function Footer() {
                   component={Link}
                   href={link.href}
                   sx={{
-                    fontSize: 13,
+                    fontSize: '0.8125rem',
                     color: 'text.secondary',
                     textDecoration: 'none',
                     '&:hover': { color: 'primary.main' },
@@ -177,7 +176,7 @@ export function Footer() {
               background: 'transparent',
               p: 0.5,
               fontFamily: 'inherit',
-              fontSize: 13,
+              fontSize: '0.8125rem',
               fontWeight: 500,
               color: 'text.secondary',
               cursor: 'pointer',
@@ -225,7 +224,7 @@ export function Footer() {
             }}
           >
             <Box sx={{ gridColumn: { xs: 'span 2', md: 'span 1' } }}>
-              <Typography sx={{ maxWidth: 280, fontSize: 14, color: 'text.secondary' }}>
+              <Typography sx={{ maxWidth: 280, fontSize: '0.875rem', color: 'text.secondary' }}>
                 AI-powered travel planning. Personal itineraries, day by day.
               </Typography>
             </Box>
@@ -236,7 +235,7 @@ export function Footer() {
                   component="h3"
                   sx={{
                     m: 0,
-                    fontSize: 11,
+                    fontSize: '0.6875rem',
                     fontWeight: 600,
                     textTransform: 'uppercase',
                     letterSpacing: '0.08em',
@@ -254,7 +253,7 @@ export function Footer() {
                           href={link.href}
                           tabIndex={open ? 0 : -1}
                           sx={{
-                            fontSize: 14,
+                            fontSize: '0.875rem',
                             color: 'text.secondary',
                             textDecoration: 'none',
                             '&:hover': { color: 'primary.main' },
@@ -268,7 +267,7 @@ export function Footer() {
                           href={link.href}
                           tabIndex={open ? 0 : -1}
                           sx={{
-                            fontSize: 14,
+                            fontSize: '0.875rem',
                             color: 'text.secondary',
                             textDecoration: 'none',
                             '&:hover': { color: 'primary.main' },
@@ -292,7 +291,7 @@ export function Footer() {
             borderColor: 'divider',
             pt: 2.5,
             textAlign: 'center',
-            fontSize: 12,
+            fontSize: '0.75rem',
             color: 'text.disabled',
             letterSpacing: '0.01em',
           }}

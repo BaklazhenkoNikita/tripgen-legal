@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { textScale } from '@/theme/standards';
 import { blogPosts } from '@/data/blogPosts';
 import { Photo } from '@/components/ui/Photo';
 import { Badge } from '@/components/ui/Badge';
@@ -19,26 +20,13 @@ export default function BlogListPage() {
     <Box sx={{ mx: 'auto', maxWidth: 1280, px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
       <Box component="header">
         <Badge tone="accent" size="md">Travel guides</Badge>
-        <Typography
-          component="h1"
-          sx={{
-            mt: 2,
-            fontFamily: 'var(--font-display, inherit)',
-            fontSize: { xs: '2.25rem', sm: '3rem' },
-            fontWeight: 700,
-            letterSpacing: '-0.025em',
-            lineHeight: 1.0,
-            color: 'text.primary',
-          }}
-        >
+        <Typography variant="h1" component="h1" sx={{ mt: 2, color: 'text.primary' }}>
           The blog
         </Typography>
         <Typography
           sx={{
             mt: 2,
             maxWidth: 672,
-            fontSize: 17,
-            lineHeight: 1.55,
             color: 'text.secondary',
           }}
         >
@@ -83,14 +71,10 @@ export default function BlogListPage() {
               <Badge tone="accent" size="sm">{hero.category}</Badge>
             </Box>
             <Typography
+              variant="h3"
               component="h2"
               sx={{
                 mt: 1.5,
-                fontFamily: 'var(--font-display, inherit)',
-                fontSize: { xs: '1.625rem', md: '2rem' },
-                fontWeight: 600,
-                lineHeight: 1.15,
-                letterSpacing: '-0.02em',
                 color: 'text.primary',
                 transition: 'color 200ms',
                 '.group:hover &': { color: 'primary.main' },
@@ -105,14 +89,13 @@ export default function BlogListPage() {
                 WebkitLineClamp: 3,
                 WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
-                fontSize: 15,
-                lineHeight: 1.6,
+                ...textScale.support,
                 color: 'text.secondary',
               }}
             >
               {hero.excerpt}
             </Typography>
-            <Typography sx={{ mt: 2, fontSize: 12, color: 'text.disabled' }}>
+            <Typography sx={{ mt: 2, ...textScale.meta, color: 'text.disabled' }}>
               {hero.date} · {hero.readTime}
             </Typography>
           </Box>
@@ -144,7 +127,7 @@ export default function BlogListPage() {
               sizes="(max-width: 768px) 100vw, 33vw"
             />
             <Box sx={{ mt: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 12, color: 'text.disabled' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ...textScale.meta, color: 'text.disabled' }}>
                 <Badge tone="accent" size="sm">{post.category}</Badge>
                 <span>{post.date}</span>
                 <span>·</span>
@@ -154,10 +137,7 @@ export default function BlogListPage() {
                 component="h2"
                 sx={{
                   mt: 1,
-                  fontFamily: 'var(--font-display, inherit)',
-                  fontSize: '1.125rem',
-                  fontWeight: 600,
-                  lineHeight: 1.35,
+                  ...textScale.title,
                   color: 'text.primary',
                   transition: 'color 200ms',
                   '.group:hover &': { color: 'primary.main' },
@@ -172,8 +152,7 @@ export default function BlogListPage() {
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
-                  fontSize: 15,
-                  lineHeight: 1.55,
+                  ...textScale.support,
                   color: 'text.secondary',
                 }}
               >

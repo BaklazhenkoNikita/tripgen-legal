@@ -9,7 +9,7 @@ import { MuiProvider } from '@/theme/MuiProvider';
 import { ToastBridge } from '@/components/ui/ToastBridge';
 import { AppContextsRoot } from '@/contexts';
 import { ClerkAppearanceProvider } from '@/components/providers/ClerkAppearanceProvider';
-import { dmSerifDisplay, plusJakartaSans } from '@/theme/fonts';
+import { plusJakartaSans } from '@/theme/fonts';
 import { organizationJsonLd, websiteJsonLd, stringifyJsonLd } from '@/lib/seo/jsonld';
 import './globals.css';
 
@@ -100,7 +100,7 @@ export default function RootLayout({
   const siteLd = stringifyJsonLd(websiteJsonLd());
 
   return (
-    <html lang="en" className={`${dmSerifDisplay.variable} ${plusJakartaSans.variable}`} suppressHydrationWarning>
+    <html lang="en" className={plusJakartaSans.variable} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <InitColorSchemeScript
           attribute="data-tg-color-scheme"

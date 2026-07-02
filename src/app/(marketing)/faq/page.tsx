@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { ChevronDown } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { textScale } from '@/theme/standards';
 import { Badge } from '@/components/ui/Badge';
 
 export const metadata: Metadata = {
@@ -54,21 +55,10 @@ export default function FAQPage() {
     <Box sx={{ mx: 'auto', maxWidth: 768, px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
       <Box component="header">
         <Badge tone="accent" size="md">Help</Badge>
-        <Typography
-          component="h1"
-          sx={{
-            mt: 2,
-            fontFamily: 'var(--font-display, inherit)',
-            fontSize: { xs: '2.25rem', sm: '3rem' },
-            fontWeight: 700,
-            letterSpacing: '-0.025em',
-            lineHeight: 1.0,
-            color: 'text.primary',
-          }}
-        >
+        <Typography variant="h1" component="h1" sx={{ mt: 2, color: 'text.primary' }}>
           Frequently asked questions
         </Typography>
-        <Typography sx={{ mt: 2, fontSize: 17, lineHeight: 1.55, color: 'text.secondary' }}>
+        <Typography sx={{ mt: 2, color: 'text.secondary' }}>
           Everything you need to know about Periplo.
         </Typography>
       </Box>
@@ -105,8 +95,8 @@ export default function FAQPage() {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 gap: 2,
-                fontSize: 15,
-                fontWeight: 600,
+                ...textScale.label,
+                fontSize: '0.95rem',
                 color: 'text.primary',
                 '&::-webkit-details-marker': { display: 'none' },
               }}
@@ -125,7 +115,7 @@ export default function FAQPage() {
                 <ChevronDown size={16} />
               </Box>
             </Box>
-            <Typography sx={{ mt: 1.5, fontSize: 15, lineHeight: 1.6, color: 'text.secondary' }}>
+            <Typography variant="body2" sx={{ mt: 1.5, color: 'text.secondary' }}>
               {faq.a}
             </Typography>
           </Box>

@@ -10,6 +10,7 @@ import { Photo } from '@/components/ui/Photo';
 import { Badge } from '@/components/ui/Badge';
 import { HorizontalScrollRow } from '@/components/ui/HorizontalScrollRow';
 import { Hero } from '@/components/marketing/Hero';
+import { textScale } from '@/theme/standards';
 
 export const metadata: Metadata = {
   title: 'Periplo — AI Travel Planner',
@@ -55,16 +56,7 @@ export default function LandingPage() {
       {/* Features */}
       <Box component="section" sx={{ px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
         <Box sx={{ mx: 'auto', maxWidth: 1152 }}>
-          <Typography
-            component="h2"
-            sx={{
-              textAlign: 'center',
-              fontWeight: 600,
-              fontSize: { xs: '1.75rem', sm: '2.25rem' },
-              letterSpacing: '-0.01em',
-              color: 'text.primary',
-            }}
-          >
+          <Typography variant="h2" sx={{ textAlign: 'center', color: 'text.primary' }}>
             Why Periplo?
           </Typography>
           <Typography
@@ -118,11 +110,11 @@ export default function LandingPage() {
                   </Box>
                   <Typography
                     component="h3"
-                    sx={{ mt: 2.5, fontSize: 18, fontWeight: 600, color: 'text.primary' }}
+                    sx={{ mt: 2.5, ...textScale.title, color: 'text.primary' }}
                   >
                     {title}
                   </Typography>
-                  <Typography sx={{ mt: 1, fontSize: 15, lineHeight: 1.55, color: 'text.secondary' }}>
+                  <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
                     {description}
                   </Typography>
                 </Box>
@@ -144,10 +136,7 @@ export default function LandingPage() {
         <Box sx={{ mx: 'auto', maxWidth: 1280, px: { xs: 2, sm: 3 } }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 1.5 }}>
             <Box>
-              <Typography
-                component="h2"
-                sx={{ fontWeight: 600, fontSize: { xs: '1.75rem', sm: '2.25rem' }, color: 'text.primary' }}
-              >
+              <Typography variant="h2" component="h2" sx={{ color: 'text.primary' }}>
                 Popular destinations
               </Typography>
               <Typography sx={{ mt: 1, color: 'text.secondary' }}>
@@ -161,8 +150,7 @@ export default function LandingPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 0.5,
-                fontSize: 14,
-                fontWeight: 500,
+                ...textScale.label,
                 color: 'primary.main',
                 textDecoration: 'none',
                 '&:hover': { textDecoration: 'underline' },
@@ -220,7 +208,7 @@ export default function LandingPage() {
                   <Box sx={{ p: 2 }}>
                     <Typography
                       component="h3"
-                      sx={{ fontSize: 16, fontWeight: 600, color: 'text.primary', transition: 'color 0.2s' }}
+                      sx={{ ...textScale.label, fontSize: '1rem', color: 'text.primary', transition: 'color 0.2s' }}
                     >
                       {dest.city}
                       <Box component="span" sx={{ color: 'text.disabled', fontWeight: 400 }}>, {dest.country}</Box>
@@ -238,10 +226,7 @@ export default function LandingPage() {
         <Box sx={{ mx: 'auto', maxWidth: 1280 }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 1.5 }}>
             <Box>
-              <Typography
-                component="h2"
-                sx={{ fontWeight: 600, fontSize: { xs: '1.75rem', sm: '2.25rem' }, color: 'text.primary' }}
-              >
+              <Typography variant="h2" component="h2" sx={{ color: 'text.primary' }}>
                 Travel guides
               </Typography>
               <Typography sx={{ mt: 1, color: 'text.secondary' }}>
@@ -255,8 +240,7 @@ export default function LandingPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 0.5,
-                fontSize: 14,
-                fontWeight: 500,
+                ...textScale.label,
                 color: 'primary.main',
                 textDecoration: 'none',
                 '&:hover': { textDecoration: 'underline' },
@@ -309,15 +293,14 @@ export default function LandingPage() {
                   <Badge tone="accent" size="sm">{post.category}</Badge>
                   <Typography
                     component="h3"
-                    sx={{ mt: 1, fontSize: 18, fontWeight: 600, lineHeight: 1.3, color: 'text.primary', transition: 'color 0.2s' }}
+                    sx={{ mt: 1, ...textScale.title, color: 'text.primary', transition: 'color 0.2s' }}
                   >
                     {post.title}
                   </Typography>
                   <Typography
                     sx={{
                       mt: 0.75,
-                      fontSize: 15,
-                      lineHeight: 1.55,
+                      ...textScale.support,
                       color: 'text.secondary',
                       display: '-webkit-box',
                       WebkitBoxOrient: 'vertical',
@@ -340,7 +323,7 @@ export default function LandingPage() {
           <Typography
             component="span"
             sx={{
-              fontSize: 11,
+              ...textScale.meta,
               fontWeight: 700,
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
@@ -349,26 +332,10 @@ export default function LandingPage() {
           >
             New
           </Typography>
-          <Typography
-            component="h3"
-            variant="h3"
-            sx={{
-              mt: 1.5,
-              fontSize: { xs: '1.5rem', sm: '1.75rem' },
-              lineHeight: 1.2,
-              color: 'text.primary',
-            }}
-          >
+          <Typography variant="h3" component="h3" sx={{ mt: 1.5, color: 'text.primary' }}>
             Connect Periplo to Claude or ChatGPT
           </Typography>
-          <Typography
-            sx={{
-              mt: 1.5,
-              fontSize: 16,
-              lineHeight: 1.6,
-              color: 'text.secondary',
-            }}
-          >
+          <Typography sx={{ mt: 1.5, color: 'text.secondary' }}>
             Bring real-time travel planning into your AI tools — itineraries, places, and prices,
             on demand.
           </Typography>
@@ -380,8 +347,7 @@ export default function LandingPage() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 0.5,
-              fontSize: 14,
-              fontWeight: 600,
+              ...textScale.label,
               color: 'primary.main',
               textDecoration: 'none',
               '&:hover': { textDecoration: 'underline' },
@@ -431,10 +397,7 @@ export default function LandingPage() {
             }}
           />
           <Box sx={{ position: 'relative' }}>
-            <Typography
-              component="h2"
-              sx={{ fontWeight: 600, fontSize: { xs: '1.75rem', sm: '2.25rem' }, letterSpacing: '-0.015em' }}
-            >
+            <Typography variant="h2" component="h2">
               Ready for your next adventure?
             </Typography>
             <Typography sx={{ mx: 'auto', mt: 1.5, maxWidth: 480, color: 'rgba(255,255,255,0.92)' }}>
@@ -453,8 +416,6 @@ export default function LandingPage() {
                 px: 3,
                 py: 1.25,
                 borderRadius: 999,
-                fontSize: 16,
-                fontWeight: 600,
                 boxShadow: '0 1px 2px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.12)',
                 '&:hover': {
                   bgcolor: 'common.white',
@@ -473,8 +434,8 @@ export default function LandingPage() {
       {/* Trust line (legal-merge addition) */}
       <Typography
         sx={{
+          ...textScale.meta,
           color: 'text.secondary',
-          fontSize: 12,
           textAlign: 'center',
           mb: 4,
           px: 2,

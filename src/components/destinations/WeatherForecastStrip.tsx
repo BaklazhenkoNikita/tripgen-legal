@@ -121,7 +121,7 @@ export function WeatherForecastStrip({ location, startDate, numDays }: Props) {
               </ButtonBase>
               <Typography
                 sx={{
-                  fontSize: 13,
+                  fontSize: '0.8125rem',
                   fontWeight: 600,
                   color: 'text.primary',
                   minWidth: 0,
@@ -136,7 +136,7 @@ export function WeatherForecastStrip({ location, startDate, numDays }: Props) {
           ) : (
             <Typography
               sx={{
-                fontSize: 13,
+                fontSize: '0.8125rem',
                 fontWeight: 500,
                 color: 'text.secondary',
                 minWidth: 0,
@@ -152,7 +152,7 @@ export function WeatherForecastStrip({ location, startDate, numDays }: Props) {
 
         <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
           {tripWindow.outsideForecastWindow ? (
-            <Typography sx={{ fontSize: 13, color: 'text.secondary', py: 1 }}>
+            <Typography sx={{ fontSize: '0.8125rem', color: 'text.secondary', py: 1 }}>
               Forecast available closer to your trip.
             </Typography>
           ) : drilledIn ? (
@@ -172,7 +172,7 @@ export function WeatherForecastStrip({ location, startDate, numDays }: Props) {
               pt: 0.75,
               borderTop: '1px solid',
               borderColor: 'divider',
-              fontSize: 12,
+              fontSize: '0.75rem',
               color: 'text.secondary',
             }}
           >
@@ -195,7 +195,7 @@ function DailyGrid({
 }) {
   if (readings.length === 0) {
     return (
-      <Typography sx={{ fontSize: 13, color: 'text.secondary', py: 1 }}>
+      <Typography sx={{ fontSize: '0.8125rem', color: 'text.secondary', py: 1 }}>
         No forecast data.
       </Typography>
     );
@@ -245,7 +245,7 @@ function DailyGrid({
           >
             <Typography
               sx={{
-                fontSize: 11,
+                fontSize: '0.6875rem',
                 fontWeight: 600,
                 letterSpacing: '0.04em',
                 textTransform: 'uppercase',
@@ -268,18 +268,18 @@ function DailyGrid({
               }}
             >
               {d.hi != null ? (
-                <Box sx={{ fontSize: 14, fontWeight: 600, color: 'text.primary' }}>
+                <Box sx={{ fontSize: '0.875rem', fontWeight: 600, color: 'text.primary' }}>
                   {Math.round(d.hi)}°
                 </Box>
               ) : null}
               {d.lo != null ? (
-                <Box sx={{ fontSize: 11, fontWeight: 400, color: 'text.secondary' }}>
+                <Box sx={{ fontSize: '0.6875rem', fontWeight: 400, color: 'text.secondary' }}>
                   {Math.round(d.lo)}°
                 </Box>
               ) : null}
             </Box>
             {d.precip != null && d.precip > 10 ? (
-              <Typography sx={{ fontSize: 10, fontWeight: 500, color: 'info.main', lineHeight: 1 }}>
+              <Typography sx={{ fontSize: '0.625rem', fontWeight: 500, color: 'info.main', lineHeight: 1 }}>
                 {Math.round(d.precip)}%
               </Typography>
             ) : null}
@@ -293,7 +293,7 @@ function DailyGrid({
 function HourlyRow({ readings }: { readings: HourlyReading[] }) {
   if (readings.length === 0) {
     return (
-      <Typography sx={{ fontSize: 13, color: 'text.secondary', py: 1 }}>
+      <Typography sx={{ fontSize: '0.8125rem', color: 'text.secondary', py: 1 }}>
         No hourly data.
       </Typography>
     );
@@ -330,7 +330,7 @@ function HourlyRow({ readings }: { readings: HourlyReading[] }) {
           >
             <Typography
               sx={{
-                fontSize: 11,
+                fontSize: '0.6875rem',
                 fontWeight: 500,
                 color: 'text.secondary',
                 fontVariantNumeric: 'tabular-nums',
@@ -348,12 +348,12 @@ function HourlyRow({ readings }: { readings: HourlyReading[] }) {
               <ConditionIcon code={h.conditionText} size={20} strokeWidth={1.5} />
             </Box>
             {h.temp != null ? (
-              <Typography sx={{ fontSize: 13, fontWeight: 500, color: 'text.primary', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+              <Typography sx={{ fontSize: '0.8125rem', fontWeight: 500, color: 'text.primary', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
                 {Math.round(h.temp)}°
               </Typography>
             ) : null}
             {h.precip != null && h.precip > 10 ? (
-              <Typography sx={{ fontSize: 10, fontWeight: 500, color: 'info.main', lineHeight: 1 }}>
+              <Typography sx={{ fontSize: '0.625rem', fontWeight: 500, color: 'info.main', lineHeight: 1 }}>
                 {Math.round(h.precip)}%
               </Typography>
             ) : null}

@@ -14,9 +14,9 @@ export interface LegalLayoutProps {
 /**
  * Shared chrome for legal / policy / help pages.
  *
- * Wraps a long-form prose body in the site Navigation + Footer, applies the
- * Periplo display font to headings, and provides sensible defaults for
- * paragraphs, lists, links, and emphasis used inside the prose container.
+ * Wraps a long-form prose body in the site Navigation + Footer and provides
+ * sensible defaults for headings, paragraphs, lists, links, and emphasis used
+ * inside the prose container.
  */
 export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) {
   return (
@@ -34,14 +34,7 @@ export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) 
           <Box component="header" sx={{ mb: { xs: 3, md: 4 } }}>
             <Typography
               variant="h1"
-              sx={{
-                fontSize: { xs: '2.25rem', sm: '2.75rem', md: '3rem' },
-                fontWeight: 700,
-                lineHeight: 1.05,
-                color: 'text.primary',
-                letterSpacing: '-0.025em',
-                mb: lastUpdated ? 1.5 : 0,
-              }}
+              sx={{ color: 'text.primary', mb: lastUpdated ? 1.5 : 0 }}
             >
               {title}
             </Typography>
@@ -68,8 +61,7 @@ export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) 
               maxWidth: '70ch',
 
               '& h2': {
-                fontFamily: 'var(--font-display), Georgia, "Times New Roman", serif',
-                fontWeight: 400,
+                fontWeight: 600,
                 fontSize: { xs: '1.4rem', md: '1.5rem' },
                 lineHeight: 1.3,
                 mt: 5,
@@ -77,8 +69,7 @@ export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) 
                 color: 'text.primary',
               },
               '& h3': {
-                fontFamily: 'var(--font-display), Georgia, "Times New Roman", serif',
-                fontWeight: 400,
+                fontWeight: 600,
                 fontSize: { xs: '1.15rem', md: '1.2rem' },
                 lineHeight: 1.35,
                 mt: 3,

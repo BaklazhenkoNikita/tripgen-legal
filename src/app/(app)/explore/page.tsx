@@ -53,7 +53,6 @@ export default function DestinationsPage() {
                 id="featured-heading"
                 component="h2"
                 sx={{
-                  fontFamily: 'var(--font-display), Georgia, serif',
                   fontWeight: 400,
                   letterSpacing: '-0.015em',
                   lineHeight: 1.1,

@@ -9,7 +9,6 @@ import {
 } from '@/lib/map/categoryColors';
 
 const fontBody = 'var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-const fontDisplay = 'var(--font-display), Georgia, "Times New Roman", serif';
 
 // Light palette — Periplo terracotta brand.
 const hoodwisePrimary = '#C4603A';
@@ -224,14 +223,19 @@ export const theme = extendTheme({
   },
   typography: {
     fontFamily: fontBody,
-    h1: { ...textScale.hero, fontFamily: fontDisplay, fontWeight: 400 },
-    h2: { ...textScale.headline, fontFamily: fontDisplay, fontWeight: 400 },
-    h3: { ...textScale.headline, fontFamily: fontDisplay, fontWeight: 400 },
+    h1: { ...textScale.hero, fontWeight: 700 },
+    h2: { ...textScale.headline, fontWeight: 700 },
+    h3: {
+      ...textScale.headline,
+      fontWeight: 600,
+      fontSize: 'clamp(1.35rem, 1.8vw, 1.75rem)',
+      lineHeight: 1.25,
+    },
     h4: {
       ...textScale.headline,
-      fontFamily: fontDisplay,
-      fontWeight: 400,
-      fontSize: 'clamp(1.1rem, 1.5vw, 1.5rem)',
+      fontWeight: 600,
+      fontSize: 'clamp(1.1rem, 1.5vw, 1.35rem)',
+      lineHeight: 1.3,
     },
     h5: { ...textScale.body, fontWeight: 600 },
     h6: textScale.body,

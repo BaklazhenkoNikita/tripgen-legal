@@ -1,11 +1,4 @@
-import { DM_Serif_Display, Plus_Jakarta_Sans } from 'next/font/google';
-
-export const dmSerifDisplay = DM_Serif_Display({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-display',
-  display: 'swap',
-});
+import { Plus_Jakarta_Sans } from 'next/font/google';
 
 export const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],

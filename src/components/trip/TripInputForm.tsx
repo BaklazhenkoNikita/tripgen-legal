@@ -113,7 +113,7 @@ function SectionHeading({ icon, children, action }: SectionHeadingProps) {
           display: 'inline-flex',
           alignItems: 'center',
           gap: 1,
-          fontSize: 14,
+          fontSize: '0.875rem',
           fontWeight: 600,
           color: 'text.primary',
         }}
@@ -134,7 +134,7 @@ const pillChipSx = (selected: boolean) => ({
   alignItems: 'center',
   borderRadius: 999,
   px: 2,
-  fontSize: 14,
+  fontSize: '0.875rem',
   fontWeight: 500,
   transition: 'all 0.2s ease',
   ...(selected
@@ -285,7 +285,7 @@ export function TripInputForm({
               Build your next trip
             </Typography>
           </Box>
-          <Typography sx={{ fontSize: 14, color: 'text.secondary' }}>
+          <Typography sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>
             Give the essentials — location, timing, and interests — and Periplo does the rest.
           </Typography>
         </Box>
@@ -336,7 +336,7 @@ export function TripInputForm({
                 {cityName}
               </Box>
               {opt.country ? (
-                <Box component="span" sx={{ fontSize: 12, color: 'text.secondary' }}>
+                <Box component="span" sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
                   {opt.country}
                 </Box>
               ) : null}
@@ -564,11 +564,11 @@ export function TripInputForm({
                       >
                         <Box
                           component="span"
-                          sx={{ fontSize: 14, fontWeight: 500, color: 'text.primary' }}
+                          sx={{ fontSize: '0.875rem', fontWeight: 500, color: 'text.primary' }}
                         >
                           {opt.label}
                         </Box>
-                        <Box component="span" sx={{ fontSize: 11, color: 'text.disabled' }}>
+                        <Box component="span" sx={{ fontSize: '0.6875rem', color: 'text.disabled' }}>
                           {opt.hint}
                         </Box>
                       </ButtonBase>
@@ -600,7 +600,7 @@ export function TripInputForm({
                           border: '1px solid',
                           px: 1.5,
                           py: 1.25,
-                          fontSize: 14,
+                          fontSize: '0.875rem',
                           fontWeight: 500,
                           transition: 'all 0.2s ease',
                           ...(on
@@ -679,13 +679,13 @@ export function TripInputForm({
                   />
                 }
                 label={
-                  <Box component="span" sx={{ fontSize: 14 }}>
+                  <Box component="span" sx={{ fontSize: '0.875rem' }}>
                     <Box component="span" sx={{ fontWeight: 500, color: 'text.primary' }}>
                       Surprise me
                     </Box>
                     <Box
                       component="span"
-                      sx={{ display: 'block', fontSize: 12, color: 'text.secondary' }}
+                      sx={{ display: 'block', fontSize: '0.75rem', color: 'text.secondary' }}
                     >
                       Periplo picks the vibe — just tell us the city.
                     </Box>

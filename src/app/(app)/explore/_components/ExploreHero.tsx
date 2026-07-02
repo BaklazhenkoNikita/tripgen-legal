@@ -88,7 +88,6 @@ export function ExploreHero() {
       <Typography
         component="h1"
         sx={{
-          fontFamily: 'var(--font-display), Georgia, "Times New Roman", serif',
           fontWeight: 400,
           letterSpacing: '-0.02em',
           lineHeight: 1.04,

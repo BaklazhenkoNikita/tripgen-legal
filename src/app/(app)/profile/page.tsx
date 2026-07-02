@@ -118,7 +118,6 @@ function ProfilePageInner() {
       <Typography
         component="h1"
         sx={{
-          fontFamily: 'var(--font-display, inherit)',
           fontSize: '2.25rem',
           fontWeight: 600,
           letterSpacing: '-0.02em',
@@ -153,7 +152,6 @@ function ProfilePageInner() {
                 justifyContent: 'center',
                 borderRadius: 999,
                 bgcolor: 'primary.main',
-                fontFamily: 'var(--font-display, inherit)',
                 fontSize: '1.25rem',
                 fontWeight: 600,
                 color: 'primary.contrastText',
@@ -168,7 +166,6 @@ function ProfilePageInner() {
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  fontFamily: 'var(--font-display, inherit)',
                   fontSize: '1.5rem',
                   fontWeight: 600,
                   color: 'text.primary',

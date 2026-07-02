@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Photo } from '@/components/ui/Photo';
+import { textScale } from '@/theme/standards';
 import { destinations } from '@/data/destinations';
 
 const CONTINENT_ORDER = ['Europe', 'Asia', 'North America', 'South America', 'Oceania', 'Africa'];
@@ -32,20 +33,10 @@ export default function CommunityPage() {
   return (
     <Box sx={{ mx: 'auto', maxWidth: 1024, px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
       <Box component="header">
-        <Typography
-          component="h1"
-          sx={{
-            fontFamily: 'var(--font-display, inherit)',
-            fontSize: { xs: '2.25rem', sm: '3rem' },
-            fontWeight: 700,
-            letterSpacing: '-0.025em',
-            lineHeight: 1.0,
-            color: 'text.primary',
-          }}
-        >
+        <Typography variant="h1" component="h1" sx={{ color: 'text.primary' }}>
           Guides
         </Typography>
-        <Typography sx={{ mt: 2, fontSize: 17, lineHeight: 1.55, color: 'text.secondary' }}>
+        <Typography sx={{ mt: 2, color: 'text.secondary' }}>
           {destinations.length} curated city guides — overviews, highlights, and ready-to-personalize itineraries.
         </Typography>
       </Box>
@@ -56,19 +47,10 @@ export default function CommunityPage() {
         return (
           <Box component="section" key={continent} sx={{ mt: 5 }}>
             <Box sx={{ mb: 2, display: 'flex', alignItems: 'baseline', gap: 1.5 }}>
-              <Typography
-                component="h2"
-                sx={{
-                  fontFamily: 'var(--font-display, inherit)',
-                  fontSize: '1.25rem',
-                  fontWeight: 600,
-                  letterSpacing: '-0.02em',
-                  color: 'text.primary',
-                }}
-              >
+              <Typography variant="h4" component="h2" sx={{ color: 'text.primary' }}>
                 {continent}
               </Typography>
-              <Typography sx={{ fontSize: 12, color: 'text.disabled' }}>{dests.length} guides</Typography>
+              <Typography sx={{ ...textScale.meta, color: 'text.disabled' }}>{dests.length} guides</Typography>
             </Box>
             <Box
               sx={{
@@ -114,9 +96,8 @@ export default function CommunityPage() {
                     <Typography
                       component="h3"
                       sx={{
-                        fontFamily: 'var(--font-display, inherit)',
-                        fontSize: 16,
-                        fontWeight: 600,
+                        ...textScale.label,
+                        fontSize: '1rem',
                         color: 'text.primary',
                         transition: 'color 200ms',
                         '.group:hover &': { color: 'primary.main' },
@@ -124,7 +105,7 @@ export default function CommunityPage() {
                     >
                       {dest.city}
                     </Typography>
-                    <Typography sx={{ mt: 0.25, fontSize: 14, color: 'text.secondary' }}>
+                    <Typography variant="body2" sx={{ mt: 0.25, color: 'text.secondary' }}>
                       {dest.country} · {dest.days}-day plan
                     </Typography>
                   </Box>

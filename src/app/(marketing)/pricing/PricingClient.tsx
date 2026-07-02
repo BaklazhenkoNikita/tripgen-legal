@@ -91,7 +91,6 @@ function PricingInner() {
         <Typography
           component="h1"
           sx={{
-            fontFamily: 'var(--font-display, inherit)',
             fontSize: { xs: '2.25rem', sm: '3rem' },
             fontWeight: 700,
             letterSpacing: '-0.025em',

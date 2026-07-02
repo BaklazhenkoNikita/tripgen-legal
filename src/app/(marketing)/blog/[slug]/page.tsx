@@ -100,13 +100,10 @@ export default async function BlogPostPage({ params }: Props) {
             {post.category}
           </Typography>
           <Typography
+            variant="h2"
             component="h1"
             sx={{
               mt: 1,
-              fontSize: { xs: '2rem', sm: '2.5rem' },
-              fontWeight: 700,
-              letterSpacing: '-0.025em',
-              lineHeight: 1.05,
               color: 'common.white',
               textShadow: '0 2px 12px rgba(0,0,0,0.5)',
             }}

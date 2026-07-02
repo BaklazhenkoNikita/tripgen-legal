@@ -85,13 +85,10 @@ export default async function GuidePage({ params }: Props) {
             {dest.country} &middot; {dest.continent}
           </Typography>
           <Typography
+            variant="h1"
             component="h1"
             sx={{
               mt: 1,
-              fontSize: { xs: '2.25rem', sm: '3rem' },
-              fontWeight: 700,
-              letterSpacing: '-0.025em',
-              lineHeight: 1.0,
               color: 'common.white',
               textShadow: '0 2px 12px rgba(0,0,0,0.5)',
             }}
