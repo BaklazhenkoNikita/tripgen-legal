@@ -113,7 +113,7 @@ export function Footer() {
               component="span"
               sx={{
                 fontSize: '1.25rem',
-                fontWeight: 400,
+                fontWeight: 600,
                 letterSpacing: '-0.01em',
               }}
             >

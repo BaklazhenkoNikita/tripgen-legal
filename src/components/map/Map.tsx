@@ -261,7 +261,7 @@ export default function MapComponent({
           source: id,
           layout: { 'line-cap': 'round', 'line-join': 'round' },
           paint: {
-            'line-color': colorForDay(group.dayIndex),
+            'line-color': colorForDay(group.dayIndex, theme),
             'line-width': 3,
             'line-opacity': 0.7,
             'line-dasharray': [2, 1.25],
@@ -590,7 +590,7 @@ function buildPinEl(
 ): HTMLDivElement {
   const color =
     pin.number != null
-      ? colorForDay(pin.dayIndex ?? 0)
+      ? colorForDay(pin.dayIndex ?? 0, theme)
       : colorForEntity(pin.entityType, theme);
   const inner =
     pin.number != null

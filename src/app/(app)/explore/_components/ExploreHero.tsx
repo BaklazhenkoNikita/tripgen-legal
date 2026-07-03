@@ -88,8 +88,8 @@ export function ExploreHero() {
       <Typography
         component="h1"
         sx={{
-          fontWeight: 400,
-          letterSpacing: '-0.02em',
+          fontWeight: 700,
+          letterSpacing: '-0.025em',
           lineHeight: 1.04,
           fontSize: { xs: '2.6rem', sm: '3.6rem', md: '4.4rem' },
           color: 'text.primary',

@@ -50,6 +50,22 @@ export const textScale = {
   },
 } as const;
 
+/**
+ * Corner radii (in theme spacing units) for hand-built Box cards, which
+ * bypass the global MuiCard override. Use these instead of ad-hoc values.
+ */
+export const radii = {
+  /** Standard card / list tile (16px). */
+  card: 2,
+  /** Prominent surface: day plan cards, sheets (24px). */
+  cardLarge: 3,
+  /** Pills, chips, fully rounded buttons. */
+  pill: 999,
+} as const;
+
+/** Text shadow for light text rendered over photos. */
+export const photoTextShadow = '0 1px 2px rgba(0,0,0,0.45)';
+
 export const sectionPadding = {
   px: { xs: 2, sm: 3, md: 5 },
   py: { xs: 5, sm: 7, md: 9 },

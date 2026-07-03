@@ -43,7 +43,7 @@ export default function DestinationsPage() {
                   fontWeight: 700,
                   letterSpacing: '0.18em',
                   textTransform: 'uppercase',
-                  color: 'secondary.main',
+                  color: 'primary.main',
                   mb: 1.25,
                 }}
               >
@@ -53,7 +53,7 @@ export default function DestinationsPage() {
                 id="featured-heading"
                 component="h2"
                 sx={{
-                  fontWeight: 400,
+                  fontWeight: 700,
                   letterSpacing: '-0.015em',
                   lineHeight: 1.1,
                   fontSize: { xs: '1.85rem', sm: '2.4rem', md: '2.8rem' },

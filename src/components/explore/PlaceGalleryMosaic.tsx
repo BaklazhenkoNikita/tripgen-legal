@@ -182,8 +182,8 @@ function Tile({
             position: 'absolute',
             inset: 0,
             background: fillerHint
-              ? 'linear-gradient(135deg, #C4603A 0%, #D88564 100%)'
-              : 'linear-gradient(135deg, rgba(196,96,58,0.18) 0%, rgba(216,133,100,0.10) 100%)',
+              ? 'linear-gradient(135deg, var(--tg-palette-primary-main) 0%, var(--tg-palette-primary-light) 100%)'
+              : 'linear-gradient(135deg, rgb(var(--tg-palette-primary-mainChannel) / 0.18) 0%, rgb(var(--tg-palette-primary-lightChannel) / 0.10) 100%)',
           }}
         />
       )}

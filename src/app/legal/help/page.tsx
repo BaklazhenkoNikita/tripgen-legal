@@ -45,7 +45,7 @@ function Tip({ children }: { children: ReactNode }) {
   return (
     <Box
       sx={{
-        bgcolor: 'rgba(91, 123, 94, 0.08)',
+        bgcolor: 'rgb(var(--tg-palette-success-mainChannel) / 0.08)',
         borderLeft: '3px solid',
         borderColor: 'secondary.main',
         borderRadius: '0 12px 12px 0',

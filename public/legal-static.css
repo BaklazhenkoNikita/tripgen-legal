@@ -8,12 +8,12 @@
  * by referencing the same vars. */
 
 :root {
-  --bg:                 #FDFCF9;
-  --text:               #1A1612;
+  --bg:                 #F7F7F7;
+  --text:               #222222;
   --text-secondary:     #3A3330;
-  --text-muted:         #8C7E74;
+  --text-muted:         #717171;
   --accent:             #C4603A;
-  --accent-hover:       #A94E2C;
+  --accent-hover:       #9A4A2D;
   --accent-soft:        #FBF3EF;
   --surface:            #FFFFFF;
   --surface-tinted:     #F5F2ED;
@@ -30,23 +30,23 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg:               #0E0C0B;
-    --text:             #F3EFE9;
+    --bg:               #131210;
+    --text:             #EDE0D4;
     --text-secondary:   #D6CEC4;
-    --text-muted:       #B8AFA6;
-    --accent:           #E58866;
-    --accent-hover:     #F0AC8E;
-    --accent-soft:      rgba(229, 136, 102, 0.10);
-    --surface:          #181513;
+    --text-muted:       #B0A090;
+    --accent:           #D4724A;
+    --accent-hover:     #E29B79;
+    --accent-soft:      rgba(212, 114, 74, 0.10);
+    --surface:          #1E1A17;
     --surface-tinted:   #221E1B;
-    --note-bg:          rgba(229, 136, 102, 0.08);
+    --note-bg:          rgba(212, 114, 74, 0.08);
     --tip-bg:           rgba(132, 168, 136, 0.10);
     --tip-border:       #84A888;
     --code-bg:          #2B2724;
     --border:           #2B2724;
     --pill-read-bg:     rgba(132, 168, 136, 0.18);
     --pill-read-fg:     #B8D6BB;
-    --pill-write-bg:    rgba(229, 136, 102, 0.18);
+    --pill-write-bg:    rgba(212, 114, 74, 0.18);
     --pill-write-fg:    #F0AC8E;
   }
 }

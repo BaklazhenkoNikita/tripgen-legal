@@ -32,8 +32,8 @@ function Pill({ tone, children }: { tone: PillTone; children: ReactNode }) {
         verticalAlign: 'middle',
         ...(tone === 'read'
           ? {
-              bgcolor: 'rgba(74, 107, 77, 0.15)',
-              color: '#4A6B4D',
+              bgcolor: 'rgb(var(--tg-palette-success-mainChannel) / 0.15)',
+              color: 'success.dark',
             }
           : {
               bgcolor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.15)',
@@ -160,7 +160,7 @@ function DemoVideo() {
           height: 220,
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(196,96,58,0.22) 0%, transparent 70%)',
+            'radial-gradient(circle, rgb(var(--tg-palette-primary-mainChannel) / 0.22) 0%, transparent 70%)',
           pointerEvents: 'none',
         }}
       />
@@ -175,9 +175,9 @@ function DemoVideo() {
           width: 72,
           height: 72,
           borderRadius: '50%',
-          bgcolor: 'rgba(196,96,58,0.90)',
+          bgcolor: 'rgb(var(--tg-palette-primary-mainChannel) / 0.90)',
           boxShadow:
-            '0 0 0 12px rgba(196,96,58,0.15), 0 8px 24px rgba(196,96,58,0.40)',
+            '0 0 0 12px rgb(var(--tg-palette-primary-mainChannel) / 0.15), 0 8px 24px rgb(var(--tg-palette-primary-mainChannel) / 0.40)',
         }}
       >
         <Play size={28} color="#fff" fill="#fff" aria-hidden />
@@ -462,7 +462,7 @@ export default function McpPage() {
 
       <Box
         sx={{
-          bgcolor: 'rgba(91, 123, 94, 0.10)',
+          bgcolor: 'rgb(var(--tg-palette-success-mainChannel) / 0.10)',
           borderLeft: '3px solid',
           borderColor: 'secondary.main',
           borderRadius: '0 12px 12px 0',

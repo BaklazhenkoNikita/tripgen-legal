@@ -14,6 +14,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 import { tgShadow } from '@/theme/shadows';
+import { photoTextShadow, radii } from '@/theme/standards';
 
 interface Props {
   item: FeedItem;
@@ -89,7 +90,7 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
         flexShrink: variant === 'grid' ? 1 : 0,
         cursor: 'pointer',
         overflow: 'hidden',
-        borderRadius: 2,
+        borderRadius: radii.card,
         textAlign: 'left',
         boxShadow: (t) =>
           isActive
@@ -207,7 +208,7 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
               WebkitLineClamp: 1,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
-              textShadow: '0 1px 2px rgba(0,0,0,0.45)',
+              textShadow: photoTextShadow,
             }}
           >
             {title}
@@ -222,7 +223,7 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
                 WebkitLineClamp: 1,
                 WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
-                textShadow: '0 1px 2px rgba(0,0,0,0.45)',
+                textShadow: photoTextShadow,
               }}
             >
               {overlaySubtitle}
@@ -240,7 +241,7 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
               fontSize: 12,
               fontWeight: 600,
               color: 'common.white',
-              textShadow: '0 1px 2px rgba(0,0,0,0.45)',
+              textShadow: photoTextShadow,
             }}
           >
             <Box sx={{ color: 'warning.main', display: 'inline-flex' }}>

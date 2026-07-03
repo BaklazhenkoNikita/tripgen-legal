@@ -8,6 +8,7 @@ import { ChevronDown, MapPin } from 'lucide-react';
 import type { DayPlan, TravelActivity } from '@/types';
 import { ActivityCard } from './ActivityCard';
 import { Badge } from '@/components/ui/Badge';
+import { radii } from '@/theme/standards';
 
 interface Props {
   day: DayPlan;
@@ -35,7 +36,7 @@ export function DayPlanCard({
       component="article"
       sx={{
         overflow: 'hidden',
-        borderRadius: 3,
+        borderRadius: radii.cardLarge,
         border: '1px solid',
         bgcolor: 'background.paper',
         transition: 'all 0.2s ease',
@@ -72,7 +73,7 @@ export function DayPlanCard({
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: 2,
+            borderRadius: radii.card,
             px: 1.5,
             py: 1,
             transition: 'background-color 0.2s ease, color 0.2s ease',

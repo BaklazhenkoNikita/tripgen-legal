@@ -113,6 +113,10 @@ export const theme = extendTheme({
           dark: lightErrorDark,
           contrastText: hoodwiseSurface,
         },
+        // Deliberately the orange brand highlight, not a semantic blue:
+        // `info` is used as an "attention/highlight" accent (weather badges,
+        // action chips), never for informational alerts. If a true info-blue
+        // is ever needed, add a new slot instead of repurposing this one.
         info: {
           main: hoodwiseHighlight,
           contrastText: hoodwiseSurface,

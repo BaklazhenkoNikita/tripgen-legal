@@ -1,8 +1,9 @@
 /**
- * Pin colours for the map. The values mirror the `--color-cat-*` CSS variables
- * defined in `src/app/globals.css` (light + dark) so badges and pins share one
- * palette. Leaflet renders SVG outside the React tree where CSS vars don't
- * cascade onto strokes/fills, so we keep an explicit hex map here too.
+ * Pin colours for the map. These are the source of truth for the
+ * `--tg-cat-*` CSS variables emitted from `src/theme/index.ts`
+ * (MuiCssBaseline) so badges and pins share one palette. The map renders
+ * SVG outside the React tree where CSS vars don't cascade onto
+ * strokes/fills, so we keep an explicit hex map here too.
  */
 
 export const CATEGORY_COLORS: Record<string, string> = {

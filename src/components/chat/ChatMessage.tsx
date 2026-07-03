@@ -11,6 +11,7 @@ import { ActionCard } from './cards/ActionCard';
 import { SingleSelectCard } from './cards/SingleSelectCard';
 import { MultiSelectCard } from './cards/MultiSelectCard';
 import { ConfirmCard } from './cards/ConfirmCard';
+import { radii } from '@/theme/standards';
 
 export interface AnswerPayload {
   optionId?: string;
@@ -36,7 +37,7 @@ export function ChatMessage({ message, onAnswer, onConfirm, onAction }: Props) {
           elevation={0}
           sx={{
             maxWidth: '85%',
-            borderRadius: 2,
+            borderRadius: radii.card,
             borderTopRightRadius: 4,
             bgcolor: (t) => alpha(t.palette.primary.main, 0.10),
             color: 'text.primary',
@@ -203,7 +204,7 @@ export function ChatMessage({ message, onAnswer, onConfirm, onAction }: Props) {
           bgcolor: 'background.paper',
           border: 1,
           borderColor: 'divider',
-          borderRadius: 2,
+          borderRadius: radii.card,
           borderTopLeftRadius: 4,
           px: 2,
           py: 1.25,

@@ -88,7 +88,7 @@ export function DestinationCard({ destination, priority }: DestinationCardProps)
           <Typography
             component="div"
             sx={{
-              fontWeight: 400,
+              fontWeight: 600,
               fontSize: { xs: 22, sm: 24 },
               lineHeight: 1.1,
               letterSpacing: '-0.01em',
