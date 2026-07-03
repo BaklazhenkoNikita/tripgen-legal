@@ -93,11 +93,7 @@ export function GenerationProgress({ phase, currentDay, totalDays, onCancel }: P
             <Box
               sx={{
                 display: 'inline-flex',
-                animation: 'tg-spin 1s linear infinite',
-                '@keyframes tg-spin': {
-                  from: { transform: 'rotate(0deg)' },
-                  to: { transform: 'rotate(360deg)' },
-                },
+                animation: 'spin 1s linear infinite',
               }}
             >
               <Loader2 size={20} aria-hidden />

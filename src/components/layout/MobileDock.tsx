@@ -1,10 +1,10 @@
 'use client';
 
 import Link, { useLinkStatus } from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useOptimisticNav } from '@/hooks/useOptimisticNav';
 import { SignedIn } from '@clerk/nextjs';
 import { Compass, House, Sparkles, Map as MapIcon, type LucideIcon } from 'lucide-react';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import { alpha } from '@mui/material/styles';
@@ -20,16 +20,13 @@ interface DockItem {
 
 /** Bottom dock — visible on mobile only when signed in. */
 export function MobileDock() {
-  const pathname = usePathname() ?? '/';
-  const router = useRouter();
-  const [pendingHref, setPendingHref] = useState<string | null>(null);
   const activeTripId = useActiveTripOptional()?.activeTripId ?? null;
 
   // Mirror Navigation: link Plan directly to /trip/{id} when we know the
   // active trip so we skip the index-page redirect hop.
   const items = useMemo<readonly DockItem[]>(
     () => [
-      { href: '/explore', match: '/explore', label: 'Home', icon: House },
+      { href: '/explore', match: '/explore', label: 'Explore', icon: House },
       { href: '/discover', match: '/discover', label: 'Discover', icon: Compass },
       {
         href: activeTripId ? `/trip/${activeTripId}` : '/trip',
@@ -43,20 +40,8 @@ export function MobileDock() {
     [activeTripId],
   );
 
-  // Clear the optimistic pending state once the route catches up. Mirrors the
-  // pattern in Navigation.tsx — the active styling holds the tapped item from
-  // the click frame through the in-flight nav until pathname reflects it.
-  useEffect(() => {
-    if (pendingHref && pathname.startsWith(pendingHref.split('?')[0])) {
-      setPendingHref(null);
-    }
-  }, [pathname, pendingHref]);
-
-  // Eagerly warm the router cache on mount — same rationale as Navigation:
-  // viewport-intersection prefetch is too late for the first tap.
-  useEffect(() => {
-    for (const item of items) router.prefetch(item.href);
-  }, [router, items]);
+  const hrefs = useMemo(() => items.map((i) => i.href), [items]);
+  const { pathname, pendingHref, setPendingHref } = useOptimisticNav(hrefs);
 
   return (
     <SignedIn>
@@ -111,7 +96,7 @@ export function MobileDock() {
                     justifyContent: 'center',
                     gap: 0.25,
                     py: 1,
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: 500,
                     textDecoration: 'none',
                     color: active ? 'primary.main' : 'text.disabled',

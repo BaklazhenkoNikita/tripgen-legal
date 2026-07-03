@@ -1,7 +1,7 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
+import { skeletonPulseSx } from '@/components/ui/Skeleton';
 
 export default function TripLoading() {
   return (
@@ -20,16 +20,14 @@ export default function TripLoading() {
             sx={{
               height: 40,
               borderRadius: 1.5,
-              bgcolor: (t) => alpha(t.palette.text.primary, 0.08),
-              animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+              ...skeletonPulseSx(0.08),
             }}
           />
           <Box
             sx={{
               height: 220,
               borderRadius: 2,
-              bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
-              animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+              ...skeletonPulseSx(0.06),
               animationDelay: '80ms',
             }}
           />
@@ -38,8 +36,7 @@ export default function TripLoading() {
               height: 48,
               width: 200,
               borderRadius: 999,
-              bgcolor: (t) => alpha(t.palette.text.primary, 0.08),
-              animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+              ...skeletonPulseSx(0.08),
               animationDelay: '160ms',
             }}
           />
@@ -53,8 +50,7 @@ export default function TripLoading() {
             height: 12,
             width: 220,
             borderRadius: 1,
-            bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
-            animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+            ...skeletonPulseSx(0.06),
           }}
         />
         <Box sx={{ display: 'flex', gap: 1.5, overflow: 'hidden' }}>
@@ -66,8 +62,7 @@ export default function TripLoading() {
                 height: 224,
                 width: 288,
                 borderRadius: 2,
-                bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
-                animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+                ...skeletonPulseSx(0.06),
                 animationDelay: `${i * 80}ms`,
               }}
             />

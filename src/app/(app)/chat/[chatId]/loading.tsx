@@ -1,7 +1,7 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
+import { skeletonPulseSx } from '@/components/ui/Skeleton';
 
 export default function ChatDetailLoading() {
   return (
@@ -41,8 +41,7 @@ export default function ChatDetailLoading() {
               maxWidth: 720,
               height: row.height,
               borderRadius: 2,
-              bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
-              animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+              ...skeletonPulseSx(0.06),
               animationDelay: `${i * 80}ms`,
             }}
           />
@@ -60,8 +59,7 @@ export default function ChatDetailLoading() {
           sx={{
             height: 48,
             borderRadius: 999,
-            bgcolor: (t) => alpha(t.palette.text.primary, 0.08),
-            animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+            ...skeletonPulseSx(0.08),
           }}
         />
       </Box>

@@ -381,7 +381,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Dubrovnik 3-Day Itinerary | Periplo",
     metaDescription: "Explore Dubrovnik in 3 days — walk the ancient city walls, kayak the Adriatic, island-hop to Lokrum, and discover Croatia's stunning coastal gem.",
-    heroImage: "https://images.unsplash.com/photo-1580502304784-8985b7eb7260?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1414862625453-d87604a607e4?w=800&q=80",
     overview: "Dubrovnik's perfectly preserved medieval walls enclose a limestone-paved Old Town that glows golden in the Adriatic sun. Known as the 'Pearl of the Adriatic,' this UNESCO World Heritage city served as the filming location for King's Landing in Game of Thrones, but its real history as the independent Republic of Ragusa is even more fascinating. Three days gives you time to walk the complete 2-kilometer city wall circuit with views over terracotta rooftops and turquoise waters, explore the elegant Stradun main street, and take the cable car up Mount Srđ for a panoramic perspective. Beyond the walls, the crystal-clear Adriatic invites sea kayaking along the coastline, and the lush island of Lokrum is just a 15-minute ferry ride away. The local cuisine centers on the sea — grilled fish, black risotto with cuttlefish ink, and fresh oysters from nearby Ston.",
     highlights: [
       "Walk the complete city walls at opening time, explore the Old Town's monasteries and Rector's Palace, and ride the cable car up Mount Srđ",
@@ -1077,7 +1077,7 @@ export const destinations: Destination[] = [
     days: 4,
     metaTitle: "Lima 4-Day Itinerary | Peru's Culinary Capital",
     metaDescription: "Explore Lima in 4 days with our guide to world-class ceviche, historic plazas, Miraflores cliffs, and the culinary scene that makes Peru a food lover's dream.",
-    heroImage: "https://images.unsplash.com/photo-1477587458883-47145ed94245?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1660521844005-015733ce411e?w=800&q=80",
     overview: "Lima is the gastronomic capital of South America, a sprawling coastal city where pre-Columbian history, colonial grandeur, and cutting-edge cuisine create an intoxicating blend. The historic center, a UNESCO World Heritage Site, features the grand Plaza Mayor surrounded by the Cathedral of Lima and the Archbishop's Palace, with ornate colonial balconies lining the streets. The bohemian district of Barranco charms visitors with its street art, galleries, and the romantic Bridge of Sighs. Miraflores sits atop dramatic cliffs overlooking the Pacific Ocean, offering upscale dining, shopping, and the ancient Huaca Pucllana pyramid illuminated at night. Lima's food scene is legendary, home to three of the world's top fifty restaurants. Ceviche, the national dish, reaches its peak here, prepared with the freshest seafood from the cold Humboldt Current. Beyond ceviche, the Nikkei and chifa fusion cuisines reflect the city's Japanese and Chinese immigrant communities. The Larco Museum houses an extraordinary collection of pre-Columbian art spanning four thousand years. Four days allows you to explore the historic neighborhoods, feast your way through the culinary scene, and discover why Lima has become one of the most exciting cities in the Americas.",
     highlights: [
       "Explore the historic center including Plaza Mayor, the catacombs of San Francisco monastery, and colonial architecture",
@@ -1110,7 +1110,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Cartagena 3-Day Itinerary | Colombia Travel Guide",
     metaDescription: "Discover Cartagena in 3 days with our guide to the colorful walled city, Caribbean beaches, historic forts, and vibrant Colombian culture and cuisine.",
-    heroImage: "https://images.unsplash.com/photo-1533561052604-c3beb6d55b8d?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1742648778984-36dea890552a?w=800&q=80",
     overview: "Cartagena de Indias is a jewel of the Caribbean, a walled colonial city where colorful buildings draped in bougainvillea line cobblestone streets and horse-drawn carriages clip-clop past centuries-old churches and plazas. Founded in 1533, Cartagena was one of the most important ports in the Spanish Empire and its massive fortifications, a UNESCO World Heritage Site, still stand as testament to its strategic significance. The Old Town is divided into distinct neighborhoods. The Centro is the heart of colonial architecture with the grand Cathedral and Palace of the Inquisition. Getsemaní has transformed from a working-class barrio into a vibrant arts district covered in street murals. San Diego offers quieter squares and boutique hotels. Beyond the walls, the modern Bocagrande district stretches along the beach, while the nearby Rosario Islands offer pristine Caribbean waters perfect for snorkeling and diving. The food scene blends Caribbean flavors with Colombian traditions, featuring fresh seafood, tropical fruits, and the beloved arepa de huevo. Three days gives you time to explore the old city, relax on the beaches, and experience the warm and festive spirit that makes Cartagena one of the most romantic cities in the Americas.",
     highlights: [
       "Explore the walled Old Town including the Cathedral, Plaza Santo Domingo, and the vibrant street art of Getsemaní",
@@ -1208,7 +1208,7 @@ export const destinations: Destination[] = [
     days: 4,
     metaTitle: "Vancouver 4-Day Itinerary | Best of BC Guide",
     metaDescription: "Explore Vancouver in 4 days with our guide to Stanley Park, Granville Island, mountain views, diverse cuisine, and the best of British Columbia.",
-    heroImage: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1572288717056-ea97fb77c71e?w=800&q=80",
     overview: "Vancouver is consistently ranked among the world's most livable cities, a stunning coastal metropolis nestled between the Pacific Ocean and the snow-capped Coast Mountains. The city offers an extraordinary combination of urban sophistication and outdoor adventure, where you can ski in the morning and sail in the afternoon. Stanley Park, a thousand-acre urban forest, encircles the downtown peninsula with its famous seawall, towering cedar trees, and views of the Lions Gate Bridge. Granville Island is a beloved public market brimming with artisanal foods, craft breweries, and street performers. The diverse neighborhoods reflect Vancouver's multicultural character, from the aromatic dim sum restaurants of Chinatown to the trendy boutiques of Gastown with its iconic steam clock. Nearby Grouse Mountain and the Capilano Suspension Bridge offer thrilling alpine experiences just minutes from downtown. The food scene is exceptional, particularly the fresh Pacific seafood and the innovative Asian fusion cuisine that reflects the city's large East Asian community. Vancouver is also a gateway to Whistler, Vancouver Island, and the spectacular Sea-to-Sky Highway. Four days provides time to explore the city's highlights, enjoy outdoor activities, and sample the diverse culinary offerings.",
     highlights: [
       "Cycle the Stanley Park seawall, visit the Vancouver Aquarium, and enjoy views of the mountains and harbor",
@@ -1375,7 +1375,7 @@ export const destinations: Destination[] = [
     days: 4,
     metaTitle: "Melbourne 4-Day Itinerary | Culture & Coffee",
     metaDescription: "Discover Melbourne in 4 days with our guide to laneway art, world-class coffee, the Great Ocean Road, diverse food scenes, and vibrant cultural life.",
-    heroImage: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1595434971780-79d5c20c5090?w=800&q=80",
     overview: "Melbourne is Australia's cultural capital, a creative and cosmopolitan city renowned for its world-class coffee culture, hidden laneway art, and an obsessive dedication to food, fashion, and sport. Unlike Sydney's harbor glamour, Melbourne's appeal lies in its layers, discovered through exploring the street art-filled laneways like Hosier Lane, the aromatic coffee roasters tucked into converted warehouses, and the eclectic neighborhoods each with their own distinct character. Fitzroy is the bohemian heart of the city with vintage shops, independent galleries, and a thriving bar scene. St Kilda offers a beachside village atmosphere with Luna Park and the famous penguin colony at the breakwater. The Queen Victoria Market has been the city's premier food market since 1878. Federation Square anchors the arts precinct with the Ian Potter Centre and ACMI. The food scene is extraordinary, reflecting Melbourne's multicultural population with everything from Vietnamese pho in Richmond to Greek souvlaki on Lonsdale Street. A day trip along the Great Ocean Road reveals some of Australia's most dramatic coastal scenery, including the Twelve Apostles. Four days allows you to dive deep into Melbourne's cultural scene, explore its diverse neighborhoods, and take in the stunning coastal landscapes nearby.",
     highlights: [
       "Explore the city center's famous laneways, street art, and coffee culture, visiting Hosier Lane and the arcades",
@@ -1408,7 +1408,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Queenstown 3-Day Itinerary | Adventure Capital",
     metaDescription: "Plan your 3-day Queenstown adventure with our guide to bungee jumping, Milford Sound, jet boating, stunning alpine scenery, and New Zealand thrills.",
-    heroImage: "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1547314283-befb6cc5cf29?w=800&q=80",
     overview: "Queenstown is the adventure capital of the world, a compact lakeside town nestled among the dramatic peaks of New Zealand's Southern Alps on the South Island. Set on the shores of the crystal-clear Lake Wakatipu with the jagged Remarkables mountain range as its backdrop, Queenstown delivers some of the most stunning scenery on the planet. The town pioneered commercial bungee jumping at the Kawarau Bridge and has since added an extraordinary range of adrenaline activities including skydiving, jet boating, paragliding, and canyon swinging. But Queenstown is not just for thrill-seekers. The Skyline Gondola rises to Bob's Peak for panoramic views and a luge track. The Gibbston Valley wine region produces exceptional pinot noir just minutes from town. Milford Sound, often called the eighth wonder of the world, is accessible as a day trip through some of New Zealand's most spectacular mountain scenery. In winter, the nearby ski fields of The Remarkables and Coronet Peak draw snow sports enthusiasts from around the world. The town itself is compact and walkable, with excellent restaurants, craft beer bars, and a lively après-ski and après-adventure scene. Three days gives you time to enjoy the adventure activities, take in the scenery, and perhaps visit Milford Sound.",
     highlights: [
       "Ride the Skyline Gondola to Bob's Peak for panoramic views, try the luge, and explore the Queenstown waterfront",
@@ -1639,7 +1639,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Hobart 3-Day Itinerary | Tasmania Travel Guide",
     metaDescription: "Plan your 3-day Hobart trip with our guide to MONA, Salamanca Market, Mount Wellington, pristine wilderness, and Tasmania's finest food and whisky.",
-    heroImage: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1663121195811-1f7234e6f8ba?w=800&q=80",
     overview: "Hobart is Australia's second-oldest city and the gateway to Tasmania's extraordinary wilderness, a compact and charming waterfront capital nestled at the foot of Mount Wellington on the banks of the River Derwent. Despite its small size, Hobart punches well above its weight in arts, food, and natural beauty. The Museum of Old and New Art, known as MONA, is Australia's most talked-about museum, a subterranean labyrinth of provocative and ancient art carved into a sandstone cliff on the banks of the Derwent. Salamanca Place hosts one of Australia's best outdoor markets every Saturday, with stalls selling local produce, crafts, and artisan goods in a row of beautifully restored sandstone warehouses. The waterfront docks are home to fresh seafood punts where you can eat oysters and fish straight from the boats. Mount Wellington rises over 1,200 meters above the city, offering panoramic views from its often snow-dusted summit. The surrounding region is rich with cool-climate wineries, whisky distilleries, and farm-gate trails. A day trip to the Tasman Peninsula reveals dramatic sea cliffs, the historic Port Arthur convict site, and some of Australia's most spectacular coastal scenery. Three days allows you to explore the city, visit MONA, summit the mountain, and venture into the wild Tasmanian landscape.",
     highlights: [
       "Explore the Salamanca Market, wander the waterfront, and eat fresh oysters from the floating fish punts at Constitution Dock",
@@ -1735,7 +1735,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Seville 3-Day Itinerary | Periplo",
     metaDescription: "Experience Seville in 3 days — flamenco performances, the stunning Alcázar palace, tapas culture, and Andalusia's most beautiful cathedral.",
-    heroImage: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1688404808661-92f72f2ea258?w=800&q=80",
     overview: "Seville is the passionate heart of Andalusia, a city where flamenco rhythms echo through narrow alleyways and the scent of orange blossoms fills the spring air. The Alcázar palace complex, with its intricate Mudéjar tilework and lush gardens, rivals the Alhambra in beauty. The massive Gothic cathedral houses Christopher Columbus's tomb and the Giralda bell tower offers sweeping views across terracotta rooftops. The Triana neighborhood across the Guadalquivir River is the birthplace of flamenco, still home to intimate tablaos where dancers perform with raw intensity. Seville's tapas culture is among Spain's finest — hop between bars sampling jamón ibérico, salmorejo, and espinacas con garbanzos. The Metropol Parasol, a striking modern wooden structure, provides a contemporary counterpoint to the historic center. Three days lets you soak in the monuments, the music, and the incomparable Sevillian way of life.",
     highlights: [
       "Tour the Royal Alcázar palace and its gardens, then explore the vast Seville Cathedral and climb the Giralda tower",
@@ -1993,7 +1993,7 @@ export const destinations: Destination[] = [
     days: 7,
     metaTitle: "Sri Lanka 7-Day Itinerary | Periplo",
     metaDescription: "Explore Sri Lanka in 7 days — ancient temples, tea plantations, wildlife safaris, pristine beaches, and one of Asia's most diverse island nations.",
-    heroImage: "https://images.unsplash.com/photo-1546587348-d12660c30c50?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1711797750174-c3750dd9d7c9?w=800&q=80",
     overview: "Sri Lanka packs an extraordinary amount of diversity into an island smaller than Ireland. Ancient cities like Sigiriya, with its dramatic rock fortress, and the sacred Temple of the Tooth in Kandy reveal a civilization stretching back over 2,000 years. The hill country around Ella and Nuwara Eliya is carpeted with emerald tea plantations, connected by one of the world's most scenic train rides. Yala National Park offers some of the best leopard-spotting opportunities anywhere, while Udawalawe guarantees elephant sightings. The southern and eastern coastlines are fringed with palm-lined beaches perfect for surfing and snorkeling. Sri Lankan cuisine is a revelation of complex curries, hoppers, kottu roti, and tropical fruits. The people are famously welcoming, and travel between destinations is straightforward by train and tuk-tuk. Seven days allows a satisfying circuit from the Cultural Triangle through the hill country to the southern beaches, capturing the island's remarkable range.",
     highlights: [
       "Climb Sigiriya Rock Fortress and explore the ancient ruins of Polonnaruwa in the Cultural Triangle",
@@ -2029,7 +2029,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Bogota 3-Day Itinerary | Periplo",
     metaDescription: "Experience Bogota in 3 days — world-class museums, vibrant street art, Andean cuisine, and the stunning colonial quarter of La Candelaria.",
-    heroImage: "https://images.unsplash.com/photo-1583089892943-e02e5b017b6a?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1568632234165-47bb34c35708?w=800&q=80",
     overview: "Bogota sits at 2,640 meters in the Andes, a sprawling capital of eight million people that has reinvented itself as one of South America's most exciting cultural cities. La Candelaria, the colonial historic center, features cobblestone streets, painted balconies, and some of the continent's best street art. The Museo del Oro (Gold Museum) houses the world's largest collection of pre-Hispanic gold artifacts, while the Museo Botero showcases the beloved Colombian artist's distinctive works alongside his personal collection of Picassos and Monets. The Monserrate peak, accessible by cable car, offers breathtaking views of the city sprawling across the Andean plateau. Bogota's food scene has matured rapidly, with traditional dishes like ajiaco soup and arepas served alongside innovative New Colombian cuisine. The Usaquén neighborhood provides upscale dining and a popular Sunday flea market. Three days gives you time to explore the essential museums, neighborhoods, and culinary highlights of this high-altitude capital.",
     highlights: [
       "Explore La Candelaria's street art, colonial churches, and the extraordinary Gold Museum and Botero Museum",
@@ -2061,7 +2061,7 @@ export const destinations: Destination[] = [
     days: 4,
     metaTitle: "Santiago 4-Day Itinerary | Periplo",
     metaDescription: "Discover Santiago in 4 days — Andean mountain views, vibrant food markets, world-class wineries, and Chile's cosmopolitan capital city awaits.",
-    heroImage: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1535479672101-8486af672be0?w=800&q=80",
     overview: "Santiago sits in a broad valley with the snow-capped Andes forming a dramatic eastern wall, visible from rooftops and hilltop parks throughout the city. Chile's capital blends Latin American energy with a surprisingly cosmopolitan feel — the Lastarria and Bellavista neighborhoods are packed with design boutiques, craft breweries, and restaurants pushing the boundaries of Chilean cuisine. The Mercado Central, housed in a beautiful iron-framed building, is one of South America's best seafood markets. Cerro San Cristóbal and Cerro Santa Lucía provide elevated perspectives over the city to the mountains. The nearby Maipo and Casablanca valleys produce world-class wines, with dozens of vineyards offering tastings just an hour from downtown. The Museo de la Memoria documents Chile's recent history with powerful honesty. Santiago also serves as a gateway to Patagonia, the Atacama Desert, and the Chilean wine country. Four days lets you experience the city's culture, cuisine, and natural setting while leaving time for a wine valley excursion.",
     highlights: [
       "Explore the Plaza de Armas, Mercado Central for seafood lunch, and the colorful streets of Barrio Lastarria",
@@ -2094,7 +2094,7 @@ export const destinations: Destination[] = [
     days: 7,
     metaTitle: "Costa Rica 7-Day Itinerary | Periplo",
     metaDescription: "Plan 7 days in Costa Rica with our guide to rainforests, volcanoes, beaches, wildlife encounters, and the pure life of this eco-tourism paradise.",
-    heroImage: "https://images.unsplash.com/photo-1518259102261-b40117eabbc9?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1705351978871-2b3316c25e6d?w=800&q=80",
     overview: "Costa Rica is a biodiversity superstar, containing roughly 5% of the world's species within an area smaller than West Virginia. Seven days allows a rewarding circuit from the cloud forests of Monteverde to the volcanic hot springs of Arenal and the Pacific beaches of Manuel Antonio or the Caribbean coast of Puerto Viejo. Sloths hang from cecropia trees, toucans perch on branches overhead, and howler monkeys provide a dawn chorus that no alarm clock can rival. The country pioneered eco-tourism and runs almost entirely on renewable energy. Arenal Volcano's cone dominates the northern landscape, with hot springs resorts at its base offering jungle-framed relaxation. Monteverde's cloud forest reserve reveals a misty, moss-draped world accessible via hanging bridges and guided night walks. The beaches range from laid-back Caribbean vibes to Pacific surf breaks. Costa Rica's Pura Vida philosophy — a genuine emphasis on gratitude and simple pleasures — permeates daily life and is infectious for visitors.",
     highlights: [
       "Explore San José's Gold Museum and Central Market before heading to Arenal Volcano region",
@@ -2130,7 +2130,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "New Orleans 3-Day Itinerary | Periplo",
     metaDescription: "Experience New Orleans in 3 days — live jazz on every corner, Creole and Cajun cuisine, historic French Quarter streets, and bayou adventures.",
-    heroImage: "https://images.unsplash.com/photo-1568402102990-bc541580b59f?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1568693059993-a239b9cd4957?w=800&q=80",
     overview: "New Orleans is America's most unique city, a place where French, Spanish, African, and Caribbean cultures fused to create something found nowhere else. The French Quarter's wrought-iron balconies and gas-lit streets set the stage, but the real magic is the music — jazz, blues, brass bands, and zydeco pour from clubs, street corners, and second-line parades throughout the week. The culinary scene is equally distinctive: gumbo, jambalaya, crawfish étouffée, beignets at Café du Monde, and po'boys from neighborhood delis represent a cuisine that is genuinely regional. Beyond Bourbon Street, the Garden District offers antebellum mansions shaded by live oaks, while the Bywater and Marigny neighborhoods showcase the city's artistic and bohemian side. The National WWII Museum is one of the finest history museums in the country. Three days gives you time to eat, drink, and listen your way through a city that celebrates life with unmatched enthusiasm.",
     highlights: [
       "Explore the French Quarter, Jackson Square, St. Louis Cathedral, and catch live jazz on Frenchmen Street in the evening",
@@ -2260,7 +2260,7 @@ export const destinations: Destination[] = [
     days: 2,
     metaTitle: "Essaouira 2-Day Itinerary | Periplo",
     metaDescription: "Discover Essaouira in 2 days — a windswept Atlantic medina, fresh seafood, artisan workshops, and Morocco's most laid-back coastal town.",
-    heroImage: "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1624802746702-60ca95bdb605?w=800&q=80",
     overview: "Essaouira is Morocco's most relaxed coastal city, a blue-and-white medina perched on the Atlantic where trade winds keep the air fresh and the surf rolling. The UNESCO-listed medina is small enough to explore without getting lost, its lanes filled with woodworking studios, art galleries, and spice shops. The ramparts of the Skala de la Ville offer sweeping views of the harbor where blue fishing boats bob and seagulls circle. The port's fish market is the day's freshest catch — choose your fish and have it grilled on the spot for a few dollars. Essaouira has attracted artists and musicians for decades, and the annual Gnaoua World Music Festival draws performers and audiences from around the globe. The wide, windswept beach stretches for miles, popular with kitesurfers, camel riders, and sunset walkers. Compared to Marrakech's intensity, Essaouira moves at a gentler pace, making it a perfect complement to Morocco's inland cities. Two days is enough to absorb the medina, the port, and the beach.",
     highlights: [
       "Explore the medina's artisan workshops, walk the Skala ramparts, and feast on grilled seafood at the port market",
@@ -2290,7 +2290,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Luxor 3-Day Itinerary | Periplo",
     metaDescription: "Plan 3 days in Luxor — the Valley of the Kings, Karnak Temple, ancient tombs, Nile felucca rides, and Egypt's greatest archaeological treasures.",
-    heroImage: "https://images.unsplash.com/photo-1539768942893-daf53e448371?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1596130535979-eedea4278d29?w=800&q=80",
     overview: "Luxor is the world's greatest open-air museum, built on and around the ancient city of Thebes, capital of Egypt during the New Kingdom. The East Bank holds the massive Karnak Temple complex, where a forest of towering columns and obelisks commemorates over 2,000 years of pharaonic construction. Luxor Temple, beautifully illuminated at night, stands in the heart of the modern city. Across the Nile, the West Bank is a vast necropolis — the Valley of the Kings contains the tombs of Tutankhamun, Ramesses II, and dozens of other pharaohs, their walls covered in vivid paintings depicting the afterlife. The Temple of Hatshepsut, carved into the cliff face at Deir el-Bahari, is one of Egypt's most dramatic monuments. A hot air balloon ride at dawn provides an unforgettable aerial view of the temples, tombs, and the Nile snaking through the desert. Three days gives you time to explore both banks thoroughly and appreciate the staggering scale of ancient Egyptian civilization.",
     highlights: [
       "Explore Karnak Temple's Great Hypostyle Hall and Luxor Temple, returning at night when Luxor Temple is illuminated",
@@ -2356,7 +2356,7 @@ export const destinations: Destination[] = [
     days: 4,
     metaTitle: "Perth 4-Day Itinerary | Periplo",
     metaDescription: "Discover Perth in 4 days — pristine beaches, Kings Park bushland, Rottnest Island quokkas, Swan Valley wines, and Western Australia's sunny capital.",
-    heroImage: "https://images.unsplash.com/photo-1561047029-3000c68339ca?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1580014942344-ce423d2b885a?w=800&q=80",
     overview: "Perth is the world's most isolated major city, but its remoteness breeds a unique character — laid-back, sun-drenched, and blessed with some of Australia's most beautiful natural spaces. Kings Park and Botanic Garden, one of the largest inner-city parks in the world, offers bushland walks with sweeping views over the Swan River and city skyline. Cottesloe Beach's turquoise waters and Norfolk pines epitomize the Perth coastal lifestyle, while Scarborough Beach draws surfers and cafe crowds. Rottnest Island, a 25-minute ferry ride offshore, is home to the irresistible quokka — a small marsupial famous for its photogenic smile — and ringed by pristine beaches and snorkeling bays. The Swan Valley wine region begins just 25 minutes from the CBD, with boutique wineries, craft breweries, and artisan food producers along a scenic river drive. Fremantle, Perth's port city, adds convict history, maritime heritage, and one of Australia's best weekend markets. Four days lets you enjoy the beaches, island, wine country, and the relaxed rhythm of this sunlit city.",
     highlights: [
       "Explore Kings Park at sunrise, walk the Lotterywest Federation Walkway through the treetops, and visit the city's cultural precinct",
@@ -2422,7 +2422,7 @@ export const destinations: Destination[] = [
     days: 2,
     metaTitle: "Rotorua 2-Day Itinerary | Periplo",
     metaDescription: "Experience Rotorua in 2 days — geothermal wonders, Maori cultural performances, redwood forest walks, and New Zealand's adventure playground.",
-    heroImage: "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1610972399594-f66f4ff82d53?w=800&q=80",
     overview: "Rotorua sits in the heart of New Zealand's Taupo Volcanic Zone, a geothermal wonderland where the earth steams, bubbles, and erupts. The city's geothermal parks — Wai-O-Tapu, Te Puia, and Hell's Gate — showcase boiling mud pools, silica terraces in psychedelic colors, and the famous Pohutu Geyser that erupts up to 30 meters high. Rotorua is also a center of Maori culture, where visitors can experience a traditional hangi feast cooked in earth ovens, watch powerful haka performances, and learn about the Maori connection to this geothermally active land. The Whakarewarewa Living Village is unique — a Maori community that has lived among geothermal features for generations. Beyond the geothermal attractions, the Redwoods Treewalk offers an elevated nighttime walk through ancient California redwoods lit with lanterns. Mountain biking trails through the Whakarewarewa Forest are world-class. Two days gives you time to experience both the geothermal landscapes and the rich Maori cultural heritage.",
     highlights: [
       "Visit Wai-O-Tapu Thermal Wonderland's Champagne Pool and Artist's Palette, then experience Te Puia's Pohutu Geyser and Maori Arts Institute",
@@ -2519,7 +2519,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Valencia 3-Day Itinerary | Periplo",
     metaDescription: "Plan 3 days in Valencia — explore the City of Arts and Sciences, eat authentic paella in its birthplace, and relax on Mediterranean beaches.",
-    heroImage: "https://images.unsplash.com/photo-1580502304784-8985b7eb7260?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1719401542194-95139aed215c?w=800&q=80",
     overview: "Valencia is where paella was born, where a futuristic arts complex rises from a drained riverbed, and where Mediterranean beaches meet a charming old town. The City of Arts and Sciences — designed by local architect Santiago Calatrava — is one of Europe's most striking modern landmarks. The old town hides the stunning Silk Exchange (a UNESCO site), the Central Market with over 1,000 stalls, and a cathedral that claims to hold the Holy Grail. Valencia moves at a gentler pace than Barcelona or Madrid, with lower prices and fewer tourists. This 3-day itinerary covers the city's architectural marvels, culinary traditions, and beach culture, with time to explore the vibrant Ruzafa neighborhood where locals gather at sidewalk cafes.",
     highlights: [
       "Wander the old town — visit the Cathedral, Central Market, and La Lonja de la Seda (Silk Exchange)",
@@ -2581,7 +2581,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Málaga 3-Day Itinerary | Periplo",
     metaDescription: "Explore Málaga in 3 days — Picasso's birthplace, the Alcazaba fortress, tapas in the old town, and Costa del Sol beaches. Free AI itinerary.",
-    heroImage: "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1589999558475-e871ef18e6c9?w=800&q=80",
     overview: "Málaga has transformed from a Costa del Sol transit point into one of Spain's most exciting cities. Picasso was born here, and the Museo Picasso Málaga houses an impressive collection. The Alcazaba — an 11th-century Moorish fortress — overlooks the city and port, while the Centre Pompidou Málaga and the Carmen Thyssen Museum add contemporary art credentials. The old town is a maze of pedestrian streets filled with tapas bars, rooftop terraces, and chiringuitos (beach bars) serving fried fish. With over 300 days of sunshine a year, Málaga combines cultural depth with the laid-back beach lifestyle that defines southern Spain.",
     highlights: [
       "Visit the Museo Picasso and explore the old town — the Cathedral, Roman Theatre, and Calle Larios shopping street",
@@ -2742,7 +2742,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Lyon 3-Day Itinerary | Periplo",
     metaDescription: "Plan 3 days in Lyon — France's gastronomic capital. Explore traboules, eat at traditional bouchons, and discover 2,000 years of history.",
-    heroImage: "https://images.unsplash.com/photo-1524396309943-e03f5249f002?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1674644098961-12311e9d7aff?w=800&q=80",
     overview: "Lyon is France's gastronomic capital, where silk merchants built secret passageways (traboules) through Renaissance buildings, and traditional bouchons still serve the hearty Lyonnaise cuisine that made Paul Bocuse famous. The city sits at the confluence of the Rhône and Saône rivers, with the hilltop Basilica of Fourvière overlooking a UNESCO-listed old town. Presqu'île — the peninsula between the rivers — buzzes with shops, theaters, and the magnificent Place Bellecour. Lyon punches well above its weight in culture, food, and nightlife while remaining far less touristed than Paris. This 3-day itinerary covers the city's culinary traditions, Roman ruins, Renaissance architecture, and vibrant contemporary scene.",
     highlights: [
       "Explore Vieux Lyon's traboules, visit the Cathedral, then take the funicular to Fourvière for panoramic views and Roman ruins",
@@ -2773,7 +2773,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Marseille 3-Day Itinerary | Periplo",
     metaDescription: "Discover Marseille in 3 days — the Calanques, the Vieux-Port, bouillabaisse, MuCEM, and France's oldest and most multicultural city.",
-    heroImage: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1566838217578-1903568a76d9?w=800&q=80",
     overview: "Marseille is France's oldest city, its largest port, and its most culturally diverse metropolis. The Vieux-Port remains the heart of the city, lined with restaurants serving bouillabaisse — the iconic Provençal fish stew born here. Notre-Dame de la Garde watches over the city from its hilltop perch, while the MuCEM (Museum of European and Mediterranean Civilizations) is a stunning contemporary landmark. But Marseille's greatest asset is the Calanques — dramatic limestone cliffs and turquoise inlets just minutes from downtown, offering some of the Mediterranean's best swimming and hiking. This 3-day itinerary covers the city's seafood traditions, cultural landmarks, and spectacular natural coastline.",
     highlights: [
       "Explore the Vieux-Port and Le Panier (oldest neighborhood), visit MuCEM, and eat bouillabaisse at a port-side restaurant",
@@ -2804,7 +2804,7 @@ export const destinations: Destination[] = [
     days: 3,
     metaTitle: "Bordeaux 3-Day Itinerary | Periplo",
     metaDescription: "Plan 3 days in Bordeaux — world-famous wine regions, stunning 18th-century architecture, the Cité du Vin, and France's most elegant riverside city.",
-    heroImage: "https://images.unsplash.com/photo-1524396309943-e03f5249f002?w=800&q=80",
+    heroImage: "https://images.unsplash.com/photo-1698608216843-67ae1151b2b8?w=800&q=80",
     overview: "Bordeaux is a city synonymous with wine, but it's also one of France's most beautiful urban landscapes — the entire 18th-century center is a UNESCO World Heritage site. The Garonne riverfront, the grand Place de la Bourse with its iconic water mirror, and the limestone facades of Saint-Pierre quarter make Bordeaux one of Europe's most photogenic cities. The Cité du Vin is a world-class wine museum, and the surrounding vineyards — Saint-Émilion, Médoc, Graves — are within easy day-trip distance. This 3-day itinerary pairs Bordeaux's architectural elegance with its legendary wine culture and an increasingly vibrant food scene.",
     highlights: [
       "Walk the UNESCO historic center — Place de la Bourse, the Water Mirror, Saint-André Cathedral, and Rue Sainte-Catherine",

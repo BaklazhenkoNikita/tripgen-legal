@@ -1,7 +1,7 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
+import { skeletonPulseSx } from '@/components/ui/Skeleton';
 
 export default function TripDetailLoading() {
   return (
@@ -12,8 +12,7 @@ export default function TripDetailLoading() {
             height: 14,
             width: '100%',
             borderRadius: 1,
-            bgcolor: (t) => alpha(t.palette.text.primary, 0.08),
-            animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+            ...skeletonPulseSx(0.08),
           }}
         />
       </Box>
@@ -23,8 +22,7 @@ export default function TripDetailLoading() {
             height: 32,
             width: 240,
             borderRadius: 1,
-            bgcolor: (t) => alpha(t.palette.text.primary, 0.1),
-            animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+            ...skeletonPulseSx(0.1),
           }}
         />
         <Box
@@ -32,8 +30,7 @@ export default function TripDetailLoading() {
             height: 16,
             width: 320,
             borderRadius: 1,
-            bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
-            animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+            ...skeletonPulseSx(0.06),
           }}
         />
         <Box sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -43,8 +40,7 @@ export default function TripDetailLoading() {
               sx={{
                 height: 96,
                 borderRadius: 2,
-                bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
-                animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+                ...skeletonPulseSx(0.06),
                 animationDelay: `${i * 80}ms`,
               }}
             />

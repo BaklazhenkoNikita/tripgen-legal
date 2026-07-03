@@ -5,12 +5,26 @@ import { useCity } from '@/contexts';
 
 const FALLBACK_CITY = 'Barcelona';
 const ATTEMPT_FLAG = 'tripgen_city_bootstrap_attempted_v1';
+const GEOLOCATION_PERMISSION = 'geolocation' as PermissionName;
+
+async function canUseGeolocation(): Promise<boolean> {
+  if (!navigator.geolocation) return false;
+  if (!navigator.permissions?.query) return true;
+
+  try {
+    const permission = await navigator.permissions.query({
+      name: GEOLOCATION_PERMISSION,
+    });
+    return permission.state !== 'denied';
+  } catch {
+    return true;
+  }
+}
 
 /** Picks a sensible default city on first visit. Order:
  *   1. If the user already has a city in localStorage → noop.
- *   2. Try browser geolocation (silent — only triggers the OS prompt if the
- *      site has permission). On success, reverse-geocode via BigDataCloud's
- *      free no-key endpoint and use that city.
+ *   2. Try browser geolocation when available and not denied. On success,
+ *      reverse-geocode via BigDataCloud's free no-key endpoint and use that city.
  *   3. Otherwise fall back to a popular default (Barcelona).
  *  Mounted once near the root so every signed-in or signed-out user lands on
  *  a populated destinations view instead of an empty "Pick a city" screen. */
@@ -43,7 +57,7 @@ export function useCityBootstrap() {
       }
     };
 
-    if (attempted || !navigator.geolocation) {
+    if (attempted) {
       useFallback();
       markAttempted();
       return;
@@ -53,30 +67,39 @@ export function useCityBootstrap() {
 
     const timeout = window.setTimeout(useFallback, 4000);
 
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        window.clearTimeout(timeout);
-        if (cancelled) return;
-        const { latitude, longitude } = pos.coords;
-        try {
-          const res = await fetch(
-            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
-          );
-          if (!res.ok) throw new Error('reverse geocode failed');
-          const data = (await res.json()) as { city?: string; locality?: string; principalSubdivision?: string };
-          const detected = data.city || data.locality || data.principalSubdivision;
-          if (cancelled) return;
-          setCity(detected && detected.trim() ? detected : FALLBACK_CITY);
-        } catch {
-          useFallback();
-        }
-      },
-      () => {
+    void canUseGeolocation().then((allowed) => {
+      if (cancelled) return;
+      if (!allowed) {
         window.clearTimeout(timeout);
         useFallback();
-      },
-      { timeout: 4000, maximumAge: 24 * 60 * 60 * 1000 },
-    );
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          window.clearTimeout(timeout);
+          if (cancelled) return;
+          const { latitude, longitude } = pos.coords;
+          try {
+            const res = await fetch(
+              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
+            );
+            if (!res.ok) throw new Error('reverse geocode failed');
+            const data = (await res.json()) as { city?: string; locality?: string; principalSubdivision?: string };
+            const detected = data.city || data.locality || data.principalSubdivision;
+            if (cancelled) return;
+            setCity(detected && detected.trim() ? detected : FALLBACK_CITY);
+          } catch {
+            useFallback();
+          }
+        },
+        () => {
+          window.clearTimeout(timeout);
+          useFallback();
+        },
+        { timeout: 4000, maximumAge: 24 * 60 * 60 * 1000 },
+      );
+    });
 
     return () => {
       cancelled = true;

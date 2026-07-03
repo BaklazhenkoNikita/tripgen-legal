@@ -2,7 +2,18 @@
 
 import { type CSSProperties, type HTMLAttributes } from 'react';
 import MuiSkeleton from '@mui/material/Skeleton';
+import { alpha, type Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+
+/**
+ * Shared pulse style for route-level loading.tsx skeletons that mirror page
+ * layout with plain Boxes (uses the global `tgSkeletonPulse` keyframes).
+ */
+export const skeletonPulseSx = (opacity = 0.06, delayMs = 0) => ({
+  bgcolor: (t: Theme) => alpha(t.palette.text.primary, opacity),
+  animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+  ...(delayMs ? { animationDelay: `${delayMs}ms` } : null),
+});
 
 export type SkeletonVariant = 'line' | 'block' | 'card' | 'circle';
 

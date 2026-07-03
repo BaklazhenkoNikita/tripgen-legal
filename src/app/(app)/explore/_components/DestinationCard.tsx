@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
@@ -14,7 +15,7 @@ interface DestinationCardProps {
 }
 
 export function DestinationCard({ destination, priority }: DestinationCardProps) {
-  const { slug, city, country, continent, days } = destination;
+  const { slug, city, country, continent } = destination;
 
   return (
     <Box
@@ -26,7 +27,7 @@ export function DestinationCard({ destination, priority }: DestinationCardProps)
         display: 'block',
         textDecoration: 'none',
         color: 'inherit',
-        borderRadius: 2.5,
+        borderRadius: 2,
         overflow: 'hidden',
         bgcolor: 'background.paper',
         border: '1px solid',
@@ -36,6 +37,10 @@ export function DestinationCard({ destination, priority }: DestinationCardProps)
           transform: 'translateY(-3px)',
           boxShadow: (t) => tgShadow(t, 'cardHover'),
           borderColor: (t) => alpha(t.palette.primary.main, 0.32),
+        },
+        '&:hover .destination-card-arrow': {
+          color: 'primary.main',
+          transform: 'translate(2px, -2px)',
         },
         '&:focus-visible': {
           outline: 'none',
@@ -66,9 +71,8 @@ export function DestinationCard({ destination, priority }: DestinationCardProps)
             bgcolor: (t) => alpha(t.palette.common.white, 0.92),
             color: 'text.primary',
             fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
+            fontWeight: 700,
+            letterSpacing: 0,
             backdropFilter: 'blur(6px)',
           }}
         >
@@ -86,12 +90,12 @@ export function DestinationCard({ destination, priority }: DestinationCardProps)
           }}
         >
           <Typography
-            component="div"
-            sx={{
-              fontWeight: 600,
+          component="div"
+          sx={{
+              fontWeight: 700,
               fontSize: { xs: 22, sm: 24 },
               lineHeight: 1.1,
-              letterSpacing: '-0.01em',
+              letterSpacing: 0,
               textShadow: '0 2px 8px rgba(0,0,0,0.35)',
             }}
           >
@@ -113,7 +117,7 @@ export function DestinationCard({ destination, priority }: DestinationCardProps)
           sx={{
             fontSize: 13.5,
             color: 'text.secondary',
-            fontWeight: 500,
+            fontWeight: 600,
             overflow: 'hidden',
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
@@ -121,18 +125,18 @@ export function DestinationCard({ destination, priority }: DestinationCardProps)
         >
           {country}
         </Typography>
-        <Typography
+        <Box
+          aria-hidden
+          className="destination-card-arrow"
           sx={{
-            fontSize: 12,
-            color: 'text.disabled',
-            fontWeight: 600,
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase',
             flexShrink: 0,
+            display: 'inline-flex',
+            color: 'text.disabled',
+            transition: 'color 0.2s, transform 0.2s',
           }}
         >
-          {days} day{days === 1 ? '' : 's'}
-        </Typography>
+          <ArrowUpRight size={16} />
+        </Box>
       </Box>
     </Box>
   );

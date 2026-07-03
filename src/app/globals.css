@@ -345,11 +345,14 @@ body {
   50%      { opacity: 0.55; }
 }
 
+/* Typing-indicator dot pulse (ChatMessage). */
+@keyframes tgDotPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+
 /* Loading spinner rotation — referenced from inline style={{ animation: 'spin ...' }}. */
 @keyframes spin {
-  to { transform: rotate(360deg); }
-}
-@keyframes tg-spin {
   to { transform: rotate(360deg); }
 }
 

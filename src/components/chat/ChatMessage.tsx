@@ -222,11 +222,7 @@ export function ChatMessage({ message, onAnswer, onConfirm, onAction }: Props) {
               width: 8,
               borderRadius: '50%',
               bgcolor: 'text.disabled',
-              animation: 'pulse 1.4s ease-in-out infinite',
-              '@keyframes pulse': {
-                '0%, 100%': { opacity: 0.4 },
-                '50%': { opacity: 1 },
-              },
+              animation: 'tgDotPulse 1.4s ease-in-out infinite',
             }}
           />
         )}

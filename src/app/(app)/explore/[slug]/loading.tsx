@@ -1,7 +1,7 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
+import { skeletonPulseSx } from '@/components/ui/Skeleton';
 
 export default function ExploreSlugLoading() {
   return (
@@ -11,8 +11,7 @@ export default function ExploreSlugLoading() {
           height: 280,
           mb: 4,
           borderRadius: 3,
-          bgcolor: (t) => alpha(t.palette.text.primary, 0.08),
-          animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+          ...skeletonPulseSx(0.08),
         }}
       />
       <Box
@@ -21,8 +20,7 @@ export default function ExploreSlugLoading() {
           width: 320,
           mb: 1.5,
           borderRadius: 1,
-          bgcolor: (t) => alpha(t.palette.text.primary, 0.08),
-          animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+          ...skeletonPulseSx(0.08),
           animationDelay: '80ms',
         }}
       />
@@ -32,8 +30,7 @@ export default function ExploreSlugLoading() {
           width: 480,
           mb: 4,
           borderRadius: 1,
-          bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
-          animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+          ...skeletonPulseSx(0.06),
           animationDelay: '160ms',
         }}
       />
@@ -45,8 +42,7 @@ export default function ExploreSlugLoading() {
               width: 200,
               mb: 1.5,
               borderRadius: 1,
-              bgcolor: (t) => alpha(t.palette.text.primary, 0.08),
-              animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+              ...skeletonPulseSx(0.08),
             }}
           />
           <Box sx={{ display: 'flex', gap: 1.5, overflow: 'hidden' }}>
@@ -58,8 +54,7 @@ export default function ExploreSlugLoading() {
                   height: 224,
                   width: 288,
                   borderRadius: 2,
-                  bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
-                  animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+                  ...skeletonPulseSx(0.06),
                   animationDelay: `${i * 80}ms`,
                 }}
               />

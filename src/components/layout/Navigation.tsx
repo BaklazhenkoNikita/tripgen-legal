@@ -1,7 +1,7 @@
 'use client';
 
 import Link, { useLinkStatus } from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useOptimisticNav } from '@/hooks/useOptimisticNav';
 import { SignedIn, SignedOut, UserButton, useClerk } from '@clerk/nextjs';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -55,25 +55,20 @@ const PRIMARY_MATCHES = {
   chat: '/chat',
 } as const;
 
-// The /explore page is the primary entry point, so it leads the nav as
-// "Home" (house icon). The URL stays /explore — the /explore/[slug] SEO
-// pages and sitemap depend on it.
+// The /explore page is the primary entry point. The URL stays /explore —
+// the /explore/[slug] SEO pages and sitemap depend on it.
 const homeLink = {
   href: '/explore',
   match: PRIMARY_MATCHES.explore,
-  label: 'Home',
+  label: 'Explore',
   icon: House,
 } as const;
 
 export function Navigation() {
-  const pathname = usePathname() ?? '/';
-  const router = useRouter();
-  const onChat = pathname === '/chat' || pathname.startsWith('/chat/');
   const { openSignIn } = useClerk();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileDiscoverOpen, setMobileDiscoverOpen] = useState(false);
   const [mobileTripOpen, setMobileTripOpen] = useState(false);
-  const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   const isPro = useSubscriptionOptional()?.credits?.isPro ?? false;
   const activeTripId = useActiveTripOptional()?.activeTripId ?? null;
@@ -92,24 +87,12 @@ export function Navigation() {
 
   const tripLinks = useMemo(() => buildTripLinks(activeTripId), [activeTripId]);
 
-  useEffect(() => {
-    if (pendingHref && pathname.startsWith(pendingHref.split('?')[0])) {
-      setPendingHref(null);
-    }
-  }, [pathname, pendingHref]);
-
-  // Warm the router cache for every pill destination (including the
-  // dynamic /trip/{id} and /chat/{id} variants). `<Link prefetch>` only
-  // fires on viewport intersection, which on a cold marketing → app click
-  // is too late — the user pays the full RSC + bundle fetch on the first
-  // hop. Calling router.prefetch on mount kicks the prefetch off
-  // immediately so by the time they click the destination's loading.tsx +
-  // page chunk are cached.
-  useEffect(() => {
-    for (const link of primaryLinks) router.prefetch(link.href);
-    for (const link of tripLinks) router.prefetch(link.href);
-    for (const link of discoverLinks) router.prefetch(link.href);
-  }, [router, primaryLinks, tripLinks]);
+  const allHrefs = useMemo(
+    () => [...primaryLinks, ...tripLinks, ...discoverLinks].map((l) => l.href),
+    [primaryLinks, tripLinks],
+  );
+  const { pathname, pendingHref, setPendingHref } = useOptimisticNav(allHrefs);
+  const onChat = pathname === '/chat' || pathname.startsWith('/chat/');
 
   const isActiveSection = (match: string, href: string) =>
     pendingHref === href || pathname.startsWith(match);
@@ -341,7 +324,7 @@ export function Navigation() {
                     px: 1.5,
                     py: 1,
                     mb: 0.5,
-                    fontSize: '0.875rem',
+                    fontSize: '1rem',
                     fontWeight: 600,
                     textDecoration: 'none',
                     color: 'primary.contrastText',
@@ -394,7 +377,7 @@ export function Navigation() {
                 borderRadius: 1.5,
                 px: 1.5,
                 py: 1.25,
-                fontSize: '0.875rem',
+                fontSize: '1rem',
                 fontWeight: tripActive ? 600 : 500,
                 background: 'transparent',
                 border: 0,
@@ -474,7 +457,7 @@ export function Navigation() {
                 borderRadius: 1.5,
                 px: 1.5,
                 py: 1.25,
-                fontSize: '0.875rem',
+                fontSize: '1rem',
                 fontWeight: discoverActive ? 600 : 500,
                 background: 'transparent',
                 border: 0,
@@ -611,7 +594,7 @@ const NavLink = memo(function NavLink({
         alignItems: 'center',
         borderRadius: 999,
         px: 1.75,
-        fontSize: '0.875rem',
+        fontSize: '1rem',
         fontWeight: active ? 600 : 500,
         textDecoration: 'none',
         transition: 'color 0.15s, background-color 0.15s',
@@ -658,7 +641,7 @@ const TripDropdown = memo(function TripDropdown({
           height: 36,
           borderRadius: 999,
           px: 1.75,
-          fontSize: '0.875rem',
+          fontSize: '1rem',
           fontWeight: active ? 600 : 500,
           background: 'transparent',
           border: 0,
@@ -707,7 +690,7 @@ const TripDropdown = memo(function TripDropdown({
               onNavigate?.(link.href);
               setAnchor(null);
             }}
-            sx={{ borderRadius: 1, fontSize: '0.875rem', py: 1, px: 1.5 }}
+            sx={{ borderRadius: 1, fontSize: '0.95rem', py: 1, px: 1.5 }}
           >
             {link.label}
             <LinkPendingDot />
@@ -742,7 +725,7 @@ const DiscoverDropdown = memo(function DiscoverDropdown({
           height: 36,
           borderRadius: 999,
           px: 1.75,
-          fontSize: '0.875rem',
+          fontSize: '1rem',
           fontWeight: active ? 600 : 500,
           background: 'transparent',
           border: 0,
@@ -791,7 +774,7 @@ const DiscoverDropdown = memo(function DiscoverDropdown({
               onNavigate?.(link.href);
               setAnchor(null);
             }}
-            sx={{ borderRadius: 1, fontSize: '0.875rem', py: 1, px: 1.5 }}
+            sx={{ borderRadius: 1, fontSize: '0.95rem', py: 1, px: 1.5 }}
           >
             {link.label}
             <LinkPendingDot />
@@ -827,7 +810,7 @@ const MobileLink = memo(function MobileLink({
         borderRadius: 1.5,
         px: 1.5,
         py: 1.25,
-        fontSize: '0.875rem',
+        fontSize: '1rem',
         fontWeight: active ? 600 : 500,
         textDecoration: 'none',
         ...(active

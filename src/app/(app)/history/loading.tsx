@@ -1,7 +1,7 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
+import { skeletonPulseSx } from '@/components/ui/Skeleton';
 
 export default function HistoryLoading() {
   return (
@@ -22,8 +22,7 @@ export default function HistoryLoading() {
               width: 200,
               mb: 1,
               borderRadius: 1,
-              bgcolor: (t) => alpha(t.palette.text.primary, 0.08),
-              animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+              ...skeletonPulseSx(0.08),
             }}
           />
           <Box
@@ -31,8 +30,7 @@ export default function HistoryLoading() {
               height: 16,
               width: 320,
               borderRadius: 1,
-              bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
-              animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+              ...skeletonPulseSx(0.06),
               animationDelay: '80ms',
             }}
           />
@@ -42,8 +40,7 @@ export default function HistoryLoading() {
             height: 40,
             width: 120,
             borderRadius: 999,
-            bgcolor: (t) => alpha(t.palette.text.primary, 0.08),
-            animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+            ...skeletonPulseSx(0.08),
           }}
         />
       </Box>
@@ -55,8 +52,7 @@ export default function HistoryLoading() {
             sx={{
               height: 96,
               borderRadius: 1.5,
-              bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
-              animation: 'tgSkeletonPulse 1.6s ease-in-out infinite',
+              ...skeletonPulseSx(0.06),
               animationDelay: `${i * 80}ms`,
             }}
           />

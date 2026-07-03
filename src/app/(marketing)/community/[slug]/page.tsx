@@ -13,6 +13,7 @@ import {
   useVotePublicTemplate,
 } from '@/hooks/useTemplates';
 import { TripView } from '@/components/trip/TripView';
+import { skeletonPulseSx } from '@/components/ui/Skeleton';
 import { useSnackbar } from '@/contexts';
 
 interface Props {
@@ -42,8 +43,7 @@ export default function CommunityTemplatePage({ params }: Props) {
               height: 32,
               width: 192,
               borderRadius: 1,
-              bgcolor: (t) => alpha(t.palette.text.primary, 0.1),
-              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              ...skeletonPulseSx(0.1),
             }}
           />
           <Box
@@ -51,8 +51,7 @@ export default function CommunityTemplatePage({ params }: Props) {
               height: 16,
               width: 256,
               borderRadius: 1,
-              bgcolor: (t) => alpha(t.palette.text.primary, 0.06),
-              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              ...skeletonPulseSx(0.06),
             }}
           />
         </Box>
