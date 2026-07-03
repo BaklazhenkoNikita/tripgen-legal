@@ -67,7 +67,6 @@ export function Footer() {
         borderTop: '1px solid',
         borderColor: 'divider',
         bgcolor: 'background.paper',
-        display: { xs: 'none', sm: 'block' },
       }}
     >
       <Box

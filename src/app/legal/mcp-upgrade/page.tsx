@@ -3,8 +3,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Navigation } from '@/components/layout/Navigation';
-import { Footer } from '@/components/layout/Footer';
 import { McpUpgradeBadges } from './McpUpgradeBadges';
 import { McpUpgradeCheckout } from './McpUpgradeCheckout';
 
@@ -61,24 +59,13 @@ export default function McpUpgradePage() {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh',
-        bgcolor: 'background.default',
+        width: '100%',
+        maxWidth: 640,
+        mx: 'auto',
+        px: { xs: 2, sm: 3 },
+        py: { xs: 4, md: 6 },
       }}
     >
-      <Navigation />
-      <Box
-        component="main"
-        sx={{
-          flex: 1,
-          width: '100%',
-          maxWidth: 640,
-          mx: 'auto',
-          px: { xs: 2, sm: 3 },
-          py: { xs: 4, md: 6 },
-        }}
-      >
         <Box
           sx={{
             display: 'inline-flex',
@@ -323,8 +310,6 @@ export default function McpUpgradePage() {
           email{' '}
           <a href="mailto:hello@periploapp.com">hello@periploapp.com</a>.
         </Typography>
-      </Box>
-      <Footer />
     </Box>
   );
 }

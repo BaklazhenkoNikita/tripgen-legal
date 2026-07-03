@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { textScale } from '@/theme/standards';
+import { Section } from '@/components/layout/Section';
 import { Badge } from '@/components/ui/Badge';
 
 export const metadata: Metadata = {
@@ -52,7 +53,7 @@ const faqs = [
 
 export default function FAQPage() {
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 768, px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
+    <Section width="prose" component="div">
       <Box component="header">
         <Badge tone="accent" size="md">Help</Badge>
         <Typography variant="h1" component="h1" sx={{ mt: 2, color: 'text.primary' }}>
@@ -139,6 +140,6 @@ export default function FAQPage() {
           }),
         }}
       />
-    </Box>
+    </Section>
   );
 }

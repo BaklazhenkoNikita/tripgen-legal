@@ -2,8 +2,6 @@ import type { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import { Navigation } from '@/components/layout/Navigation';
-import { Footer } from '@/components/layout/Footer';
 
 export interface LegalLayoutProps {
   title: string;
@@ -12,25 +10,15 @@ export interface LegalLayoutProps {
 }
 
 /**
- * Shared chrome for legal / policy / help pages.
+ * Header + prose container for legal / policy / help pages.
  *
- * Wraps a long-form prose body in the site Navigation + Footer and provides
- * sensible defaults for headings, paragraphs, lists, links, and emphasis used
- * inside the prose container.
+ * Site chrome (Navigation/Footer) comes from src/app/legal/layout.tsx; this
+ * provides sensible defaults for headings, paragraphs, lists, links, and
+ * emphasis used inside the prose container.
  */
 export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh',
-        bgcolor: 'background.default',
-      }}
-    >
-      <Navigation />
-      <Box component="main" sx={{ flex: 1 }}>
-        <Container maxWidth="md" sx={{ pt: { xs: 5, md: 6 }, pb: { xs: 7, md: 8 } }}>
+    <Container maxWidth="md" sx={{ pt: { xs: 5, md: 6 }, pb: { xs: 7, md: 8 } }}>
           <Box component="header" sx={{ mb: { xs: 3, md: 4 } }}>
             <Typography
               variant="h1"
@@ -144,10 +132,7 @@ export function LegalLayout({ title, lastUpdated, children }: LegalLayoutProps) 
             }}
           >
             {children}
-          </Box>
-        </Container>
       </Box>
-      <Footer />
-    </Box>
+    </Container>
   );
 }

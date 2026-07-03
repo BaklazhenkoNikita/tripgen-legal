@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Photo } from '@/components/ui/Photo';
 import { textScale } from '@/theme/standards';
+import { Section } from '@/components/layout/Section';
 import { destinations } from '@/data/destinations';
 
 const CONTINENT_ORDER = ['Europe', 'Asia', 'North America', 'South America', 'Oceania', 'Africa'];
@@ -31,7 +32,7 @@ export default function CommunityPage() {
   }, {});
 
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 1024, px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
+    <Section width="content" component="div">
       <Box component="header">
         <Typography variant="h1" component="h1" sx={{ color: 'text.primary' }}>
           Guides
@@ -115,6 +116,6 @@ export default function CommunityPage() {
           </Box>
         );
       })}
-    </Box>
+    </Section>
   );
 }

@@ -10,6 +10,7 @@ import { Photo } from '@/components/ui/Photo';
 import { Badge } from '@/components/ui/Badge';
 import { HorizontalScrollRow } from '@/components/ui/HorizontalScrollRow';
 import { Hero } from '@/components/marketing/Hero';
+import { Section } from '@/components/layout/Section';
 import { textScale } from '@/theme/standards';
 
 export const metadata: Metadata = {
@@ -54,8 +55,8 @@ export default function LandingPage() {
       <Hero />
 
       {/* Features */}
-      <Box component="section" sx={{ px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
-        <Box sx={{ mx: 'auto', maxWidth: 1152 }}>
+      <Section width="content">
+        <Box>
           <Typography variant="h2" sx={{ textAlign: 'center', color: 'text.primary' }}>
             Why Periplo?
           </Typography>
@@ -122,18 +123,16 @@ export default function LandingPage() {
             ))}
           </Box>
         </Box>
-      </Box>
+      </Section>
 
       {/* Featured destinations */}
-      <Box
-        component="section"
+      <Section
         sx={{
           borderBlock: '1px solid var(--tg-palette-divider)',
           bgcolor: 'background.paper',
-          py: { xs: 8, md: 12 },
         }}
       >
-        <Box sx={{ mx: 'auto', maxWidth: 1280, px: { xs: 2, sm: 3 } }}>
+        <Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 1.5 }}>
             <Box>
               <Typography variant="h2" component="h2" sx={{ color: 'text.primary' }}>
@@ -219,11 +218,11 @@ export default function LandingPage() {
             </HorizontalScrollRow>
           </Box>
         </Box>
-      </Box>
+      </Section>
 
       {/* Blog preview */}
-      <Box component="section" sx={{ px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
-        <Box sx={{ mx: 'auto', maxWidth: 1280 }}>
+      <Section>
+        <Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 1.5 }}>
             <Box>
               <Typography variant="h2" component="h2" sx={{ color: 'text.primary' }}>
@@ -315,11 +314,11 @@ export default function LandingPage() {
             ))}
           </Box>
         </Box>
-      </Box>
+      </Section>
 
       {/* MCP connector callout (legal-merge addition) */}
-      <Box component="section" sx={{ px: { xs: 2, sm: 3 }, py: { xs: 5, md: 6 } }}>
-        <Box sx={{ mx: 'auto', maxWidth: 720, textAlign: 'center' }}>
+      <Section width="prose" containerSx={{ textAlign: 'center' }}>
+        <Box>
           <Typography
             component="span"
             sx={{
@@ -357,15 +356,13 @@ export default function LandingPage() {
             <ArrowRight size={14} aria-hidden />
           </Box>
         </Box>
-      </Box>
+      </Section>
 
       {/* CTA */}
-      <Box component="section" sx={{ px: { xs: 2, sm: 3 }, py: 6 }}>
+      <Section width="content" sx={{ pt: 0 }}>
         <Box
           sx={{
             position: 'relative',
-            mx: 'auto',
-            maxWidth: 1024,
             overflow: 'hidden',
             borderRadius: 4,
             backgroundColor: 'var(--tg-palette-primary-dark)',
@@ -429,7 +426,7 @@ export default function LandingPage() {
             </Button>
           </Box>
         </Box>
-      </Box>
+      </Section>
 
       {/* Trust line (legal-merge addition) */}
       <Typography

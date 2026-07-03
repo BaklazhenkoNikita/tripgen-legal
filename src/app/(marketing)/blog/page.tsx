@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { textScale } from '@/theme/standards';
+import { Section } from '@/components/layout/Section';
 import { blogPosts } from '@/data/blogPosts';
 import { Photo } from '@/components/ui/Photo';
 import { Badge } from '@/components/ui/Badge';
@@ -17,7 +18,7 @@ export default function BlogListPage() {
   const [hero, ...rest] = blogPosts;
 
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 1280, px: { xs: 2, sm: 3 }, py: { xs: 8, md: 12 } }}>
+    <Section component="div">
       <Box component="header">
         <Badge tone="accent" size="md">Travel guides</Badge>
         <Typography variant="h1" component="h1" sx={{ mt: 2, color: 'text.primary' }}>
@@ -107,7 +108,7 @@ export default function BlogListPage() {
           mt: 6,
           display: 'grid',
           gap: 4,
-          gridTemplateColumns: { md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' },
+          gridTemplateColumns: { sm: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' },
         }}
       >
         {rest.map((post) => (
@@ -162,6 +163,6 @@ export default function BlogListPage() {
           </Box>
         ))}
       </Box>
-    </Box>
+    </Section>
   );
 }
