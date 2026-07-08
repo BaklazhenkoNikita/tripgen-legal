@@ -48,6 +48,9 @@ export function travelActivityToFeedDetail(
     insiderTips: activity.insider_tips ?? [],
     interestingFacts: activity.interesting_facts ?? [],
     highlights: [],
+    // Trip stops surfaced through this adapter are activities (restaurants use
+    // the dedicated restaurant surface), so they save as 'activity'.
+    saveEntityType: 'activity',
   };
 }
 

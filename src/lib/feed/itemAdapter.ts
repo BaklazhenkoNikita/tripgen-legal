@@ -12,6 +12,7 @@
 import type { FeedItem } from '@/hooks/useHomeFeed';
 import { getLatLng, type LatLng } from '@/lib/geo/coords';
 import { cardId } from '@/components/home/FeedCard';
+import type { EntityType } from '@/types/shortlist';
 
 export interface NormalizedFeedDetail {
   id: string;
@@ -42,6 +43,25 @@ export interface NormalizedFeedDetail {
   insiderTips: string[];
   interestingFacts: string[];
   highlights: string[];
+  /** Shortlist entity type for the Save action, or null if unsavable (Viator). */
+  saveEntityType: EntityType | null;
+}
+
+/** Map a feed entity_type to a shortlist EntityType (Viator isn't savable). */
+export function toSaveEntityType(
+  entityType: FeedItem['entity_type'],
+): EntityType | null {
+  switch (entityType) {
+    case 'restaurant':
+      return 'restaurant';
+    case 'live_event':
+      return 'live_event';
+    case 'exploration':
+    case 'activity':
+      return 'activity';
+    default:
+      return null;
+  }
 }
 
 export function normalizeFeedItem(feedItem: FeedItem): NormalizedFeedDetail {
@@ -76,6 +96,7 @@ export function normalizeFeedItem(feedItem: FeedItem): NormalizedFeedDetail {
     insiderTips: pickStringArray(inner.insider_tips),
     interestingFacts: pickStringArray(inner.interesting_facts),
     highlights: pickStringArray(inner.highlights),
+    saveEntityType: toSaveEntityType(feedItem.entity_type),
   };
 }
 

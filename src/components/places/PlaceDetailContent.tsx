@@ -6,7 +6,9 @@ import {
   Calendar,
   Clock,
   ExternalLink,
+  Heart,
   MapPin,
+  Navigation,
   Star,
   Wallet,
 } from 'lucide-react';
@@ -27,6 +29,11 @@ import {
   normalizeFeedItem,
   type NormalizedFeedDetail,
 } from '@/lib/feed/itemAdapter';
+import {
+  useShortlistIds,
+  useShortlistAdd,
+  useShortlistRemove,
+} from '@/hooks/useShortlist';
 import { getMapsUrl } from '@/lib/map/openInMaps';
 import type { MapPinData } from '@/components/map/Map';
 import type { TravelActivity } from '@/types';
@@ -172,6 +179,8 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
             {detail.subtitle}
           </Typography>
         ) : null}
+
+        <PlaceActionBar detail={detail} city={city} mapsHref={mapsHref} />
 
         {detail.address ? (
           <Typography
@@ -684,4 +693,63 @@ function formatEventDate(iso: string): string {
   } catch {
     return iso;
   }
+}
+
+/**
+ * Planning action bar for the place drawer/page — surfaces the two actions
+ * that apply in every context: Save (to the shortlist) and Directions.
+ * (Add-to-trip with a placement chooser pairs with the smart-placement
+ * backend and lands with that track.)
+ */
+function PlaceActionBar({
+  detail,
+  city,
+  mapsHref,
+}: {
+  detail: NormalizedFeedDetail;
+  city: string | null;
+  mapsHref: string | null;
+}) {
+  const savedIds = useShortlistIds();
+  const add = useShortlistAdd();
+  const remove = useShortlistRemove();
+
+  const entityType = detail.saveEntityType;
+  const canSave = entityType !== null;
+  const saved = savedIds.has(detail.id);
+
+  const toggleSave = () => {
+    if (!canSave) return;
+    if (saved) {
+      remove.mutate(detail.id);
+    } else {
+      add.mutate({ entity_id: detail.id, entity_type: entityType, city: city ?? undefined });
+    }
+  };
+
+  if (!canSave && !mapsHref) return null;
+
+  return (
+    <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+      {canSave ? (
+        <Button
+          variant={saved ? 'primary' : 'outline'}
+          size="sm"
+          iconLeft={<Heart size={15} fill={saved ? 'currentColor' : 'none'} />}
+          onClick={toggleSave}
+          disabled={add.isPending || remove.isPending}
+          aria-pressed={saved}
+        >
+          {saved ? 'Saved' : 'Save'}
+        </Button>
+      ) : null}
+      {mapsHref ? (
+        <Button asChild variant="secondary" size="sm" iconLeft={<Navigation size={15} />}>
+          <a href={mapsHref} target="_blank" rel="noopener noreferrer">
+            Directions
+          </a>
+        </Button>
+      ) : null}
+    </Box>
+  );
 }
