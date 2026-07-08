@@ -421,12 +421,18 @@ export function useTripMutations({
             mode,
           });
           syncSearchHistorySummary(tripData);
+          // In redistribute mode the server moves this day's activities onto
+          // other days; the optimistic update only dropped the day, so refetch
+          // to pull in the redistributed plan. delete_all needs no refetch.
+          if (mode === 'redistribute') {
+            queryClient.invalidateQueries({ queryKey: queryKeys.trips.detail(searchId) });
+          }
         } catch {
           setTripData(previous);
         }
       });
     },
-    [searchId, tripData, setTripData, syncSearchHistorySummary, enqueueMutation],
+    [searchId, tripData, setTripData, syncSearchHistorySummary, enqueueMutation, queryClient],
   );
 
   // ── Reorder Days ─────────────────────────────────────────────────

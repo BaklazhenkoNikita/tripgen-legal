@@ -140,7 +140,8 @@ export function HomeMap({
           bottom: 12,
           left: 12,
           zIndex: 1000,
-          display: { xs: 'none', sm: 'flex' },
+          // Hidden in fullscreen — the bottom card strip owns that band there.
+          display: fullscreen ? 'none' : { xs: 'none', sm: 'flex' },
           flexWrap: 'wrap',
           gap: 0.75,
           maxWidth: 'calc(100% - 80px)',

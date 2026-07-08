@@ -15,6 +15,9 @@ export interface PhotoProps extends Omit<ImageProps, 'src' | 'alt' | 'width' | '
   rounded?: 'none' | 'sm' | 'md' | 'lg';
   /** Apply a soft bottom gradient over the image (good when overlaying text). */
   gradient?: boolean;
+  /** Gradient intensity. 'strong' is a taller, darker scrim for white text sat
+   *  directly on the image (e.g. map cards); default 'soft'. */
+  gradientStrength?: 'soft' | 'strong';
   className?: string;
   /** Hover-zoom (used inside cards). */
   zoomOnHover?: boolean;
@@ -30,6 +33,7 @@ export function Photo({
   aspect = '3/2',
   rounded = 'none',
   gradient,
+  gradientStrength = 'soft',
   className,
   zoomOnHover,
   sizes = '(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw',
@@ -95,17 +99,21 @@ export function Photo({
       )}
       {gradient ? (
         <Box
-          sx={(t) => ({
-            pointerEvents: 'none',
-            position: 'absolute',
-            insetInline: 0,
-            bottom: 0,
-            height: '50%',
-            background:
-              t.palette.mode === 'dark'
-                ? 'linear-gradient(to top, rgba(0,0,0,0.72), rgba(0,0,0,0) 60%)'
-                : 'linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0) 60%)',
-          })}
+          sx={(t) => {
+            const strong = gradientStrength === 'strong';
+            const dark = t.palette.mode === 'dark';
+            const base = strong ? (dark ? 0.85 : 0.78) : dark ? 0.72 : 0.45;
+            return {
+              pointerEvents: 'none',
+              position: 'absolute',
+              insetInline: 0,
+              bottom: 0,
+              height: strong ? '68%' : '50%',
+              background: strong
+                ? `linear-gradient(to top, rgba(0,0,0,${base}), rgba(0,0,0,0.10) 52%, rgba(0,0,0,0) 78%)`
+                : `linear-gradient(to top, rgba(0,0,0,${base}), rgba(0,0,0,0) 60%)`,
+            };
+          }}
         />
       ) : null}
     </Box>

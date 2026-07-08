@@ -150,7 +150,7 @@ export function CityOverviewDetails({
                       mt: info.climate ? 1.25 : 0,
                       fontSize: '0.875rem',
                       lineHeight: 1.65,
-                      color: 'text.secondary',
+                      color: 'text.primary',
                     }}
                   >
                     <Box
@@ -283,7 +283,7 @@ function SectionLabel({ children }: { children: ReactNode }) {
         fontWeight: 600,
         textTransform: 'uppercase',
         letterSpacing: '0.12em',
-        color: 'text.secondary',
+        color: 'primary.dark',
       }}
     >
       {children}
@@ -298,7 +298,7 @@ function BodyText({ children }: { children: ReactNode }) {
         whiteSpace: 'pre-line',
         fontSize: '0.9375rem',
         lineHeight: 1.6,
-        color: 'text.secondary',
+        color: 'text.primary',
       }}
     >
       {children}
@@ -323,7 +323,7 @@ function ClampedText({
       sx={{
         fontSize: '0.9375rem',
         lineHeight: 1.6,
-        color: 'text.secondary',
+        color: 'text.primary',
         display: '-webkit-box',
         WebkitLineClamp: clampLines,
         WebkitBoxOrient: 'vertical',
@@ -371,7 +371,7 @@ function ListRow({
         gap: 1,
         fontSize: '0.875rem',
         lineHeight: 1.55,
-        color: 'text.secondary',
+        color: 'text.primary',
       }}
     >
       <Box
@@ -399,7 +399,7 @@ function ListRow({
             fontSize: 'inherit',
             fontFamily: 'inherit',
             lineHeight: 'inherit',
-            color: 'text.secondary',
+            color: 'text.primary',
             cursor: 'pointer',
             '&:hover': { color: 'primary.main', textDecoration: 'underline' },
           }}

@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { RotateCcw, AlertTriangle } from 'lucide-react';
-import { useAuth } from '@clerk/nextjs';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
@@ -14,7 +13,6 @@ import {
   PopularCitiesRow,
   type PopularDestinationSelection,
 } from '@/components/trip/PopularCitiesRow';
-import { GuestSignInPrompt } from '@/components/auth/GuestSignInPrompt';
 import { useTripGeneration, type GenerateParams } from '@/hooks/useTripGeneration';
 import { useFeatureConfig } from '@/hooks/useFeatureConfig';
 import { Button } from '@/components/ui/Button';
@@ -32,7 +30,6 @@ function TripPageInner() {
     searchParams.has('destination') ||
     searchParams.has('days') ||
     searchParams.has('new');
-  const { isSignedIn, isLoaded: authLoaded } = useAuth();
   const { city } = useCity();
   const { activeTripId } = useActiveTrip();
 
@@ -89,13 +86,6 @@ function TripPageInner() {
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }, []);
-
-  const [guestPromptDismissed, setGuestPromptDismissed] = useState(false);
-  useEffect(() => {
-    if (phase === 'idle') setGuestPromptDismissed(false);
-  }, [phase]);
-  const showGuestPrompt =
-    phase === 'complete' && authLoaded && !isSignedIn && !guestPromptDismissed;
 
   const handleGenerate = useCallback(
     (params: GenerateParams) => {
@@ -209,13 +199,6 @@ function TripPageInner() {
             question={clarificationQuestion}
             onAnswer={handleAnswer}
             onCancel={reset}
-          />
-        ) : null}
-
-        {showGuestPrompt ? (
-          <GuestSignInPrompt
-            destination={travelData?.destination}
-            onDismiss={() => setGuestPromptDismissed(true)}
           />
         ) : null}
       </Box>

@@ -110,23 +110,7 @@ export default function MapComponent({
   const handlerRef = useRef({ onPinHover, onPinClick, activePinId, theme });
   handlerRef.current = { onPinHover, onPinClick, activePinId, theme };
 
-  const bounds = useMemo<LngLatBounds>(() => {
-    if (pins.length === 0) return null;
-    let minLat = pins[0].lat;
-    let maxLat = pins[0].lat;
-    let minLng = pins[0].lng;
-    let maxLng = pins[0].lng;
-    for (const p of pins) {
-      if (p.lat < minLat) minLat = p.lat;
-      if (p.lat > maxLat) maxLat = p.lat;
-      if (p.lng < minLng) minLng = p.lng;
-      if (p.lng > maxLng) maxLng = p.lng;
-    }
-    return [
-      [minLng, minLat],
-      [maxLng, maxLat],
-    ];
-  }, [pins]);
+  const bounds = useMemo<LngLatBounds>(() => computeFitBounds(pins), [pins]);
 
   const dayGroups = useMemo(() => groupPinsByDay(pins), [pins]);
   const useClustering = pins.length >= (clusterThreshold ?? CLUSTER_THRESHOLD);
@@ -200,12 +184,14 @@ export default function MapComponent({
     const map = mapRef.current;
     if (!map || !bounds) return;
     map.fitBounds(bounds as LngLatBoundsLike, {
-      padding: { top: 60, right: 80, bottom: 60, left: 80 },
+      // In fullscreen, reserve room for the bottom card strip that overlays
+      // the map so pins aren't framed underneath it.
+      padding: fitPaddingFor(fullscreen),
       maxZoom: 15,
       duration: didInitialFit.current ? 500 : 0,
     });
     didInitialFit.current = true;
-  }, [bounds]);
+  }, [bounds, fullscreen]);
 
   // ─────────────────────────────────────────────────── Focus pin ──
   useEffect(() => {
@@ -574,6 +560,7 @@ export default function MapComponent({
       <MapControls
         map={mapInstance}
         bounds={bounds}
+        fitPadding={fitPaddingFor(fullscreen)}
         onFullscreenToggle={onFullscreenToggle}
         fullscreen={fullscreen}
       />
@@ -582,6 +569,76 @@ export default function MapComponent({
 }
 
 // ─────────────────────────────────────────────────────────── helpers ──
+
+const DEFAULT_FIT_PADDING = { top: 60, right: 80, bottom: 60, left: 80 };
+// In fullscreen the bottom card strip (≈190–270px tall, anchored bottom:16)
+// overlays the map, so reserve vertical room to keep pins above it.
+const FULLSCREEN_FIT_PADDING = { top: 64, right: 80, bottom: 288, left: 80 };
+
+function fitPaddingFor(fullscreen: boolean | undefined) {
+  return fullscreen ? FULLSCREEN_FIT_PADDING : DEFAULT_FIT_PADDING;
+}
+
+function boundsOf(pts: { lat: number; lng: number }[]): LngLatBounds {
+  let minLat = pts[0].lat;
+  let maxLat = pts[0].lat;
+  let minLng = pts[0].lng;
+  let maxLng = pts[0].lng;
+  for (const p of pts) {
+    if (p.lat < minLat) minLat = p.lat;
+    if (p.lat > maxLat) maxLat = p.lat;
+    if (p.lng < minLng) minLng = p.lng;
+    if (p.lng > maxLng) maxLng = p.lng;
+  }
+  return [
+    [minLng, minLat],
+    [maxLng, maxLat],
+  ];
+}
+
+function quantile(sorted: number[], q: number): number {
+  if (sorted.length === 1) return sorted[0];
+  const pos = (sorted.length - 1) * q;
+  const base = Math.floor(pos);
+  const next = sorted[base + 1];
+  return next !== undefined
+    ? sorted[base] + (pos - base) * (next - sorted[base])
+    : sorted[base];
+}
+
+// Frame the dense cluster, not the whole spread. A single far-flung pin (a
+// day-trip site 40km out, a mis-geocoded coordinate) would otherwise blow up
+// the bbox and collapse every downtown pin into a dot. We reject distance
+// outliers (Tukey's 1.5·IQR from the median centroid) from the *framing* only —
+// every pin is still rendered as a marker.
+function computeFitBounds(pins: MapPinData[]): LngLatBounds {
+  if (pins.length === 0) return null;
+  if (pins.length <= 3) return boundsOf(pins);
+
+  const lats = pins.map((p) => p.lat).sort((a, b) => a - b);
+  const lngs = pins.map((p) => p.lng).sort((a, b) => a - b);
+  const medLat = quantile(lats, 0.5);
+  const medLng = quantile(lngs, 0.5);
+  const cosLat = Math.cos((medLat * Math.PI) / 180) || 1e-6;
+
+  const dist = pins.map((p) => {
+    const dLat = p.lat - medLat;
+    const dLng = (p.lng - medLng) * cosLat; // scale lng by latitude
+    return Math.sqrt(dLat * dLat + dLng * dLng);
+  });
+  const sortedDist = [...dist].sort((a, b) => a - b);
+  const cutoff =
+    quantile(sortedDist, 0.75) +
+    1.5 * (quantile(sortedDist, 0.75) - quantile(sortedDist, 0.25));
+
+  const inliers = pins.filter((_, i) => dist[i] <= cutoff);
+  // Never trim away the majority — if the test would drop too many (genuinely
+  // dispersed pins, or two legitimate clusters), frame everything.
+  if (inliers.length < Math.max(3, Math.ceil(pins.length * 0.6))) {
+    return boundsOf(pins);
+  }
+  return boundsOf(inliers);
+}
 
 function buildPinEl(
   pin: PointProps,

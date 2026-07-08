@@ -23,6 +23,7 @@ import { TripMapPanel, type MapFilter } from '../trip/TripMapPanel';
 import { ExtendTripCta } from '../trip/ExtendTripCta';
 import { RestaurantCard } from '../trip/RestaurantCard';
 import { Button } from '@/components/ui/Button';
+import { Dialog } from '@/components/ui/Dialog';
 import { DestinationHero } from '../destinations/DestinationHero';
 import { CityOverviewIntro, CityOverviewDetails } from '../destinations/CityOverview';
 import { WeatherForecastStrip } from '../destinations/WeatherForecastStrip';
@@ -68,6 +69,7 @@ export function EditableTripView({
   const [activeDayIndex, setActiveDayIndex] = useState(0);
   const [hoveredActivityId, setHoveredActivityId] = useState<string | null>(null);
   const [pickerDayNumber, setPickerDayNumber] = useState<number | null>(null);
+  const [dayPendingDelete, setDayPendingDelete] = useState<number | null>(null);
   const [diningExpanded, setDiningExpanded] = useState(true);
   const [recentlyAdded, setRecentlyAdded] = useState<{
     activity: TravelActivity;
@@ -207,6 +209,21 @@ export function EditableTripView({
       setActiveDayIndex(target);
     },
     [days, mutations],
+  );
+
+  // Remove a whole day. Opens a confirmation asking whether to redistribute the
+  // day's activities onto other days or delete them outright — both the day-tab
+  // trash affordance and the in-day header "Delete" route through here.
+  const handleRequestDeleteDay = useCallback((dayNumber: number) => {
+    setDayPendingDelete(dayNumber);
+  }, []);
+
+  const handleConfirmDeleteDay = useCallback(
+    (mode: 'redistribute' | 'delete_all') => {
+      if (dayPendingDelete != null) mutations.deleteDay(dayPendingDelete, mode);
+      setDayPendingDelete(null);
+    },
+    [dayPendingDelete, mutations],
   );
 
   const handleUndoAdd = useCallback(() => {
@@ -372,6 +389,7 @@ export function EditableTripView({
                   onSelect={setActiveDayIndex}
                   counts={dayCounts}
                   droppable
+                  onDeleteDay={days.length > 1 ? handleRequestDeleteDay : undefined}
                 />
                 {activeDay ? (
                   <DragDropDay
@@ -381,7 +399,7 @@ export function EditableTripView({
                     activities={getActivitiesForDay(safeDayIndex)}
                     photoMap={photoMap}
                     onDeleteActivity={mutations.deleteActivity}
-                    onDeleteDay={days.length > 1 ? mutations.deleteDay : undefined}
+                    onDeleteDay={days.length > 1 ? handleRequestDeleteDay : undefined}
                     onAutofillDay={mutations.autofillDay}
                     onAddActivity={setPickerDayNumber}
                     onActivityClick={setSelectedActivity}
@@ -616,6 +634,34 @@ export function EditableTripView({
           </Button>
         }
       />
+
+      <Dialog
+        open={dayPendingDelete != null}
+        onOpenChange={(open) => {
+          if (!open) setDayPendingDelete(null);
+        }}
+        title={dayPendingDelete != null ? `Remove Day ${dayPendingDelete}?` : 'Remove day'}
+        description="Choose what happens to this day's activities. The remaining days are renumbered automatically."
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setDayPendingDelete(null)}>
+              Cancel
+            </Button>
+            <Button variant="secondary" onClick={() => handleConfirmDeleteDay('redistribute')}>
+              Move activities to other days
+            </Button>
+            <Button variant="destructive" onClick={() => handleConfirmDeleteDay('delete_all')}>
+              Delete day &amp; activities
+            </Button>
+          </>
+        }
+      >
+        <Typography sx={{ fontSize: 14, color: 'text.secondary' }}>
+          <strong>Move activities to other days</strong> keeps this day&apos;s stops by spreading
+          them across your remaining days. <strong>Delete day &amp; activities</strong> removes the
+          day and its stops from the trip.
+        </Typography>
+      </Dialog>
     </Box>
   );
 }

@@ -71,9 +71,15 @@ export default function HistoryPage() {
       </Box>
 
       {isLoading ? (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+            gap: 2.5,
+          }}
+        >
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} style={{ height: 96, width: '100%', borderRadius: 12, animationDelay: `${i * 0.08}s` }} />
+            <Skeleton key={i} style={{ height: 268, width: '100%', borderRadius: 16, animationDelay: `${i * 0.08}s` }} />
           ))}
         </Box>
       ) : null}
@@ -128,7 +134,17 @@ export default function HistoryPage() {
               >
                 {label} <Box component="span" sx={{ color: 'text.secondary' }}>· {rows.length}</Box>
               </Typography>
-              <Box component="ul" sx={{ display: 'flex', flexDirection: 'column', gap: 1, listStyle: 'none', p: 0, m: 0 }}>
+              <Box
+                component="ul"
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+                  gap: 2.5,
+                  listStyle: 'none',
+                  p: 0,
+                  m: 0,
+                }}
+              >
                 {rows.map((trip) => {
                   const summary = trip.result_summary;
                   const params = trip.parameters;
@@ -138,6 +154,7 @@ export default function HistoryPage() {
                     params?.destination ??
                     trip.destination ??
                     'Untitled trip';
+                  const createdLabel = formatCreated(trip.created_at);
 
                   return (
                     <Box component="li" key={trip.search_id}>
@@ -148,89 +165,120 @@ export default function HistoryPage() {
                         onFocus={() => prefetchTripDetail(queryClient, trip.search_id)}
                         sx={{
                           display: 'flex',
-                          alignItems: 'center',
-                          gap: 2,
-                          borderRadius: 1.5,
+                          flexDirection: 'column',
+                          height: '100%',
+                          borderRadius: 2,
                           border: '1px solid',
                           borderColor: 'divider',
                           bgcolor: 'background.paper',
-                          p: 1.5,
-                          pr: 2,
+                          overflow: 'hidden',
                           textDecoration: 'none',
-                          transition: 'all 200ms',
+                          transition: 'all 200ms ease',
                           boxShadow: 'var(--tg-shadow-card)',
-                          '&:hover': { borderColor: 'text.disabled', boxShadow: 'var(--tg-shadow-card-hover)' },
+                          '&:hover': {
+                            borderColor: 'text.disabled',
+                            boxShadow: 'var(--tg-shadow-card-hover)',
+                            transform: 'translateY(-2px)',
+                          },
+                          '&:hover .hero img.zoomable': { transform: 'scale(1.05)' },
                           '&:hover .chev': { transform: 'translateX(2px)', color: 'primary.main' },
                         }}
                       >
-                        <Box sx={{ height: 80, width: 112, flexShrink: 0, overflow: 'hidden', borderRadius: 1 }}>
+                        <Box className="hero" sx={{ position: 'relative' }}>
                           {summary?.thumbnail_image_url ? (
                             <Photo
                               src={summary.thumbnail_image_url}
                               alt={displayName}
-                              aspect="4/3"
+                              aspect="16/9"
                               zoomOnHover
-                              sizes="160px"
+                              sizes="(max-width: 600px) 100vw, 440px"
                             />
                           ) : (
                             <Box
                               sx={{
                                 display: 'flex',
-                                height: '100%',
+                                aspectRatio: '16 / 9',
                                 width: '100%',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                bgcolor: (t) => alpha(t.palette.primary.main, 0.12),
+                                background: (t) =>
+                                  `linear-gradient(135deg, ${alpha(t.palette.primary.main, 0.16)}, ${alpha(t.palette.primary.main, 0.06)})`,
                                 color: 'primary.main',
                               }}
                             >
-                              <MapPin className="size-6" aria-hidden />
+                              <MapPin className="size-8" aria-hidden />
                             </Box>
                           )}
+                          {trip.is_favorite ? (
+                            <Box
+                              aria-label="Favorite"
+                              sx={{
+                                position: 'absolute',
+                                top: 10,
+                                right: 10,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 32,
+                                height: 32,
+                                borderRadius: '50%',
+                                bgcolor: (t) => alpha(t.palette.background.paper, 0.9),
+                                backdropFilter: 'blur(6px)',
+                                boxShadow: 'var(--tg-shadow-card)',
+                              }}
+                            >
+                              <Box
+                                component={Heart}
+                                sx={{ width: 15, height: 15, color: 'primary.main', fill: 'currentColor' }}
+                              />
+                            </Box>
+                          ) : null}
                         </Box>
 
-                        <Box sx={{ minWidth: 0, flex: 1 }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 1, p: 2 }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <Typography
                               component="h3"
                               sx={{
+                                minWidth: 0,
+                                flex: 1,
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
-                                fontSize: 16,
+                                fontSize: 18,
                                 fontWeight: 600,
+                                letterSpacing: '-0.01em',
                                 color: 'text.primary',
                               }}
                             >
                               {displayName}
                             </Typography>
-                            {trip.is_favorite ? (
-                              <Box
-                                component={Heart}
-                                aria-label="Favorite"
-                                sx={{ width: 16, height: 16, color: 'primary.main', fill: 'currentColor' }}
-                              />
-                            ) : null}
+                            <Box
+                              component={ChevronRight}
+                              className="chev"
+                              aria-hidden
+                              sx={{ width: 18, height: 18, flexShrink: 0, color: 'text.disabled', transition: 'all 200ms' }}
+                            />
                           </Box>
-                          <Box sx={{ mt: 0.5, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.75 }}>
+
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.75 }}>
                             {summary?.date_range ? (
                               <Badge tone="neutral" size="sm">{summary.date_range}</Badge>
                             ) : null}
                             {summary?.total_days ? (
-                              <Badge tone="neutral" size="sm">{summary.total_days} days</Badge>
+                              <Badge tone="accent" size="sm">{summary.total_days} {summary.total_days === 1 ? 'day' : 'days'}</Badge>
                             ) : null}
                             {summary?.total_activities != null ? (
                               <Badge tone="neutral" size="sm">{summary.total_activities} activities</Badge>
                             ) : null}
                           </Box>
-                        </Box>
 
-                        <Box
-                          component={ChevronRight}
-                          className="chev"
-                          aria-hidden
-                          sx={{ width: 16, height: 16, flexShrink: 0, color: 'text.disabled', transition: 'all 200ms' }}
-                        />
+                          {createdLabel ? (
+                            <Typography sx={{ mt: 'auto', pt: 0.5, fontSize: 12, color: 'text.disabled' }}>
+                              Created {createdLabel}
+                            </Typography>
+                          ) : null}
+                        </Box>
                       </Box>
                     </Box>
                   );
@@ -242,6 +290,19 @@ export default function HistoryPage() {
       ) : null}
     </Box>
   );
+}
+
+function formatCreated(iso?: string): string | null {
+  if (!iso) return null;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+  const now = new Date();
+  const sameYear = date.getFullYear() === now.getFullYear();
+  return date.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    ...(sameYear ? {} : { year: 'numeric' }),
+  });
 }
 
 interface Group {

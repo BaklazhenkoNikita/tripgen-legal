@@ -175,7 +175,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
           {detail.title}
         </Typography>
         {detail.subtitle ? (
-          <Typography sx={{ mt: 0.5, fontSize: '0.875rem', color: 'text.secondary' }}>
+          <Typography sx={{ mt: 0.5, fontSize: '0.875rem', color: 'text.primary' }}>
             {detail.subtitle}
           </Typography>
         ) : null}
@@ -249,7 +249,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
               mt: 2.5,
               fontSize: isPage ? 16 : 15,
               lineHeight: 1.65,
-              color: 'text.secondary',
+              color: 'text.primary',
               maxWidth: isPage ? 760 : undefined,
             }}
           >
@@ -306,7 +306,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
               pt: 3,
             }}
           >
-            <SectionHeading>Deeper context</SectionHeading>
+            <SectionHeading variant="title">Deeper context</SectionHeading>
             {contextLoading ? (
               <Stack spacing={1} sx={{ mt: 1.5 }}>
                 <Skeleton variant="line" height={12} width="33%" />
@@ -320,7 +320,9 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
                   borderRadius: 2,
                   border: '1px solid',
                   borderColor: 'divider',
-                  bgcolor: (t: Theme) => alpha(t.palette.text.primary, 0.025),
+                  // A distinct warm editorial panel — the old 2.5% tint was
+                  // effectively invisible against the page/paper surface.
+                  bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.05),
                   p: { xs: 2, sm: 2.5 },
                   display: 'flex',
                   flexDirection: 'column',
@@ -343,7 +345,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
                         whiteSpace: 'pre-line',
                         fontSize: 14.5,
                         lineHeight: 1.65,
-                        color: 'text.secondary',
+                        color: 'text.primary',
                       }}
                     >
                       {section.content}
@@ -382,7 +384,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
 
         {detail.coords ? (
           <Box sx={{ mt: 3 }}>
-            <SectionHeading>On the map</SectionHeading>
+            <SectionHeading variant="title">On the map</SectionHeading>
             <Box
               sx={{
                 mt: 1,
@@ -444,7 +446,7 @@ function RelatedViator({
   if (!isLoading && items.length === 0) return null;
   return (
     <Box sx={{ mt: 3 }}>
-      <SectionHeading>Popular nearby</SectionHeading>
+      <SectionHeading variant="title">Popular nearby</SectionHeading>
       <Typography
         sx={{ mt: 0.25, mb: 1.25, fontSize: '0.75rem', color: 'text.disabled' }}
       >
@@ -607,25 +609,38 @@ function Chip({
 
 function SectionHeading({
   children,
+  variant = 'eyebrow',
   sx,
 }: {
   children: React.ReactNode;
+  /** 'eyebrow' — small tracked terracotta caps (nested sub-labels, list
+   *  labels). 'title' — a readable section title for top-level blocks, so the
+   *  page reads as a real two-level hierarchy instead of one flat overline. */
+  variant?: 'eyebrow' | 'title';
   sx?: SxProps<Theme>;
 }) {
+  const base: SxProps<Theme> =
+    variant === 'title'
+      ? {
+          fontSize: '1rem',
+          fontWeight: 600,
+          lineHeight: 1.3,
+          letterSpacing: '-0.01em',
+          color: 'text.primary',
+          m: 0,
+        }
+      : {
+          fontSize: '0.6875rem',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '0.16em',
+          color: 'primary.dark',
+          m: 0,
+        };
   return (
     <Typography
       component="h3"
-      sx={[
-        {
-          fontSize: '0.6875rem',
-          fontWeight: 600,
-          textTransform: 'uppercase',
-          letterSpacing: '0.16em',
-          color: 'text.disabled',
-          m: 0,
-        },
-        ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
-      ]}
+      sx={[base, ...(Array.isArray(sx) ? sx : sx ? [sx] : [])]}
     >
       {children}
     </Typography>
@@ -659,7 +674,7 @@ function List({
               gap: 1,
               fontSize: '0.875rem',
               lineHeight: 1.6,
-              color: 'text.secondary',
+              color: 'text.primary',
             }}
           >
             <Box

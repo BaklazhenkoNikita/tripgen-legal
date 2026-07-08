@@ -1,12 +1,14 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
-// NOTE: /trip and /chat are intentionally NOT protected — anonymous users can
-// use them as guests (X-Session-Id attribution on the backend) and later merge
-// into an authenticated profile via POST /api/profiles/merge (wired through
-// useGuestMerge in src/app/(app)/layout.tsx).
+// NOTE: /trip, /chat and /history are intentionally NOT protected — anonymous
+// users can use them as guests (X-Session-Id attribution on the backend) and
+// later merge into an authenticated profile via POST /api/profiles/merge (wired
+// through useGuestMerge in src/app/(app)/layout.tsx). /history reads back the
+// guest's own X-Session-Id-attributed trips (or renders the empty state);
+// protecting it would bounce guests to /?redirect=/history — a dead end nothing
+// consumes.
 const isProtectedRoute = createRouteMatcher([
-  '/history(.*)',
   '/profile(.*)',
   '/discover(.*)',
   '/join(.*)',

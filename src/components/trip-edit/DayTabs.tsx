@@ -2,8 +2,10 @@
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
+import IconButton from '@mui/material/IconButton';
 import { alpha, type Theme } from '@mui/material/styles';
 import { Droppable } from '@hello-pangea/dnd';
+import { Trash2 } from 'lucide-react';
 import type { DayPlan } from '@/types';
 
 interface Props {
@@ -17,6 +19,12 @@ interface Props {
    * moves it to that day. Requires an enclosing DragDropContext.
    */
   droppable?: boolean;
+  /**
+   * When provided, each tab shows a trash affordance that requests removal of
+   * that day. Omitted in read-only mode (no delete UI). The parent should only
+   * pass this when more than one day exists so the last day can't be deleted.
+   */
+  onDeleteDay?: (dayNumber: number) => void;
 }
 
 /**
@@ -25,7 +33,7 @@ interface Props {
  * as a drop zone so cross-day moves survive the switch to tabs — drag a stop
  * onto "Day 3" to send it there.
  */
-export function DayTabs({ days, activeIndex, onSelect, counts, droppable }: Props) {
+export function DayTabs({ days, activeIndex, onSelect, counts, droppable, onDeleteDay }: Props) {
   return (
     <Box
       role="tablist"
@@ -45,7 +53,16 @@ export function DayTabs({ days, activeIndex, onSelect, counts, droppable }: Prop
         const count = counts[i] ?? 0;
 
         const tab = (isDropTarget: boolean, dropRef?: React.Ref<HTMLDivElement>, dropProps?: object) => (
-          <Box ref={dropRef} {...(dropProps ?? {})}>
+          <Box
+            ref={dropRef}
+            {...(dropProps ?? {})}
+            sx={{
+              position: 'relative',
+              // Reveal the delete affordance on hover/focus for non-active tabs;
+              // the active tab keeps it always visible (see button sx below).
+              '&:hover .day-tab-delete, &:focus-within .day-tab-delete': { opacity: 1 },
+            }}
+          >
             <ButtonBase
               role="tab"
               aria-selected={active}
@@ -101,6 +118,38 @@ export function DayTabs({ days, activeIndex, onSelect, counts, droppable }: Prop
                 {count} {count === 1 ? 'stop' : 'stops'}
               </Box>
             </ButtonBase>
+            {onDeleteDay ? (
+              <IconButton
+                className="day-tab-delete"
+                size="small"
+                aria-label={`Remove day ${dayNumber}`}
+                title="Remove day"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteDay(dayNumber);
+                }}
+                sx={{
+                  position: 'absolute',
+                  top: 2,
+                  right: 2,
+                  width: 24,
+                  height: 24,
+                  color: 'text.secondary',
+                  bgcolor: 'background.paper',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  opacity: active ? 1 : 0,
+                  transition: 'opacity 0.15s, color 0.15s, background-color 0.15s',
+                  '&:hover': {
+                    color: 'error.main',
+                    bgcolor: (t: Theme) => alpha(t.palette.error.main, 0.1),
+                    borderColor: (t: Theme) => alpha(t.palette.error.main, 0.4),
+                  },
+                }}
+              >
+                <Trash2 size={13} aria-hidden />
+              </IconButton>
+            ) : null}
           </Box>
         );
 

@@ -38,9 +38,14 @@ export function GenerationProgress({ phase, currentDay, totalDays, onCancel }: P
 
   return (
     <Box
+      role="status"
+      aria-live="polite"
+      aria-label={`${label}${currentDay && totalDays ? `, day ${currentDay} of ${totalDays}` : ''}`}
       sx={{
         position: 'relative',
+        mx: 'auto',
         mb: 3,
+        maxWidth: 560,
         overflow: 'hidden',
         borderRadius: 3,
         border: '1px solid',
@@ -49,6 +54,7 @@ export function GenerationProgress({ phase, currentDay, totalDays, onCancel }: P
           `linear-gradient(135deg, ${alpha(t.palette.primary.main, 0.12)}, ${
             t.palette.background.paper
           } 50%, ${alpha(t.palette.text.primary, 0.04)})`,
+        boxShadow: (t: Theme) => `0 12px 32px -20px ${alpha(t.palette.primary.main, 0.5)}`,
         p: 2.5,
       }}
     >
@@ -122,27 +128,61 @@ export function GenerationProgress({ phase, currentDay, totalDays, onCancel }: P
         </Button>
       </Box>
 
-      {progress != null ? (
-        <Box
-          sx={{
-            mt: 2,
-            height: 6,
-            overflow: 'hidden',
-            borderRadius: 999,
-            bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.16),
-          }}
-        >
+      <Box
+        sx={{
+          mt: 2,
+          position: 'relative',
+          height: 6,
+          overflow: 'hidden',
+          borderRadius: 999,
+          bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.16),
+          '@keyframes tgProgressSweep': {
+            '0%': { transform: 'translateX(-100%)' },
+            '100%': { transform: 'translateX(100%)' },
+          },
+          '@keyframes tgProgressIndeterminate': {
+            '0%': { left: '-40%' },
+            '100%': { left: '100%' },
+          },
+        }}
+      >
+        {progress != null ? (
           <Box
             sx={{
+              position: 'relative',
               height: '100%',
+              overflow: 'hidden',
               borderRadius: 999,
               bgcolor: 'primary.main',
               transition: 'width 0.5s ease',
               width: `${progress}%`,
+              // Moving sheen so the bar reads as "working" even between day ticks.
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                inset: 0,
+                background:
+                  'linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)',
+                animation: 'tgProgressSweep 1.4s ease-in-out infinite',
+              },
             }}
           />
-        </Box>
-      ) : null}
+        ) : (
+          // No day info yet (early phases) — indeterminate slider so the bar is
+          // never empty or stuck.
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              width: '40%',
+              borderRadius: 999,
+              bgcolor: 'primary.main',
+              animation: 'tgProgressIndeterminate 1.3s ease-in-out infinite',
+            }}
+          />
+        )}
+      </Box>
     </Box>
   );
 }

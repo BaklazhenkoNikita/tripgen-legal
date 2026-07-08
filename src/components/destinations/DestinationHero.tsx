@@ -298,7 +298,9 @@ export function DestinationHero({
               fontSize: { xs: 28, sm: 44 },
               fontWeight: 600,
               color: 'common.white',
-              lineHeight: 1.0,
+              // 1.0 crops tall ascenders/diacritics (e.g. accented city names)
+              // against the hero's overflow:hidden top edge; 1.12 adds leading.
+              lineHeight: 1.12,
               letterSpacing: '-0.02em',
               textShadow: '0 2px 12px rgba(0,0,0,0.5)',
               m: 0,

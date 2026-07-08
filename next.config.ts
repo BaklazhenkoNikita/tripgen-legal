@@ -62,11 +62,16 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    // https-wildcard is deliberate: activity/destination photos come from
+    // Protocol-wildcards are deliberate: activity/destination photos come from
     // arbitrary hosts (Google CSE image results, Viator, city sources), so a
-    // host allowlist would break content images. Plain-http sources are not
-    // proxied — a photo URL that only serves http is dropped upstream.
-    remotePatterns: [{ protocol: 'https', hostname: '**' }],
+    // host allowlist would break content images. Some upstream sources only
+    // serve plain http (e.g. Google-CSE-sourced city photos), and those URLs
+    // reach the client despite the intended upstream drop — allow http too so
+    // next/image renders them instead of throwing "hostname not configured".
+    remotePatterns: [
+      { protocol: 'https', hostname: '**' },
+      { protocol: 'http', hostname: '**' },
+    ],
   },
   // Next 15 ships with `staleTimes.dynamic = 0`, which discards the client
   // Router Cache for dynamic routes immediately and forces a fresh RSC

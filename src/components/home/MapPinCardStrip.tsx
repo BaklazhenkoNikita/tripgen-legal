@@ -157,8 +157,9 @@ function StripCard({
       <Photo
         src={image}
         alt={title}
-        aspect={isPreview ? '16/9' : '16/9'}
+        aspect="16/9"
         gradient
+        gradientStrength="strong"
         sizes={`${width}px`}
       />
       {tone ? (

@@ -8,9 +8,16 @@ import { alpha } from '@mui/material/styles';
 
 type LngLatBounds = [[number, number], [number, number]] | null;
 
+type Padding = { top: number; right: number; bottom: number; left: number };
+
+const DEFAULT_FIT_PADDING: Padding = { top: 60, right: 80, bottom: 60, left: 80 };
+
 interface Props {
   map: maplibregl.Map | null;
   bounds: LngLatBounds;
+  /** Padding used by "Fit to pins" — matches the map's own fit so the button
+   *  reframes identically (e.g. reserving room for the fullscreen card strip). */
+  fitPadding?: Padding;
   onLayersToggle?: () => void;
   layersActive?: boolean;
   onFullscreenToggle?: () => void;
@@ -20,6 +27,7 @@ interface Props {
 export function MapControls({
   map,
   bounds,
+  fitPadding = DEFAULT_FIT_PADDING,
   onLayersToggle,
   layersActive,
   onFullscreenToggle,
@@ -68,7 +76,7 @@ export function MapControls({
           icon={<Maximize2 size={16} aria-hidden />}
           onClick={() =>
             map?.fitBounds(bounds, {
-              padding: { top: 60, right: 80, bottom: 60, left: 80 },
+              padding: fitPadding,
               maxZoom: 15,
               duration: 400,
             })
