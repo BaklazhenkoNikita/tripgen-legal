@@ -60,6 +60,10 @@ interface Props {
   onActivityClick?: (activity: TravelActivity) => void;
   /** Render as a static, non-draggable day (read-only trip surfaces). */
   readOnly?: boolean;
+  /** Stop id currently highlighted by a hovered map pin (bidirectional sync). */
+  hoveredActivityId?: string | null;
+  /** Fires a stop id on card hover (null on leave) to highlight its pin. */
+  onActivityHover?: (activityId: string | null) => void;
 }
 
 export function DragDropDay({
@@ -73,6 +77,8 @@ export function DragDropDay({
   onAddActivity,
   onActivityClick,
   readOnly = false,
+  hoveredActivityId = null,
+  onActivityHover,
 }: Props) {
   const dayNumber = day.day_number ?? dayIndex + 1;
   const droppableId = `day-${dayNumber}`;
@@ -227,6 +233,8 @@ export function DragDropDay({
                   onClick={() => onActivityClick?.(activity)}
                   stopNumber={index + 1}
                   travelToNext={travelToNext(index)}
+                  highlighted={hoveredActivityId === activity.id}
+                  onHoverChange={onActivityHover}
                   readOnly
                 />
               </Fragment>
@@ -281,6 +289,8 @@ export function DragDropDay({
                   photoMap={photoMap}
                   stopNumber={index + 1}
                   travelToNext={travelToNext(index)}
+                  highlighted={hoveredActivityId === activity.id}
+                  onHoverChange={onActivityHover}
                   onDelete={
                     onDeleteActivity
                       ? () => onDeleteActivity(activity.id, dayNumber)

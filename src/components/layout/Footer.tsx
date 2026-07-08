@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -56,9 +56,10 @@ const inlineLinks: FooterLink[] = [
   { label: 'Terms', href: '/legal/terms' },
 ];
 
+const FOOTER_LINKS_PANEL_ID = 'periplo-footer-site-links';
+
 export function Footer() {
   const [open, setOpen] = useState(false);
-  const panelId = useId();
 
   return (
     <Box
@@ -166,7 +167,7 @@ export function Footer() {
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            aria-controls={panelId}
+            aria-controls={FOOTER_LINKS_PANEL_ID}
             sx={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -202,7 +203,7 @@ export function Footer() {
         </Box>
 
         <Box
-          id={panelId}
+          id={FOOTER_LINKS_PANEL_ID}
           role="region"
           aria-label="Site links"
           aria-hidden={!open}

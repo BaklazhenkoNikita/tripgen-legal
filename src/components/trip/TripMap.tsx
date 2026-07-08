@@ -18,6 +18,10 @@ interface Props {
   activeDayNumber: number | null;
   onActivityClick?: (activityId: string) => void;
   showRoute?: boolean;
+  /** Highlighted pin id — driven by hovering the matching stop card. */
+  activePinId?: string | null;
+  /** Fires with a pin id on pin hover (null on leave) — highlights its card. */
+  onActivityHover?: (activityId: string | null) => void;
 }
 
 function getCoord(a: TravelActivity): { lat: number; lng: number } | null {
@@ -38,6 +42,8 @@ export function TripMap({
   activeDayNumber,
   onActivityClick,
   showRoute = true,
+  activePinId = null,
+  onActivityHover,
 }: Props) {
   const pins: MapPinData[] = useMemo(() => {
     const poolById = new Map<string, TravelActivity>();
@@ -107,7 +113,8 @@ export function TripMap({
     >
       <LeafletMap
         pins={pins}
-        activePinId={null}
+        activePinId={activePinId}
+        onPinHover={onActivityHover}
         onPinClick={onActivityClick}
         connectByDay={showRoute}
         focusPin={focusPin}

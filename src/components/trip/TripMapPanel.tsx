@@ -15,6 +15,10 @@ interface Props {
   filter: MapFilter;
   onFilterChange: (filter: MapFilter) => void;
   onActivityClick?: (activityId: string) => void;
+  /** Highlighted pin id (hovering the matching stop card). */
+  activePinId?: string | null;
+  /** Pin hover → highlight the matching card. */
+  onActivityHover?: (activityId: string | null) => void;
 }
 
 export type MapFilter =
@@ -29,6 +33,8 @@ export function TripMapPanel({
   filter,
   onFilterChange,
   onActivityClick,
+  activePinId = null,
+  onActivityHover,
 }: Props) {
   const { displayDays, displayPool, activeDayNumber } = useMemo(() => {
     if (filter.kind === 'day') {
@@ -132,6 +138,8 @@ export function TripMapPanel({
           activeDayNumber={activeDayNumber}
           onActivityClick={onActivityClick}
           showRoute={filter.kind === 'day'}
+          activePinId={activePinId}
+          onActivityHover={onActivityHover}
         />
       </Box>
     </Box>

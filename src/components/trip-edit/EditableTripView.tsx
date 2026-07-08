@@ -66,6 +66,7 @@ export function EditableTripView({
   const [selectedActivity, setSelectedActivity] = useState<TravelActivity | null>(null);
   const [mapFilter, setMapFilter] = useState<MapFilter>({ kind: 'all' });
   const [activeDayIndex, setActiveDayIndex] = useState(0);
+  const [hoveredActivityId, setHoveredActivityId] = useState<string | null>(null);
   const [pickerDayNumber, setPickerDayNumber] = useState<number | null>(null);
   const [diningExpanded, setDiningExpanded] = useState(true);
   const [recentlyAdded, setRecentlyAdded] = useState<{
@@ -368,6 +369,8 @@ export function EditableTripView({
                     onAutofillDay={mutations.autofillDay}
                     onAddActivity={setPickerDayNumber}
                     onActivityClick={setSelectedActivity}
+                    hoveredActivityId={hoveredActivityId}
+                    onActivityHover={setHoveredActivityId}
                   />
                 ) : null}
               </Box>
@@ -388,6 +391,8 @@ export function EditableTripView({
                   activities={getActivitiesForDay(safeDayIndex)}
                   photoMap={photoMap}
                   onActivityClick={setSelectedActivity}
+                  hoveredActivityId={hoveredActivityId}
+                  onActivityHover={setHoveredActivityId}
                   readOnly
                 />
               ) : null}
@@ -552,6 +557,8 @@ export function EditableTripView({
               const a = activityPoolMap.get(id);
               if (a) setSelectedActivity(a);
             }}
+            activePinId={hoveredActivityId}
+            onActivityHover={setHoveredActivityId}
           />
         </Box>
       </Box>

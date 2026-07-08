@@ -25,6 +25,10 @@ interface Props {
   stopNumber?: number;
   /** Estimated travel to the next stop, e.g. "5 min walk" (route-blue footer). */
   travelToNext?: string | null;
+  /** Highlighted because its map pin is hovered (bidirectional sync). */
+  highlighted?: boolean;
+  /** Fires this card's activity id on hover (null on leave) to highlight its pin. */
+  onHoverChange?: (activityId: string | null) => void;
 }
 
 export function ActivityDragItem({
@@ -36,6 +40,8 @@ export function ActivityDragItem({
   readOnly = false,
   stopNumber,
   travelToNext,
+  highlighted = false,
+  onHoverChange,
 }: Props) {
   const imageUrl = getActivityImageUrl(activity, photoMap);
   const primaryCategory = activity.category?.[0];
@@ -53,6 +59,8 @@ export function ActivityDragItem({
       {...(provided?.draggableProps ?? {})}
       {...(provided?.dragHandleProps ?? {})}
       onClick={onClick}
+      onMouseEnter={onHoverChange ? () => onHoverChange(activity.id) : undefined}
+      onMouseLeave={onHoverChange ? () => onHoverChange(null) : undefined}
       role="button"
       tabIndex={0}
       sx={{
@@ -73,6 +81,12 @@ export function ActivityDragItem({
           boxShadow: (t: Theme) => tgShadow(t, 'card'),
         },
         '&:hover .activity-delete': { opacity: 1 },
+        ...(highlighted
+          ? {
+              borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.5),
+              boxShadow: (t: Theme) => tgShadow(t, 'cardHover'),
+            }
+          : null),
         ...(isDragging
           ? {
               boxShadow: (t: Theme) => tgShadow(t, 'cardHover'),
