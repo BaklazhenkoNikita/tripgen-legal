@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { alpha, type Theme } from '@mui/material/styles';
 import { Clock, MapPin, Sparkles, Star, X } from 'lucide-react';
-import { Draggable } from '@hello-pangea/dnd';
+import { Draggable, type DraggableProvided } from '@hello-pangea/dnd';
 import type { TravelActivity } from '@/types';
 import { getActivityImageUrl } from '@/hooks/useActivityPhotos';
 import { Photo } from '@/components/ui/Photo';
@@ -18,9 +18,18 @@ interface Props {
   photoMap?: Record<string, string>;
   onDelete?: () => void;
   onClick?: () => void;
+  /** Render as a plain, non-draggable card (used on read-only trip surfaces). */
+  readOnly?: boolean;
 }
 
-export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick }: Props) {
+export function ActivityDragItem({
+  activity,
+  index,
+  photoMap,
+  onDelete,
+  onClick,
+  readOnly = false,
+}: Props) {
   const imageUrl = getActivityImageUrl(activity, photoMap);
   const primaryCategory = activity.category?.[0];
   const secondarySubtitle =
@@ -28,44 +37,45 @@ export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick 
       ? activity.category.slice(0, 3).join(' · ')
       : null;
 
-  return (
-    <Draggable draggableId={activity.id} index={index}>
-      {(provided, snapshot) => (
-        <Box
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          onClick={onClick}
-          role="button"
-          tabIndex={0}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-            borderRadius: 2,
-            border: '1px solid',
-            borderColor: 'divider',
-            bgcolor: 'background.paper',
-            cursor: 'grab',
-            userSelect: 'none',
-            textAlign: 'left',
-            transition: 'all 0.2s ease',
-            '&:active': { cursor: 'grabbing' },
-            '&:hover': {
-              borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.32),
-              boxShadow: (t: Theme) => tgShadow(t, 'card'),
-            },
-            '&:hover .activity-delete': { opacity: 1 },
-            ...(snapshot.isDragging
-              ? {
-                  boxShadow: (t: Theme) => tgShadow(t, 'cardHover'),
-                  borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.4),
-                  outline: (t: Theme) => `2px solid ${alpha(t.palette.primary.main, 0.24)}`,
-                  outlineOffset: 0,
-                }
-              : null),
-          }}
-        >
+  // Card body shared by the draggable and read-only variants. `dragProps`
+  // carries the ref + drag handle bindings when draggable; `isDragging`
+  // drives the lifted-card styling.
+  const renderCard = (provided?: DraggableProvided, isDragging = false) => (
+    <Box
+      ref={provided?.innerRef}
+      {...(provided?.draggableProps ?? {})}
+      {...(provided?.dragHandleProps ?? {})}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        borderRadius: 2,
+        border: '1px solid',
+        borderColor: 'divider',
+        bgcolor: 'background.paper',
+        cursor: readOnly ? 'pointer' : 'grab',
+        userSelect: 'none',
+        textAlign: 'left',
+        transition: 'all 0.2s ease',
+        ...(readOnly ? null : { '&:active': { cursor: 'grabbing' } }),
+        '&:hover': {
+          borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.32),
+          boxShadow: (t: Theme) => tgShadow(t, 'card'),
+        },
+        '&:hover .activity-delete': { opacity: 1 },
+        ...(isDragging
+          ? {
+              boxShadow: (t: Theme) => tgShadow(t, 'cardHover'),
+              borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.4),
+              outline: (t: Theme) => `2px solid ${alpha(t.palette.primary.main, 0.24)}`,
+              outlineOffset: 0,
+            }
+          : null),
+      }}
+    >
           <Box sx={{ position: 'relative' }}>
             <Photo
               src={imageUrl ?? null}
@@ -206,7 +216,15 @@ export function ActivityDragItem({ activity, index, photoMap, onDelete, onClick 
             ) : null}
           </Box>
         </Box>
-      )}
+  );
+
+  if (readOnly) {
+    return renderCard();
+  }
+
+  return (
+    <Draggable draggableId={activity.id} index={index}>
+      {(provided, snapshot) => renderCard(provided, snapshot.isDragging)}
     </Draggable>
   );
 }

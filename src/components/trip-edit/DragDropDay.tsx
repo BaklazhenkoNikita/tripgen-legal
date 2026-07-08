@@ -20,6 +20,8 @@ interface Props {
   onAutofillDay?: (dayNumber: number) => void;
   onAddActivity?: (dayNumber: number) => void;
   onActivityClick?: (activity: TravelActivity) => void;
+  /** Render as a static, non-draggable day (read-only trip surfaces). */
+  readOnly?: boolean;
 }
 
 export function DragDropDay({
@@ -32,10 +34,16 @@ export function DragDropDay({
   onAutofillDay,
   onAddActivity,
   onActivityClick,
+  readOnly = false,
 }: Props) {
   const dayNumber = day.day_number ?? dayIndex + 1;
   const droppableId = `day-${dayNumber}`;
   const subtitleParts = [day.date, day.city].filter(Boolean);
+
+  const gridColumns = {
+    xs: '1fr',
+    sm: 'repeat(2, minmax(0, 1fr))',
+  } as const;
 
   return (
     <Box component="section">
@@ -108,6 +116,44 @@ export function DragDropDay({
         </Box>
       </Box>
 
+      {readOnly ? (
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 2,
+            gridTemplateColumns: gridColumns,
+            minHeight: 80,
+          }}
+        >
+          {activities.length > 0 ? (
+            activities.map((activity, i) => (
+              <ActivityDragItem
+                key={activity.id}
+                activity={activity}
+                index={i}
+                photoMap={photoMap}
+                onClick={() => onActivityClick?.(activity)}
+                readOnly
+              />
+            ))
+          ) : (
+            <Box
+              sx={{
+                gridColumn: '1 / -1',
+                py: 4,
+                textAlign: 'center',
+                fontSize: 13,
+                color: 'text.disabled',
+                border: '1px dashed',
+                borderColor: 'divider',
+                borderRadius: 2,
+              }}
+            >
+              No activities planned for this day
+            </Box>
+          )}
+        </Box>
+      ) : (
       <Droppable droppableId={droppableId} type="ACTIVITY">
         {(provided, snapshot) => (
           <Box
@@ -210,6 +256,7 @@ export function DragDropDay({
           </Box>
         )}
       </Droppable>
+      )}
     </Box>
   );
 }

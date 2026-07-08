@@ -273,6 +273,7 @@ export function TripDetailClient({ searchId, initialDestination }: Props) {
         toolbar={toolbar}
         onActiveDayChange={setActiveDayNumber}
         canEdit={canEdit}
+        viewerBanner
         onRequestEditAccess={() => setCollabOpen(true)}
       />
     </Box>

@@ -28,28 +28,38 @@ import { WeatherForecastStrip } from '../destinations/WeatherForecastStrip';
 import { destinationSlug } from '@/lib/destinationSlug';
 
 interface Props {
-  searchId: string;
+  /** Required for edit mode; optional on read-only surfaces with no mutation backend. */
+  searchId?: string;
   tripData: TravelData;
-  setTripData: (
+  setTripData?: (
     updater: TravelData | ((prev: TravelData | null) => TravelData | null),
   ) => void;
   photoMap?: Record<string, string>;
   toolbar?: React.ReactNode;
   onActiveDayChange?: (dayNumber: number | null) => void;
-  /** When false, all edit affordances are hidden and a view-only banner is shown. */
+  /**
+   * When false, all edit affordances are hidden. If `viewerBanner` is also set,
+   * a "you're viewing this trip" banner shows (collaborator/viewer context);
+   * omit it for genuinely public read-only surfaces (e.g. community guides).
+   */
   canEdit?: boolean;
+  /** Show the collaborator view-only banner in place of the toolbar when !canEdit. */
+  viewerBanner?: boolean;
   /** Optional handler for the "Ask for editor access" CTA (e.g. open CollaboratorsSheet). */
   onRequestEditAccess?: () => void;
 }
 
+const noopSetTripData: NonNullable<Props['setTripData']> = () => {};
+
 export function EditableTripView({
-  searchId,
+  searchId = '',
   tripData,
-  setTripData,
+  setTripData = noopSetTripData,
   photoMap,
   toolbar,
   onActiveDayChange,
   canEdit = true,
+  viewerBanner = false,
   onRequestEditAccess,
 }: Props) {
   const [selectedActivity, setSelectedActivity] = useState<TravelActivity | null>(null);
@@ -252,7 +262,7 @@ export function EditableTripView({
 
       {canEdit ? (
         toolbar
-      ) : (
+      ) : viewerBanner ? (
         <Box
           role="status"
           sx={{
@@ -286,7 +296,7 @@ export function EditableTripView({
             </Button>
           ) : null}
         </Box>
-      )}
+      ) : null}
 
       <Box
         sx={{
@@ -301,7 +311,26 @@ export function EditableTripView({
         }}
       >
         <Box sx={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <DragDropContext onDragEnd={handleDragEnd}>
+          {canEdit ? (
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                {days.map((day, i) => (
+                  <DragDropDay
+                    key={day.day_number ?? i}
+                    day={day}
+                    dayIndex={i}
+                    activities={getActivitiesForDay(i)}
+                    photoMap={photoMap}
+                    onDeleteActivity={mutations.deleteActivity}
+                    onDeleteDay={days.length > 1 ? mutations.deleteDay : undefined}
+                    onAutofillDay={mutations.autofillDay}
+                    onAddActivity={setPickerDayNumber}
+                    onActivityClick={setSelectedActivity}
+                  />
+                ))}
+              </Box>
+            </DragDropContext>
+          ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
               {days.map((day, i) => (
                 <DragDropDay
@@ -310,17 +339,12 @@ export function EditableTripView({
                   dayIndex={i}
                   activities={getActivitiesForDay(i)}
                   photoMap={photoMap}
-                  onDeleteActivity={canEdit ? mutations.deleteActivity : undefined}
-                  onDeleteDay={
-                    canEdit && days.length > 1 ? mutations.deleteDay : undefined
-                  }
-                  onAutofillDay={canEdit ? mutations.autofillDay : undefined}
-                  onAddActivity={canEdit ? setPickerDayNumber : undefined}
                   onActivityClick={setSelectedActivity}
+                  readOnly
                 />
               ))}
             </Box>
-          </DragDropContext>
+          )}
 
           {canEdit ? (
             <Box>

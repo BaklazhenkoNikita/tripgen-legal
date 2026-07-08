@@ -12,7 +12,7 @@ import {
   usePublicTemplate,
   useVotePublicTemplate,
 } from '@/hooks/useTemplates';
-import { TripView } from '@/components/trip/TripView';
+import { EditableTripView } from '@/components/trip-edit/EditableTripView';
 import { skeletonPulseSx } from '@/components/ui/Skeleton';
 import { useSnackbar } from '@/contexts';
 
@@ -246,9 +246,9 @@ export default function CommunityTemplatePage({ params }: Props) {
         </Box>
       </Box>
 
-      <TripView
-        travelData={data.travel_state}
-        destination={data.travel_state.destination}
+      <EditableTripView
+        tripData={data.travel_state}
+        canEdit={false}
       />
     </Box>
   );
