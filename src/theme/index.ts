@@ -7,6 +7,7 @@ import {
   CATEGORY_COLORS,
   CATEGORY_COLORS_DARK,
 } from '@/lib/map/categoryColors';
+import { ROUTE_COLORS, ROUTE_COLORS_DARK } from '@/lib/map/routeColors';
 
 const fontBody = 'var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
 
@@ -149,6 +150,12 @@ export const theme = extendTheme({
           restaurant: CATEGORY_COLORS.restaurant,
           viator: CATEGORY_COLORS.viator,
         },
+        // Transit blue for routes / travel-time / directions — its own
+        // information channel, distinct from primary/secondary/highlight.
+        route: {
+          main: ROUTE_COLORS.main,
+          muted: ROUTE_COLORS.muted,
+        },
       },
     },
     dark: {
@@ -221,6 +228,10 @@ export const theme = extendTheme({
           live_event: CATEGORY_COLORS_DARK.live_event,
           restaurant: CATEGORY_COLORS_DARK.restaurant,
           viator: CATEGORY_COLORS_DARK.viator,
+        },
+        route: {
+          main: ROUTE_COLORS_DARK.main,
+          muted: ROUTE_COLORS_DARK.muted,
         },
       },
     },
@@ -304,6 +315,10 @@ export const theme = extendTheme({
           '--tg-cat-live-event': t.palette.category.live_event,
           '--tg-cat-restaurant': t.palette.category.restaurant,
           '--tg-cat-viator': t.palette.category.viator,
+          // Route/transit blue — for map polylines, transit labels and
+          // travel-time chips rendered outside the React tree.
+          '--tg-route-main': t.palette.route.main,
+          '--tg-route-muted': t.palette.route.muted,
         },
       }),
     },
@@ -421,11 +436,19 @@ declare module '@mui/material/styles' {
     restaurant: string;
     viator: string;
   }
+  // Transit blue for routes / travel-time / directions. A flat {main, muted}
+  // group (not a full PaletteColor) — reach via `theme.palette.route.main`.
+  interface RoutePalette {
+    main: string;
+    muted: string;
+  }
   interface Palette {
     category: CategoryPalette;
+    route: RoutePalette;
   }
   interface PaletteOptions {
     category?: CategoryPalette;
+    route?: RoutePalette;
   }
   // Custom slots beyond MUI's defaults — `text.tertiary` for card meta and
   // `background.elevated` for the third surface tier (modals, expanded

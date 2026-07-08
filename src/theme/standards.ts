@@ -66,6 +66,32 @@ export const radii = {
 /** Text shadow for light text rendered over photos. */
 export const photoTextShadow = '0 1px 2px rgba(0,0,0,0.45)';
 
+/**
+ * Minimum interactive target size (px). WCAG 2.5.5 / Apple HIG guidance is
+ * 44×44. Any tappable control on a touch surface (icon buttons, chips, dock
+ * items, small `Button` sizes) should meet this — use `minHeight`/`minWidth`
+ * of `minTap`, padding the visual hit-area even when the glyph is smaller.
+ */
+export const minTap = 44;
+
+/**
+ * Button hierarchy — one primary action per surface.
+ * - `primary`   filled terracotta. Exactly ONE per screen/section (the main CTA).
+ * - `secondary` filled-neutral / teal. Supporting actions.
+ * - `outline`   bordered. Lower-emphasis alternatives sitting next to a primary.
+ * - `ghost`     text-only. Tertiary / dismissive actions (Cancel, Back).
+ * - `destructive` reserved for irreversible actions; never the default.
+ * Do not place two `primary` buttons in the same visual group — demote the
+ * lesser one to `secondary`/`outline`.
+ */
+export const buttonHierarchy = [
+  'primary',
+  'secondary',
+  'outline',
+  'ghost',
+  'destructive',
+] as const;
+
 export const sectionPadding = {
   px: { xs: 2, sm: 3, md: 5 },
   py: { xs: 5, sm: 7, md: 9 },
