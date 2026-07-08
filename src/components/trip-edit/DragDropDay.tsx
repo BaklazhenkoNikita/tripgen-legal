@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import { alpha, type Theme } from '@mui/material/styles';
-import { CalendarDays, Plus } from 'lucide-react';
+import { AlertTriangle, CalendarDays, Plus } from 'lucide-react';
 import { Droppable } from '@hello-pangea/dnd';
 import type { DayPlan, TravelActivity } from '@/types';
 import { ActivityDragItem } from './ActivityDragItem';
@@ -83,12 +83,23 @@ export function DragDropDay({
   // order). Client-side approximation via haversine — good enough to flag long
   // hops; a routed upgrade can slot in later.
   const coordsList = activities.map((a) => getLatLng(a));
-  const travelToNext = (i: number): string | null => {
+  const estimates = activities.map((_, i) => {
     const from = coordsList[i];
     const to = coordsList[i + 1];
-    if (!from || !to) return null;
-    return estimateTransit(from, to).label;
-  };
+    return from && to ? estimateTransit(from, to) : null;
+  });
+  const travelToNext = (i: number): string | null => estimates[i]?.label ?? null;
+
+  // Day-level pacing warnings (Phase 3d) — flag packed days and heavy transit
+  // so the plan stays realistic. Amber, non-blocking.
+  const totalTravelMin = estimates.reduce((sum, e) => sum + (e?.durationMinutes ?? 0), 0);
+  const warnings: string[] = [];
+  if (activities.length >= 7) {
+    warnings.push(`Packed day — ${activities.length} stops. Consider moving a couple to another day.`);
+  }
+  if (totalTravelMin >= 120) {
+    warnings.push(`Heavy travel — about ${totalTravelMin} min between stops. Try "Optimize route".`);
+  }
 
   const gridColumns = {
     xs: '1fr',
@@ -165,6 +176,36 @@ export function DragDropDay({
           </Box>
         </Box>
       </Box>
+
+      {warnings.length > 0 ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
+          {warnings.map((w) => (
+            <Box
+              key={w}
+              role="note"
+              sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 1,
+                px: 1.5,
+                py: 1,
+                borderRadius: 1.5,
+                border: '1px solid',
+                borderColor: (t: Theme) => alpha(t.palette.warning.main, 0.35),
+                bgcolor: (t: Theme) => alpha(t.palette.warning.main, 0.1),
+              }}
+            >
+              <Box
+                component="span"
+                sx={{ mt: '1px', flexShrink: 0, display: 'inline-flex', color: 'warning.main' }}
+              >
+                <AlertTriangle size={15} aria-hidden />
+              </Box>
+              <Typography sx={{ fontSize: 13, color: 'text.primary' }}>{w}</Typography>
+            </Box>
+          ))}
+        </Box>
+      ) : null}
 
       {readOnly ? (
         <Box
