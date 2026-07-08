@@ -15,6 +15,8 @@ import {
   TIME_BUCKET_LABELS,
   type TimeBucket,
 } from '@/lib/trip/timeOfDay';
+import { getLatLng } from '@/lib/geo/coords';
+import { estimateTransit } from '@/lib/geo/transitEstimate';
 
 /** Full-width section divider for a time-of-day group inside the day grid. */
 function SectionHeader({ bucket }: { bucket: TimeBucket }) {
@@ -76,6 +78,17 @@ export function DragDropDay({
   const droppableId = `day-${dayNumber}`;
   const subtitleParts = [day.date, day.city].filter(Boolean);
   const bucketed = bucketDayActivities(activities);
+
+  // Straight-line travel estimate from each stop to the next (same day, in
+  // order). Client-side approximation via haversine — good enough to flag long
+  // hops; a routed upgrade can slot in later.
+  const coordsList = activities.map((a) => getLatLng(a));
+  const travelToNext = (i: number): string | null => {
+    const from = coordsList[i];
+    const to = coordsList[i + 1];
+    if (!from || !to) return null;
+    return estimateTransit(from, to).label;
+  };
 
   const gridColumns = {
     xs: '1fr',
@@ -171,6 +184,8 @@ export function DragDropDay({
                   index={index}
                   photoMap={photoMap}
                   onClick={() => onActivityClick?.(activity)}
+                  stopNumber={index + 1}
+                  travelToNext={travelToNext(index)}
                   readOnly
                 />
               </Fragment>
@@ -223,6 +238,8 @@ export function DragDropDay({
                   activity={activity}
                   index={index}
                   photoMap={photoMap}
+                  stopNumber={index + 1}
+                  travelToNext={travelToNext(index)}
                   onDelete={
                     onDeleteActivity
                       ? () => onDeleteActivity(activity.id, dayNumber)

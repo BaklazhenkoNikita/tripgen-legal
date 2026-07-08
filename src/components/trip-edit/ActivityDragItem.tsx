@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { alpha, type Theme } from '@mui/material/styles';
-import { Clock, MapPin, Sparkles, Star, X } from 'lucide-react';
+import { ArrowRight, Clock, MapPin, Sparkles, Star, X } from 'lucide-react';
 import { Draggable, type DraggableProvided } from '@hello-pangea/dnd';
 import type { TravelActivity } from '@/types';
 import { getActivityImageUrl } from '@/hooks/useActivityPhotos';
@@ -20,6 +20,11 @@ interface Props {
   onClick?: () => void;
   /** Render as a plain, non-draggable card (used on read-only trip surfaces). */
   readOnly?: boolean;
+  /** 1-based stop order within the day — shown as a numbered medallion and
+   *  matched to the numbered map marker. */
+  stopNumber?: number;
+  /** Estimated travel to the next stop, e.g. "5 min walk" (route-blue footer). */
+  travelToNext?: string | null;
 }
 
 export function ActivityDragItem({
@@ -29,6 +34,8 @@ export function ActivityDragItem({
   onDelete,
   onClick,
   readOnly = false,
+  stopNumber,
+  travelToNext,
 }: Props) {
   const imageUrl = getActivityImageUrl(activity, photoMap);
   const primaryCategory = activity.category?.[0];
@@ -96,13 +103,37 @@ export function ActivityDragItem({
                 gap: 1,
               }}
             >
-              <Badge
-                tone="activity"
-                size="sm"
-                iconLeft={<MapPin size={12} />}
-              >
-                {primaryCategory ?? 'Activity'}
-              </Badge>
+              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+                {stopNumber != null ? (
+                  <Box
+                    component="span"
+                    aria-hidden
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 22,
+                      height: 22,
+                      borderRadius: '50%',
+                      flexShrink: 0,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: 'primary.contrastText',
+                      bgcolor: 'primary.main',
+                      boxShadow: (t: Theme) => tgShadow(t, 'markerLabel'),
+                    }}
+                  >
+                    {stopNumber}
+                  </Box>
+                ) : null}
+                <Badge
+                  tone="activity"
+                  size="sm"
+                  iconLeft={<MapPin size={12} />}
+                >
+                  {primaryCategory ?? 'Activity'}
+                </Badge>
+              </Box>
               {activity.duration ? (
                 <Badge
                   tone="neutral"
@@ -215,6 +246,25 @@ export function ActivityDragItem({
               </Typography>
             ) : null}
           </Box>
+          {travelToNext ? (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.75,
+                px: 1.5,
+                py: 0.75,
+                borderTop: '1px solid',
+                borderColor: 'divider',
+                fontSize: 11,
+                fontWeight: 600,
+                color: (t: Theme) => t.palette.route.main,
+              }}
+            >
+              <ArrowRight size={13} aria-hidden />
+              <Box component="span">{travelToNext} to next stop</Box>
+            </Box>
+          ) : null}
         </Box>
   );
 
