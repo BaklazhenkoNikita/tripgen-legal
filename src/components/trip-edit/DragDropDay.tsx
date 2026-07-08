@@ -119,9 +119,9 @@ export function DragDropDay({
               variant="subtle"
               size="xs"
               onClick={() => onAutofillDay(dayNumber)}
-              title="AI autofill"
+              title="Let AI fill this day's open time with nearby picks"
             >
-              + AI Fill
+              Fill open time
             </Button>
           )}
           {onDeleteDay && (
@@ -291,7 +291,7 @@ export function DragDropDay({
                   borderRadius: 2,
                 }}
               >
-                Drag activities here or use AI Fill
+                Drag stops here, or use Fill open time
               </Box>
             )}
           </Box>

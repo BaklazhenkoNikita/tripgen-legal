@@ -45,10 +45,10 @@ export function TripActionsToolbar({
     try {
       if (action === 'reorganize') {
         await onReorganize();
-        toast.success('Trip reorganized.');
+        toast.success('Route optimized.');
       } else if (action === 'surprise' && onSurpriseDay) {
         await onSurpriseDay();
-        toast.success(`Day ${activeDayNumber ?? ''} refreshed.`);
+        toast.success(`Day ${activeDayNumber ?? ''} refreshed with new picks.`);
       }
     } catch (err) {
       toast.error(
@@ -83,9 +83,9 @@ export function TripActionsToolbar({
           iconLeft={<Shuffle size={14} />}
           onClick={() => setConfirm('reorganize')}
           disabled={disabled || running}
-          title="Let AI reorder activities for a smoother itinerary"
+          title="Let AI reorder stops to cut travel time between them"
         >
-          Reorganize
+          Optimize route
           <Box component="span" sx={{ ml: 0.5, display: 'inline-flex' }}>
             <Badge tone="accent" size="sm">
               1 credit
@@ -100,9 +100,9 @@ export function TripActionsToolbar({
             iconLeft={<Wand2 size={14} />}
             onClick={() => setConfirm('surprise')}
             disabled={disabled || running}
-            title={`Replace Day ${activeDayNumber}'s activities with AI picks`}
+            title={`Swap Day ${activeDayNumber}'s stops for fresh AI suggestions`}
           >
-            Surprise Day {activeDayNumber}
+            Suggest alternatives
             <Box component="span" sx={{ ml: 0.5, display: 'inline-flex' }}>
               <Badge tone="accent" size="sm">
                 1 credit
@@ -145,14 +145,14 @@ export function TripActionsToolbar({
               <Sparkles size={16} aria-hidden />
             </Box>
             {confirm === 'reorganize'
-              ? 'Reorganize the whole trip?'
-              : `Replace Day ${activeDayNumber} with AI picks?`}
+              ? 'Optimize the route across your trip?'
+              : `Suggest alternatives for Day ${activeDayNumber}?`}
           </Box>
         }
         description={
           confirm === 'reorganize'
-            ? 'AI will reorder activities across all days for better flow. Costs 1 credit.'
-            : 'AI will replace the activities on this day with new picks. Costs 1 credit.'
+            ? 'AI reorders your stops across all days to cut travel time between them. Costs 1 credit.'
+            : 'AI swaps this day’s stops for fresh suggestions. Costs 1 credit.'
         }
         footer={
           <>

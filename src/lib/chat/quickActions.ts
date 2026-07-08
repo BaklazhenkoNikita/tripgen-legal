@@ -27,7 +27,7 @@ export const TRIP_QUICK_ACTIONS: QuickAction[] = [
   { label: 'Show itinerary', icon: List, prompt: 'Show me a summary of my current trip' },
   { label: 'Add activities', icon: PlusCircle, prompt: 'Add more activities to my trip' },
   { label: 'Add day', icon: Calendar, prompt: 'Add a new day to my trip' },
-  { label: 'Reorganize', icon: List, prompt: 'Help me reorganize activities between days' },
+  { label: 'Optimize route', icon: List, prompt: 'Optimize my route to cut travel time between stops' },
   { label: 'Weather', icon: Sun, prompt: "What's the weather like at my destination?" },
   { label: 'Go to trip', icon: Navigation, prompt: 'Navigate to my trip details' },
 ];
