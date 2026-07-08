@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import { alpha, type Theme } from '@mui/material/styles';
-import { AlertTriangle, CalendarDays, Plus } from 'lucide-react';
+import { AlertTriangle, CalendarDays, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Droppable } from '@hello-pangea/dnd';
 import type { DayPlan, TravelActivity } from '@/types';
 import { ActivityDragItem } from './ActivityDragItem';
@@ -64,6 +64,10 @@ interface Props {
   hoveredActivityId?: string | null;
   /** Fires a stop id on card hover (null on leave) to highlight its pin. */
   onActivityHover?: (activityId: string | null) => void;
+  /** Move this day earlier/later in the trip (Phase 3e). Omit to hide controls. */
+  onMoveDay?: (dayNumber: number, direction: -1 | 1) => void;
+  canMoveEarlier?: boolean;
+  canMoveLater?: boolean;
 }
 
 export function DragDropDay({
@@ -79,6 +83,9 @@ export function DragDropDay({
   readOnly = false,
   hoveredActivityId = null,
   onActivityHover,
+  onMoveDay,
+  canMoveEarlier = false,
+  canMoveLater = false,
 }: Props) {
   const dayNumber = day.day_number ?? dayIndex + 1;
   const droppableId = `day-${dayNumber}`;
@@ -144,6 +151,30 @@ export function DragDropDay({
           )}
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {onMoveDay ? (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={() => onMoveDay(dayNumber, -1)}
+                disabled={!canMoveEarlier}
+                title="Move day earlier"
+                aria-label={`Move day ${dayNumber} earlier`}
+              >
+                <ChevronLeft size={16} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={() => onMoveDay(dayNumber, 1)}
+                disabled={!canMoveLater}
+                title="Move day later"
+                aria-label={`Move day ${dayNumber} later`}
+              >
+                <ChevronRight size={16} />
+              </Button>
+            </Box>
+          ) : null}
           {onAutofillDay && (
             <Button
               variant="subtle"

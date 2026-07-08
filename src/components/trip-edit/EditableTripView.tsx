@@ -193,6 +193,22 @@ export function EditableTripView({
     [mutations, pickerDayNumber],
   );
 
+  // Reorder whole days (Phase 3e). Swaps the target day with its neighbour and
+  // persists via the existing reorderDays mutation; the active tab follows the
+  // moved day so focus doesn't jump.
+  const handleMoveDay = useCallback(
+    (dayNumber: number, direction: -1 | 1) => {
+      const order = days.map((d, i) => d.day_number ?? i + 1);
+      const pos = order.indexOf(dayNumber);
+      const target = pos + direction;
+      if (pos < 0 || target < 0 || target >= order.length) return;
+      [order[pos], order[target]] = [order[target], order[pos]];
+      mutations.reorderDays(order);
+      setActiveDayIndex(target);
+    },
+    [days, mutations],
+  );
+
   const handleUndoAdd = useCallback(() => {
     if (!recentlyAdded) return;
     const id = recentlyAdded.activity.activity_id ?? recentlyAdded.activity.id;
@@ -371,6 +387,9 @@ export function EditableTripView({
                     onActivityClick={setSelectedActivity}
                     hoveredActivityId={hoveredActivityId}
                     onActivityHover={setHoveredActivityId}
+                    onMoveDay={days.length > 1 ? handleMoveDay : undefined}
+                    canMoveEarlier={safeDayIndex > 0}
+                    canMoveLater={safeDayIndex < days.length - 1}
                   />
                 ) : null}
               </Box>
