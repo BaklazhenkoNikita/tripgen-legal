@@ -3,12 +3,20 @@
 import Link, { useLinkStatus } from 'next/link';
 import { useOptimisticNav } from '@/hooks/useOptimisticNav';
 import { SignedIn } from '@clerk/nextjs';
-import { Compass, House, Sparkles, Map as MapIcon, type LucideIcon } from 'lucide-react';
+import {
+  BookOpen,
+  House,
+  MessageCircle,
+  Sparkles,
+  Map as MapIcon,
+  type LucideIcon,
+} from 'lucide-react';
 import { memo, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import { alpha } from '@mui/material/styles';
 import { useActiveTripOptional } from '@/contexts';
+import { useLastChatId } from '@/components/chat/lastChatStorage';
 
 interface DockItem {
   href: string;
@@ -21,13 +29,15 @@ interface DockItem {
 /** Bottom dock — visible on mobile only when signed in. */
 export function MobileDock() {
   const activeTripId = useActiveTripOptional()?.activeTripId ?? null;
+  const lastChatId = useLastChatId();
 
-  // Mirror Navigation: link Plan directly to /trip/{id} when we know the
-  // active trip so we skip the index-page redirect hop.
+  // Mirrors the desktop IA (Explore / Plan / Trips / Guides / Ask Periplo).
+  // Plan and Ask deep-link to the canonical destination (/trip/{id},
+  // /chat/{lastChatId}) to skip the index-page redirect hop. Chat now has a
+  // home on mobile; the old Compass "/discover" folds under Ask Periplo.
   const items = useMemo<readonly DockItem[]>(
     () => [
       { href: '/explore', match: '/explore', label: 'Explore', icon: House },
-      { href: '/discover', match: '/discover', label: 'Discover', icon: Compass },
       {
         href: activeTripId ? `/trip/${activeTripId}` : '/trip',
         match: '/trip',
@@ -36,8 +46,16 @@ export function MobileDock() {
         suppressHydration: true,
       },
       { href: '/history', match: '/history', label: 'Trips', icon: MapIcon },
+      { href: '/community', match: '/community', label: 'Guides', icon: BookOpen },
+      {
+        href: lastChatId ? `/chat/${lastChatId}` : '/chat',
+        match: '/chat',
+        label: 'Ask',
+        icon: MessageCircle,
+        suppressHydration: true,
+      },
     ],
-    [activeTripId],
+    [activeTripId, lastChatId],
   );
 
   const hrefs = useMemo(() => items.map((i) => i.href), [items]);
