@@ -4,6 +4,7 @@ import Image, { type ImageProps } from 'next/image';
 import { useState } from 'react';
 import { ImageOff } from 'lucide-react';
 import Box from '@mui/material/Box';
+import { isPreOptimizedImage } from '@/lib/imageSource';
 
 type Aspect = '16/9' | '16/10' | '4/3' | '3/2' | '1/1' | '5/4' | '21/9';
 
@@ -61,6 +62,7 @@ export function Photo({
           fill
           sizes={sizes}
           priority={priority}
+          unoptimized={isPreOptimizedImage(src)}
           onError={() => setErrored(true)}
           className={zoomOnHover ? 'zoomable' : undefined}
           style={{

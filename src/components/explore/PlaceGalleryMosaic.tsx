@@ -7,6 +7,7 @@ import { Grid3x3 } from 'lucide-react';
 import { ImageCarousel } from '@/components/ui/ImageCarousel';
 import { Lightbox } from '@/components/ui/Lightbox';
 import { tgShadow } from '@/theme/shadows';
+import { isPreOptimizedImage } from '@/lib/imageSource';
 
 interface Props {
   images: string[];
@@ -174,6 +175,7 @@ function Tile({
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
           priority={priority}
+          unoptimized={isPreOptimizedImage(src)}
           style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }}
         />
       ) : (

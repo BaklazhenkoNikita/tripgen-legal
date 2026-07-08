@@ -32,6 +32,20 @@ body {
   line-height: 1.5;
 }
 
+/* Accessible keyboard focus ring. Mouse/touch interactions don't trigger
+ * :focus-visible, so this only shows for keyboard users. Uses the primary
+ * palette var so it auto-switches with the color scheme. */
+:focus-visible {
+  outline: 2px solid var(--tg-palette-primary-main);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Elements that manage their own visible focus (MUI inputs) opt out. */
+.MuiInputBase-root:focus-visible,
+.MuiOutlinedInput-root:focus-visible {
+  outline: none;
+}
+
 /* Mobile safe areas — preserved from legacy frontend/src/App.css */
 @supports (padding: max(0px)) {
   .app-container {

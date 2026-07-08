@@ -10,6 +10,7 @@ import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCity } from '@/contexts';
 import { useRecentDestinations } from '@/hooks/useRecentDestinations';
 import { destinationSlug } from '@/lib/destinationSlug';
+import { isPreOptimizedImage } from '@/lib/imageSource';
 import { CityPickerPopover } from './CityPickerPopover';
 import type { DestinationInfo } from '@/types';
 
@@ -146,6 +147,7 @@ export function DestinationHero({
             fill
             priority={i === 0}
             sizes="(max-width: 1024px) 100vw, 1400px"
+            unoptimized={isPreOptimizedImage(url)}
             style={{ objectFit: 'cover' }}
           />
         </Box>

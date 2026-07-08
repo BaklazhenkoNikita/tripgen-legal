@@ -38,7 +38,7 @@ export function CategoryChips({ city, active, onChange, hideCategories }: Props)
         aria-label="Loading categories"
       >
         {[0, 1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} height={32} width={96} style={{ flexShrink: 0, borderRadius: 999 }} />
+          <Skeleton key={i} height={44} width={96} style={{ flexShrink: 0, borderRadius: 999 }} />
         ))}
       </Box>
     );
@@ -100,7 +100,7 @@ export function CategoryChips({ city, active, onChange, hideCategories }: Props)
             flexShrink: 0,
             alignItems: 'center',
             gap: 0.5,
-            height: 32,
+            minHeight: 44,
             borderRadius: 999,
             border: '1px solid',
             borderColor: 'divider',
@@ -142,7 +142,7 @@ function Chip({
         flexShrink: 0,
         alignItems: 'center',
         gap: 0.75,
-        height: 32,
+        minHeight: 44,
         borderRadius: 999,
         px: 1.75,
         fontSize: 13,
