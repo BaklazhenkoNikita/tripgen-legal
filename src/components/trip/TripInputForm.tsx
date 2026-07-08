@@ -9,7 +9,6 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
-import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import { alpha, type Theme } from '@mui/material/styles';
@@ -23,8 +22,11 @@ import {
   Heart,
   Layers,
   Shuffle,
+  ChevronLeft,
+  ChevronRight,
   ChevronDown,
   ChevronUp,
+  Check,
 } from 'lucide-react';
 import type { GenerateParams } from '@/hooks/useTripGeneration';
 import { useDestinationsAutocomplete } from '@/hooks/useDestinationsAutocomplete';
@@ -86,6 +88,12 @@ const PLAN_MODES = [
   { value: 'custom', label: 'Custom' },
 ];
 
+const STEPS = [
+  { key: 'basics', label: 'Basics', hint: 'Where, when, and who' },
+  { key: 'style', label: 'Style', hint: 'What you love' },
+  { key: 'constraints', label: 'Details', hint: 'Anything to note' },
+] as const;
+
 interface Props {
   onSubmit: (params: GenerateParams) => void;
   isLoading: boolean;
@@ -130,7 +138,7 @@ function SectionHeading({ icon, children, action }: SectionHeadingProps) {
 
 const pillChipSx = (selected: boolean) => ({
   display: 'inline-flex',
-  height: 36,
+  minHeight: 44,
   alignItems: 'center',
   borderRadius: 999,
   px: 2,
@@ -162,6 +170,7 @@ export function TripInputForm({
   prefillNonce,
   showHeading = true,
 }: Props) {
+  const [step, setStep] = useState(0);
   const [destination, setDestination] = useState(defaultDestination ?? '');
   const [startDate, setStartDate] = useState(defaultStartDate ?? '');
   const [numberOfDays, setNumberOfDays] = useState(defaultDays ?? 3);
@@ -175,7 +184,6 @@ export function TripInputForm({
   const [planMode, setPlanMode] = useState('balanced');
   const [surpriseMe, setSurpriseMe] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState(MODE_GUIDANCE.balanced);
-  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const lastRandomSlugRef = useRef<string | null>(null);
   const lastGuidanceRef = useRef<string>(MODE_GUIDANCE.balanced);
@@ -218,6 +226,7 @@ export function TripInputForm({
   };
 
   const canSubmit = !!destination.trim();
+  const isLastStep = step === STEPS.length - 1;
 
   const submit = () => {
     if (!canSubmit) return;
@@ -236,12 +245,20 @@ export function TripInputForm({
     });
   };
 
+  // Advance: Basics requires a destination before you can move on.
+  const goNext = () => {
+    if (step === 0 && !canSubmit) return;
+    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+  };
+  const goBack = () => setStep((s) => Math.max(s - 1, 0));
+
   return (
     <Box
       component="form"
       onSubmit={(e: React.FormEvent) => {
         e.preventDefault();
-        submit();
+        if (isLastStep) submit();
+        else goNext();
       }}
       sx={{
         display: 'flex',
@@ -286,448 +303,531 @@ export function TripInputForm({
             </Typography>
           </Box>
           <Typography sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>
-            Give the essentials — location, timing, and interests — and Periplo does the rest.
+            Three quick steps — location and timing, your style, then any details.
           </Typography>
         </Box>
       ) : null}
 
-      <Autocomplete<DestinationListItem, false, false, true>
-        freeSolo
-        fullWidth
-        autoHighlight
-        clearOnBlur={false}
-        selectOnFocus={false}
-        inputValue={destination}
-        onInputChange={(_, value, reason) => {
-          if (reason !== 'reset') setDestination(value);
-        }}
-        onChange={(_, value) => {
-          if (!value) return;
-          if (typeof value === 'string') {
-            setDestination(value);
-            return;
-          }
-          const cityName = value.city || value.name || '';
-          if (!cityName) return;
-          setDestination(value.country ? `${cityName}, ${value.country}` : cityName);
-        }}
-        options={destinationOptions}
-        filterOptions={(opts) => opts}
-        loading={autocompleteLoading && destinationDebounced.length >= 2}
-        getOptionLabel={(opt) => {
-          if (typeof opt === 'string') return opt;
-          const cityName = opt.city || opt.name || '';
-          return opt.country ? `${cityName}, ${opt.country}` : cityName;
-        }}
-        isOptionEqualToValue={(opt, val) => {
-          if (typeof opt === 'string' || typeof val === 'string') return false;
-          return (opt.city || opt.name) === (val.city || val.name) && opt.country === val.country;
-        }}
-        renderOption={(props, opt) => {
-          const cityName = opt.city || opt.name || '';
+      {/* Step indicator */}
+      <Box role="tablist" aria-label="Trip builder steps" sx={{ display: 'flex', gap: 1 }}>
+        {STEPS.map((s, i) => {
+          const active = i === step;
+          const done = i < step;
+          const reachable = i <= step || canSubmit;
           return (
-            <Box
-              component="li"
-              {...props}
-              key={`${cityName}-${opt.country ?? ''}`}
-              sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}
-            >
-              <Box component="span" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                {cityName}
-              </Box>
-              {opt.country ? (
-                <Box component="span" sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
-                  {opt.country}
-                </Box>
-              ) : null}
-            </Box>
-          );
-        }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            id="destination"
-            label="Destination"
-            placeholder="e.g. Kyoto, Japan"
-            required
-            autoFocus
-            InputLabelProps={{ shrink: true }}
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {params.InputProps.endAdornment}
-                  <InputAdornment position="end">
-                    <IconButton
-                      edge="end"
-                      onClick={pickRandomDestination}
-                      aria-label="Pick a random destination"
-                      size="small"
-                    >
-                      <Shuffle size={18} />
-                    </IconButton>
-                  </InputAdornment>
-                </>
-              ),
-            }}
-          />
-        )}
-      />
-
-      <Box
-        sx={{
-          display: 'grid',
-          gap: 2,
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-        }}
-      >
-        <TextField
-          id="startDate"
-          label="Start date"
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          fullWidth
-          InputLabelProps={{ shrink: true }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Box component="span" sx={{ display: 'inline-flex', color: 'text.disabled' }}>
-                  <Calendar size={18} aria-hidden />
-                </Box>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          id="days"
-          label="Number of days"
-          select
-          value={numberOfDays}
-          onChange={(e) => setNumberOfDays(Number(e.target.value))}
-          fullWidth
-          InputLabelProps={{ shrink: true }}
-        >
-          {Array.from({ length: 14 }, (_, i) => i + 1).map((n) => (
-            <MenuItem key={n} value={n}>
-              {n} {n === 1 ? 'day' : 'days'}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Box>
-
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-        <SectionHeading
-          icon={<Heart size={14} aria-hidden />}
-          action={
-            ACTIVITY_TYPES.length > INTERESTS_VISIBLE_BY_DEFAULT ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowAllInterests((v) => !v)}
-                iconRight={
-                  showAllInterests ? (
-                    <ChevronUp size={14} aria-hidden />
-                  ) : (
-                    <ChevronDown size={14} aria-hidden />
-                  )
-                }
-              >
-                {showAllInterests ? 'Show less' : 'Show more'}
-              </Button>
-            ) : undefined
-          }
-        >
-          Interests
-        </SectionHeading>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-          {(showAllInterests ? ACTIVITY_TYPES : ACTIVITY_TYPES.slice(0, INTERESTS_VISIBLE_BY_DEFAULT)).map((t) => {
-            const on = selectedTypes.includes(t.value);
-            return (
-              <ButtonBase
-                key={t.value}
-                type="button"
-                onClick={() => toggleIn(setSelectedTypes, t.value)}
-                sx={pillChipSx(on)}
-              >
-                {t.label}
-              </ButtonBase>
-            );
-          })}
-        </Box>
-      </Box>
-
-      <Box>
-        <Button
-          type="button"
-          variant="ghost"
-          size="md"
-          fullWidth
-          onClick={() => setAdvancedOpen((v) => !v)}
-          iconRight={
-            advancedOpen ? (
-              <ChevronUp size={16} aria-hidden />
-            ) : (
-              <ChevronDown size={16} aria-hidden />
-            )
-          }
-          aria-expanded={advancedOpen}
-        >
-          {advancedOpen ? 'Hide additional options' : 'Show additional options'}
-        </Button>
-        <Collapse in={advancedOpen} unmountOnExit={false}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, pt: 3 }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-              <SectionHeading icon={<Wallet size={14} aria-hidden />}>Budget</SectionHeading>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {BUDGET_OPTIONS.map((opt) => {
-                  const on = budget === opt.value;
-                  return (
-                    <ButtonBase
-                      key={opt.value}
-                      type="button"
-                      onClick={() => setBudget(opt.value)}
-                      sx={pillChipSx(on)}
-                    >
-                      {opt.label}
-                    </ButtonBase>
-                  );
-                })}
-              </Box>
-            </Box>
-
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-              <SectionHeading icon={<Compass size={14} aria-hidden />}>
-                What&apos;s the vibe?
-              </SectionHeading>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {VIBE_TAGS.map((v) => {
-                  const on = vibeTags.includes(v.value);
-                  return (
-                    <ButtonBase
-                      key={v.value}
-                      type="button"
-                      onClick={() => toggleIn(setVibeTags, v.value)}
-                      sx={pillChipSx(on)}
-                    >
-                      {v.label}
-                    </ButtonBase>
-                  );
-                })}
-              </Box>
-            </Box>
-
-            <Box
+            <ButtonBase
+              key={s.key}
+              role="tab"
+              aria-selected={active}
+              disabled={!reachable}
+              onClick={() => reachable && setStep(i)}
               sx={{
-                display: 'grid',
-                gap: 3,
-                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
-              }}
-            >
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <SectionHeading icon={<Battery size={14} aria-hidden />}>Energy</SectionHeading>
-                <Box sx={{ display: 'grid', gap: 1 }}>
-                  {ENERGY_LEVELS.map((opt) => {
-                    const on = energyLevel === opt.value;
-                    return (
-                      <ButtonBase
-                        key={opt.value}
-                        type="button"
-                        onClick={() =>
-                          setEnergyLevel(energyLevel === opt.value ? '' : opt.value)
-                        }
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          borderRadius: 1.5,
-                          border: '1px solid',
-                          px: 2,
-                          py: 1.25,
-                          textAlign: 'left',
-                          transition: 'border-color 0.2s ease, background-color 0.2s ease',
-                          ...(on
-                            ? {
-                                borderColor: 'primary.main',
-                                bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.12),
-                              }
-                            : {
-                                borderColor: 'divider',
-                                bgcolor: 'background.paper',
-                                '&:hover': {
-                                  borderColor: (t: Theme) =>
-                                    alpha(t.palette.primary.main, 0.32),
-                                },
-                              }),
-                        }}
-                      >
-                        <Box
-                          component="span"
-                          sx={{ fontSize: '0.875rem', fontWeight: 500, color: 'text.primary' }}
-                        >
-                          {opt.label}
-                        </Box>
-                        <Box component="span" sx={{ fontSize: '0.6875rem', color: 'text.disabled' }}>
-                          {opt.hint}
-                        </Box>
-                      </ButtonBase>
-                    );
-                  })}
-                </Box>
-              </Box>
-
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <SectionHeading icon={<Users size={14} aria-hidden />}>
-                  Who&apos;s going
-                </SectionHeading>
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gap: 1,
-                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-                  }}
-                >
-                  {WHO_OPTIONS.map((opt) => {
-                    const on = who === opt.value;
-                    return (
-                      <ButtonBase
-                        key={opt.value}
-                        type="button"
-                        onClick={() => setWho(who === opt.value ? '' : opt.value)}
-                        sx={{
-                          borderRadius: 1.5,
-                          border: '1px solid',
-                          px: 1.5,
-                          py: 1.25,
-                          fontSize: '0.875rem',
-                          fontWeight: 500,
-                          transition: 'all 0.2s ease',
-                          ...(on
-                            ? {
-                                borderColor: 'primary.main',
-                                bgcolor: (t: Theme) =>
-                                  alpha(t.palette.primary.main, 0.12),
-                                color: 'primary.main',
-                              }
-                            : {
-                                borderColor: 'divider',
-                                bgcolor: 'background.paper',
-                                color: 'text.primary',
-                                '&:hover': {
-                                  borderColor: (t: Theme) =>
-                                    alpha(t.palette.primary.main, 0.32),
-                                },
-                              }),
-                        }}
-                      >
-                        {opt.label}
-                      </ButtonBase>
-                    );
-                  })}
-                </Box>
-              </Box>
-            </Box>
-
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-              <SectionHeading icon={<Layers size={14} aria-hidden />}>Plan style</SectionHeading>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {PLAN_MODES.map((opt) => {
-                  const on = planMode === opt.value;
-                  return (
-                    <ButtonBase
-                      key={opt.value}
-                      type="button"
-                      onClick={() => setPlanMode(on ? '' : opt.value)}
-                      sx={pillChipSx(on)}
-                    >
-                      {opt.label}
-                    </ButtonBase>
-                  );
-                })}
-              </Box>
-            </Box>
-
-            <Box
-              component="label"
-              sx={{
+                flex: 1,
                 display: 'flex',
-                cursor: 'pointer',
-                alignItems: 'flex-start',
-                gap: 1.5,
+                alignItems: 'center',
+                gap: 1,
                 borderRadius: 1.5,
                 border: '1px solid',
-                borderColor: 'divider',
-                bgcolor: (t: Theme) => alpha(t.palette.text.primary, 0.04),
-                p: 2,
-                '&:hover': {
-                  borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.32),
-                },
+                borderColor: active ? 'primary.main' : 'divider',
+                bgcolor: (t: Theme) =>
+                  active ? alpha(t.palette.primary.main, 0.08) : 'background.paper',
+                px: 1.5,
+                py: 1,
+                textAlign: 'left',
+                opacity: reachable ? 1 : 0.5,
               }}
             >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={surpriseMe}
-                    onChange={(e) => setSurpriseMe(e.target.checked)}
-                    size="small"
-                    sx={{
-                      p: 0,
-                      color: 'divider',
-                      '&.Mui-checked': { color: 'primary.main' },
-                    }}
-                  />
-                }
-                label={
-                  <Box component="span" sx={{ fontSize: '0.875rem' }}>
-                    <Box component="span" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                      Surprise me
-                    </Box>
-                    <Box
-                      component="span"
-                      sx={{ display: 'block', fontSize: '0.75rem', color: 'text.secondary' }}
-                    >
-                      Periplo picks the vibe — just tell us the city.
-                    </Box>
-                  </Box>
-                }
-                sx={{ m: 0, alignItems: 'flex-start', gap: 1.5, flex: 1 }}
-              />
-              {surpriseMe ? (
-                <Box sx={{ ml: 'auto' }}>
-                  <Badge tone="accent" size="sm">
-                    On
-                  </Badge>
+              <Box
+                component="span"
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 24,
+                  height: 24,
+                  flexShrink: 0,
+                  borderRadius: '50%',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: active || done ? 'primary.contrastText' : 'text.secondary',
+                  bgcolor: active || done ? 'primary.main' : (t: Theme) => alpha(t.palette.text.primary, 0.08),
+                }}
+              >
+                {done ? <Check size={14} aria-hidden /> : i + 1}
+              </Box>
+              <Box sx={{ minWidth: 0, display: { xs: 'none', sm: 'block' } }}>
+                <Box
+                  component="span"
+                  sx={{
+                    display: 'block',
+                    fontSize: '0.8125rem',
+                    fontWeight: 600,
+                    color: active ? 'primary.main' : 'text.primary',
+                  }}
+                >
+                  {s.label}
                 </Box>
-              ) : null}
-            </Box>
-
-            <TextField
-              id="additionalInfo"
-              label="Anything else? (optional)"
-              value={additionalInfo}
-              onChange={(e) => setAdditionalInfo(e.target.value)}
-              placeholder="Travelling with kids, prefer walking, want to see cherry blossoms…"
-              helperText="This tells the AI what to focus on. Edit to refine your trip."
-              multiline
-              rows={4}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-            />
-          </Box>
-        </Collapse>
+                <Box component="span" sx={{ fontSize: '0.6875rem', color: 'text.secondary' }}>
+                  {s.hint}
+                </Box>
+              </Box>
+            </ButtonBase>
+          );
+        })}
       </Box>
 
-      <Button
-        type="submit"
-        disabled={isLoading || !canSubmit}
-        loading={isLoading}
-        iconLeft={<Sparkles size={16} />}
-        size="lg"
-        fullWidth
-      >
-        {isLoading ? 'Generating' : 'Generate itinerary'}
-      </Button>
+      {/* ── Step 1: Basics ───────────────────────────────────────────── */}
+      {step === 0 ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Autocomplete<DestinationListItem, false, false, true>
+            freeSolo
+            fullWidth
+            autoHighlight
+            clearOnBlur={false}
+            selectOnFocus={false}
+            inputValue={destination}
+            onInputChange={(_, value, reason) => {
+              if (reason !== 'reset') setDestination(value);
+            }}
+            onChange={(_, value) => {
+              if (!value) return;
+              if (typeof value === 'string') {
+                setDestination(value);
+                return;
+              }
+              const cityName = value.city || value.name || '';
+              if (!cityName) return;
+              setDestination(value.country ? `${cityName}, ${value.country}` : cityName);
+            }}
+            options={destinationOptions}
+            filterOptions={(opts) => opts}
+            loading={autocompleteLoading && destinationDebounced.length >= 2}
+            getOptionLabel={(opt) => {
+              if (typeof opt === 'string') return opt;
+              const cityName = opt.city || opt.name || '';
+              return opt.country ? `${cityName}, ${opt.country}` : cityName;
+            }}
+            isOptionEqualToValue={(opt, val) => {
+              if (typeof opt === 'string' || typeof val === 'string') return false;
+              return (opt.city || opt.name) === (val.city || val.name) && opt.country === val.country;
+            }}
+            renderOption={(props, opt) => {
+              const cityName = opt.city || opt.name || '';
+              return (
+                <Box
+                  component="li"
+                  {...props}
+                  key={`${cityName}-${opt.country ?? ''}`}
+                  sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}
+                >
+                  <Box component="span" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                    {cityName}
+                  </Box>
+                  {opt.country ? (
+                    <Box component="span" sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
+                      {opt.country}
+                    </Box>
+                  ) : null}
+                </Box>
+              );
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                id="destination"
+                label="Destination"
+                placeholder="e.g. Kyoto, Japan"
+                required
+                autoFocus
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {params.InputProps.endAdornment}
+                      <InputAdornment position="end">
+                        <IconButton
+                          edge="end"
+                          onClick={pickRandomDestination}
+                          aria-label="Pick a random destination"
+                          size="small"
+                        >
+                          <Shuffle size={18} />
+                        </IconButton>
+                      </InputAdornment>
+                    </>
+                  ),
+                }}
+              />
+            )}
+          />
+
+          <Box
+            sx={{
+              display: 'grid',
+              gap: 2,
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+            }}
+          >
+            <TextField
+              id="startDate"
+              label="Start date"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box component="span" sx={{ display: 'inline-flex', color: 'text.disabled' }}>
+                      <Calendar size={18} aria-hidden />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              id="days"
+              label="Number of days"
+              select
+              value={numberOfDays}
+              onChange={(e) => setNumberOfDays(Number(e.target.value))}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+            >
+              {Array.from({ length: 14 }, (_, i) => i + 1).map((n) => (
+                <MenuItem key={n} value={n}>
+                  {n} {n === 1 ? 'day' : 'days'}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+
+          <Box
+            sx={{
+              display: 'grid',
+              gap: 3,
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+            }}
+          >
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              <SectionHeading icon={<Users size={14} aria-hidden />}>
+                Who&apos;s going
+              </SectionHeading>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gap: 1,
+                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                }}
+              >
+                {WHO_OPTIONS.map((opt) => {
+                  const on = who === opt.value;
+                  return (
+                    <ButtonBase
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setWho(who === opt.value ? '' : opt.value)}
+                      sx={{
+                        minHeight: 44,
+                        borderRadius: 1.5,
+                        border: '1px solid',
+                        px: 1.5,
+                        py: 1.25,
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        transition: 'all 0.2s ease',
+                        ...(on
+                          ? {
+                              borderColor: 'primary.main',
+                              bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.12),
+                              color: 'primary.main',
+                            }
+                          : {
+                              borderColor: 'divider',
+                              bgcolor: 'background.paper',
+                              color: 'text.primary',
+                              '&:hover': {
+                                borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.32),
+                              },
+                            }),
+                      }}
+                    >
+                      {opt.label}
+                    </ButtonBase>
+                  );
+                })}
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              <SectionHeading icon={<Battery size={14} aria-hidden />}>Pace</SectionHeading>
+              <Box sx={{ display: 'grid', gap: 1 }}>
+                {ENERGY_LEVELS.map((opt) => {
+                  const on = energyLevel === opt.value;
+                  return (
+                    <ButtonBase
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setEnergyLevel(energyLevel === opt.value ? '' : opt.value)}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        minHeight: 44,
+                        borderRadius: 1.5,
+                        border: '1px solid',
+                        px: 2,
+                        py: 1.25,
+                        textAlign: 'left',
+                        transition: 'border-color 0.2s ease, background-color 0.2s ease',
+                        ...(on
+                          ? {
+                              borderColor: 'primary.main',
+                              bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.12),
+                            }
+                          : {
+                              borderColor: 'divider',
+                              bgcolor: 'background.paper',
+                              '&:hover': {
+                                borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.32),
+                              },
+                            }),
+                      }}
+                    >
+                      <Box
+                        component="span"
+                        sx={{ fontSize: '0.875rem', fontWeight: 500, color: 'text.primary' }}
+                      >
+                        {opt.label}
+                      </Box>
+                      <Box component="span" sx={{ fontSize: '0.6875rem', color: 'text.disabled' }}>
+                        {opt.hint}
+                      </Box>
+                    </ButtonBase>
+                  );
+                })}
+              </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <SectionHeading icon={<Wallet size={14} aria-hidden />}>Budget</SectionHeading>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {BUDGET_OPTIONS.map((opt) => {
+                const on = budget === opt.value;
+                return (
+                  <ButtonBase
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setBudget(opt.value)}
+                    sx={pillChipSx(on)}
+                  >
+                    {opt.label}
+                  </ButtonBase>
+                );
+              })}
+            </Box>
+          </Box>
+        </Box>
+      ) : null}
+
+      {/* ── Step 2: Style ────────────────────────────────────────────── */}
+      {step === 1 ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <SectionHeading
+              icon={<Heart size={14} aria-hidden />}
+              action={
+                ACTIVITY_TYPES.length > INTERESTS_VISIBLE_BY_DEFAULT ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAllInterests((v) => !v)}
+                    iconRight={
+                      showAllInterests ? (
+                        <ChevronUp size={14} aria-hidden />
+                      ) : (
+                        <ChevronDown size={14} aria-hidden />
+                      )
+                    }
+                  >
+                    {showAllInterests ? 'Show less' : 'Show more'}
+                  </Button>
+                ) : undefined
+              }
+            >
+              Interests
+            </SectionHeading>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {(showAllInterests ? ACTIVITY_TYPES : ACTIVITY_TYPES.slice(0, INTERESTS_VISIBLE_BY_DEFAULT)).map((t) => {
+                const on = selectedTypes.includes(t.value);
+                return (
+                  <ButtonBase
+                    key={t.value}
+                    type="button"
+                    onClick={() => toggleIn(setSelectedTypes, t.value)}
+                    sx={pillChipSx(on)}
+                  >
+                    {t.label}
+                  </ButtonBase>
+                );
+              })}
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <SectionHeading icon={<Compass size={14} aria-hidden />}>
+              What&apos;s the vibe?
+            </SectionHeading>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {VIBE_TAGS.map((v) => {
+                const on = vibeTags.includes(v.value);
+                return (
+                  <ButtonBase
+                    key={v.value}
+                    type="button"
+                    onClick={() => toggleIn(setVibeTags, v.value)}
+                    sx={pillChipSx(on)}
+                  >
+                    {v.label}
+                  </ButtonBase>
+                );
+              })}
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <SectionHeading icon={<Layers size={14} aria-hidden />}>Plan style</SectionHeading>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {PLAN_MODES.map((opt) => {
+                const on = planMode === opt.value;
+                return (
+                  <ButtonBase
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setPlanMode(on ? '' : opt.value)}
+                    sx={pillChipSx(on)}
+                  >
+                    {opt.label}
+                  </ButtonBase>
+                );
+              })}
+            </Box>
+          </Box>
+        </Box>
+      ) : null}
+
+      {/* ── Step 3: Details / Constraints ────────────────────────────── */}
+      {step === 2 ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Box
+            component="label"
+            sx={{
+              display: 'flex',
+              cursor: 'pointer',
+              alignItems: 'flex-start',
+              gap: 1.5,
+              borderRadius: 1.5,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: (t: Theme) => alpha(t.palette.text.primary, 0.04),
+              p: 2,
+              '&:hover': {
+                borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.32),
+              },
+            }}
+          >
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={surpriseMe}
+                  onChange={(e) => setSurpriseMe(e.target.checked)}
+                  size="small"
+                  sx={{
+                    p: 0,
+                    color: 'divider',
+                    '&.Mui-checked': { color: 'primary.main' },
+                  }}
+                />
+              }
+              label={
+                <Box component="span" sx={{ fontSize: '0.875rem' }}>
+                  <Box component="span" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                    Surprise me
+                  </Box>
+                  <Box
+                    component="span"
+                    sx={{ display: 'block', fontSize: '0.75rem', color: 'text.secondary' }}
+                  >
+                    Periplo picks the vibe — just tell us the city.
+                  </Box>
+                </Box>
+              }
+              sx={{ m: 0, alignItems: 'flex-start', gap: 1.5, flex: 1 }}
+            />
+            {surpriseMe ? (
+              <Box sx={{ ml: 'auto' }}>
+                <Badge tone="accent" size="sm">
+                  On
+                </Badge>
+              </Box>
+            ) : null}
+          </Box>
+
+          <TextField
+            id="additionalInfo"
+            label="Anything else? (optional)"
+            value={additionalInfo}
+            onChange={(e) => setAdditionalInfo(e.target.value)}
+            placeholder="Must-sees, places to avoid, dietary needs, accessibility, hotel area, wake-up style…"
+            helperText="Constraints and must-haves the AI should respect. Edit to refine your trip."
+            multiline
+            rows={5}
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+          />
+        </Box>
+      ) : null}
+
+      {/* Nav */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        {step > 0 ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="lg"
+            onClick={goBack}
+            iconLeft={<ChevronLeft size={16} />}
+            disabled={isLoading}
+          >
+            Back
+          </Button>
+        ) : null}
+        <Box sx={{ flex: 1 }} />
+        {isLastStep ? (
+          <Button
+            type="submit"
+            disabled={isLoading || !canSubmit}
+            loading={isLoading}
+            iconLeft={<Sparkles size={16} />}
+            size="lg"
+          >
+            {isLoading ? 'Generating' : 'Generate itinerary'}
+          </Button>
+        ) : (
+          <Button
+            type="submit"
+            size="lg"
+            disabled={step === 0 && !canSubmit}
+            iconRight={<ChevronRight size={16} />}
+          >
+            Next
+          </Button>
+        )}
+      </Box>
     </Box>
   );
 }
