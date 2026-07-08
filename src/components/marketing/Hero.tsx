@@ -3,10 +3,11 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { ArrowRight, Compass, Sparkles } from 'lucide-react';
+import { Compass, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { surfaceBackgroundSx } from '@/theme/backgrounds';
 import { HeroProductMockup } from './HeroProductMockup';
+import { HeroQuickStart } from './HeroQuickStart';
 import { StoreBadge } from './StoreBadge';
 
 export function Hero() {
@@ -67,40 +68,31 @@ export function Hero() {
             Get personalized itineraries, hand-picked activities, and real-time collaboration —
             all in minutes. No spreadsheets, no second-guessing.
           </Typography>
+          <HeroQuickStart />
           <Stack
             direction="row"
             spacing={1.5}
             sx={{
-              mt: 4,
+              mt: 2,
               flexWrap: 'wrap',
+              alignItems: 'center',
               justifyContent: { xs: 'center', md: 'flex-start' },
-              rowGap: 1.5,
+              rowGap: 1,
             }}
           >
-            <Button
-              component={Link}
-              href="/trip"
-              variant="contained"
-              color="primary"
-              size="large"
-              endIcon={<ArrowRight size={16} />}
-              sx={{ borderRadius: 999, px: 3, py: 1.25 }}
-            >
-              Start planning
-            </Button>
+            <Typography sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>
+              or
+            </Typography>
             <Button
               component={Link}
               href="/explore"
-              variant="outlined"
+              variant="text"
               size="large"
               startIcon={<Compass size={16} />}
               sx={{
                 borderRadius: 999,
-                px: 3,
-                py: 1.25,
-                borderColor: 'divider',
                 color: 'text.primary',
-                '&:hover': { bgcolor: 'action.hover', borderColor: 'text.disabled' },
+                '&:hover': { bgcolor: 'action.hover' },
               }}
             >
               Explore destinations

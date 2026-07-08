@@ -33,9 +33,7 @@ export function HeroProductMockup() {
     >
       <motion.div
         style={{ y: backY, position: 'absolute', top: 0, right: '4%', width: '54%', height: '92%' }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+        initial={false}
       >
         <Box
           sx={{
@@ -63,9 +61,7 @@ export function HeroProductMockup() {
 
       <motion.div
         style={{ y: frontY, position: 'absolute', bottom: 0, left: '2%', width: '58%', height: '94%' }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        initial={false}
       >
         <Box
           sx={{
