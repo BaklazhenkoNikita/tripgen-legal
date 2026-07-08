@@ -13,6 +13,7 @@ import type { TravelData, TravelActivity } from '@/types';
 import { useTripMutations } from '@/hooks/useTripMutations';
 import { useDestinationInfo } from '@/hooks/useDestinationInfo';
 import { DragDropDay } from './DragDropDay';
+import { DayTabs } from './DayTabs';
 import { AddDayButton } from './AddDayButton';
 import { AddActivityToDayPicker } from './AddActivityToDayPicker';
 import { DeletedActivitiesSection } from './DeletedActivitiesSection';
@@ -64,6 +65,7 @@ export function EditableTripView({
 }: Props) {
   const [selectedActivity, setSelectedActivity] = useState<TravelActivity | null>(null);
   const [mapFilter, setMapFilter] = useState<MapFilter>({ kind: 'all' });
+  const [activeDayIndex, setActiveDayIndex] = useState(0);
   const [pickerDayNumber, setPickerDayNumber] = useState<number | null>(null);
   const [diningExpanded, setDiningExpanded] = useState(true);
   const [recentlyAdded, setRecentlyAdded] = useState<{
@@ -125,6 +127,18 @@ export function EditableTripView({
       }
 
       const fromDayNumber = parseInt(source.droppableId.replace('day-', ''), 10);
+
+      // Dropped onto a day tab → move to the end of that day. Lets cross-day
+      // moves survive the switch to one-day-at-a-time tabs.
+      if (destination.droppableId.startsWith('daytab-')) {
+        const toDayNumber = parseInt(destination.droppableId.replace('daytab-', ''), 10);
+        if (toDayNumber === fromDayNumber) return;
+        const target = days.find((d) => d.day_number === toDayNumber);
+        const endIndex = target?.activities.length ?? 0;
+        mutations.moveActivity(draggableId, fromDayNumber, toDayNumber, endIndex);
+        return;
+      }
+
       const toDayNumber = parseInt(destination.droppableId.replace('day-', ''), 10);
 
       if (fromDayNumber === toDayNumber) {
@@ -185,11 +199,32 @@ export function EditableTripView({
     setRecentlyAdded(null);
   }, [recentlyAdded, mutations]);
 
-  // Surprise-me targets day 1 by default in edit mode (no day-pill nav here).
-  const firstDayNumber = days[0]?.day_number ?? null;
+  // Keep the active tab in range as days are added/removed.
+  const safeDayIndex = Math.min(activeDayIndex, Math.max(days.length - 1, 0));
   useEffect(() => {
-    onActiveDayChange?.(firstDayNumber);
-  }, [firstDayNumber, onActiveDayChange]);
+    if (safeDayIndex !== activeDayIndex) setActiveDayIndex(safeDayIndex);
+  }, [safeDayIndex, activeDayIndex]);
+
+  const activeDay = days[safeDayIndex];
+  const activeDayNumber = activeDay?.day_number ?? null;
+
+  // Report the focused day (drives Surprise-day / Suggest-alternatives target)
+  // and sync the map to show that day's route.
+  useEffect(() => {
+    onActiveDayChange?.(activeDayNumber);
+  }, [activeDayNumber, onActiveDayChange]);
+
+  useEffect(() => {
+    if (mapFilter.kind === 'restaurants') return;
+    if (activeDayNumber == null) {
+      if (mapFilter.kind !== 'all') setMapFilter({ kind: 'all' });
+    } else if (mapFilter.kind !== 'day' || mapFilter.dayNumber !== activeDayNumber) {
+      setMapFilter({ kind: 'day', dayNumber: activeDayNumber });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeDayNumber]);
+
+  const dayCounts = useMemo(() => days.map((d) => d.activities.length), [days]);
 
   const exploreHref = `/explore/${destinationSlug(destination)}`;
 
@@ -313,13 +348,20 @@ export function EditableTripView({
         <Box sx={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
           {canEdit ? (
             <DragDropContext onDragEnd={handleDragEnd}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                {days.map((day, i) => (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                <DayTabs
+                  days={days}
+                  activeIndex={safeDayIndex}
+                  onSelect={setActiveDayIndex}
+                  counts={dayCounts}
+                  droppable
+                />
+                {activeDay ? (
                   <DragDropDay
-                    key={day.day_number ?? i}
-                    day={day}
-                    dayIndex={i}
-                    activities={getActivitiesForDay(i)}
+                    key={activeDay.day_number ?? safeDayIndex}
+                    day={activeDay}
+                    dayIndex={safeDayIndex}
+                    activities={getActivitiesForDay(safeDayIndex)}
                     photoMap={photoMap}
                     onDeleteActivity={mutations.deleteActivity}
                     onDeleteDay={days.length > 1 ? mutations.deleteDay : undefined}
@@ -327,22 +369,28 @@ export function EditableTripView({
                     onAddActivity={setPickerDayNumber}
                     onActivityClick={setSelectedActivity}
                   />
-                ))}
+                ) : null}
               </Box>
             </DragDropContext>
           ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-              {days.map((day, i) => (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+              <DayTabs
+                days={days}
+                activeIndex={safeDayIndex}
+                onSelect={setActiveDayIndex}
+                counts={dayCounts}
+              />
+              {activeDay ? (
                 <DragDropDay
-                  key={day.day_number ?? i}
-                  day={day}
-                  dayIndex={i}
-                  activities={getActivitiesForDay(i)}
+                  key={activeDay.day_number ?? safeDayIndex}
+                  day={activeDay}
+                  dayIndex={safeDayIndex}
+                  activities={getActivitiesForDay(safeDayIndex)}
                   photoMap={photoMap}
                   onActivityClick={setSelectedActivity}
                   readOnly
                 />
-              ))}
+              ) : null}
             </Box>
           )}
 

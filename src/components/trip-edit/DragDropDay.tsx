@@ -1,5 +1,6 @@
 'use client';
 
+import { Fragment } from 'react';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
@@ -9,6 +10,41 @@ import { Droppable } from '@hello-pangea/dnd';
 import type { DayPlan, TravelActivity } from '@/types';
 import { ActivityDragItem } from './ActivityDragItem';
 import { Button } from '@/components/ui/Button';
+import {
+  bucketDayActivities,
+  TIME_BUCKET_LABELS,
+  type TimeBucket,
+} from '@/lib/trip/timeOfDay';
+
+/** Full-width section divider for a time-of-day group inside the day grid. */
+function SectionHeader({ bucket }: { bucket: TimeBucket }) {
+  return (
+    <Box
+      sx={{
+        gridColumn: '1 / -1',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1.5,
+        mt: 0.5,
+      }}
+    >
+      <Typography
+        component="h3"
+        sx={{
+          fontSize: '0.75rem',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+          color: 'text.secondary',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {TIME_BUCKET_LABELS[bucket]}
+      </Typography>
+      <Box sx={{ flex: 1, height: '1px', bgcolor: 'divider' }} />
+    </Box>
+  );
+}
 
 interface Props {
   day: DayPlan;
@@ -39,6 +75,7 @@ export function DragDropDay({
   const dayNumber = day.day_number ?? dayIndex + 1;
   const droppableId = `day-${dayNumber}`;
   const subtitleParts = [day.date, day.city].filter(Boolean);
+  const bucketed = bucketDayActivities(activities);
 
   const gridColumns = {
     xs: '1fr',
@@ -126,15 +163,17 @@ export function DragDropDay({
           }}
         >
           {activities.length > 0 ? (
-            activities.map((activity, i) => (
-              <ActivityDragItem
-                key={activity.id}
-                activity={activity}
-                index={i}
-                photoMap={photoMap}
-                onClick={() => onActivityClick?.(activity)}
-                readOnly
-              />
+            bucketed.map(({ activity, index, bucket, startsBucket }) => (
+              <Fragment key={activity.id}>
+                {startsBucket ? <SectionHeader bucket={bucket} /> : null}
+                <ActivityDragItem
+                  activity={activity}
+                  index={index}
+                  photoMap={photoMap}
+                  onClick={() => onActivityClick?.(activity)}
+                  readOnly
+                />
+              </Fragment>
             ))
           ) : (
             <Box
@@ -177,19 +216,21 @@ export function DragDropDay({
                 : null),
             }}
           >
-            {activities.map((activity, i) => (
-              <ActivityDragItem
-                key={activity.id}
-                activity={activity}
-                index={i}
-                photoMap={photoMap}
-                onDelete={
-                  onDeleteActivity
-                    ? () => onDeleteActivity(activity.id, dayNumber)
-                    : undefined
-                }
-                onClick={() => onActivityClick?.(activity)}
-              />
+            {bucketed.map(({ activity, index, bucket, startsBucket }) => (
+              <Fragment key={activity.id}>
+                {startsBucket ? <SectionHeader bucket={bucket} /> : null}
+                <ActivityDragItem
+                  activity={activity}
+                  index={index}
+                  photoMap={photoMap}
+                  onDelete={
+                    onDeleteActivity
+                      ? () => onDeleteActivity(activity.id, dayNumber)
+                      : undefined
+                  }
+                  onClick={() => onActivityClick?.(activity)}
+                />
+              </Fragment>
             ))}
             {provided.placeholder}
             {onAddActivity && !snapshot.isDraggingOver ? (
