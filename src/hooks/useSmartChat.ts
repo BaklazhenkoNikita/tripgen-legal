@@ -1,463 +1,331 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { useAuth } from '@clerk/nextjs';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { createSSEStream } from '@/lib/api/sseClient';
+import { api, ApiError } from '@/lib/api/client';
 import { getSessionId } from '@/lib/api/telemetry';
 import { endpoints } from '@/lib/api/endpoints';
-import type {
-  ActionRequest,
-  SmartChatMessage,
-  SmartChatSSEEvent,
-} from '@/types';
+import { queryKeys } from '@/lib/query/keys';
+import {
+  CHAT_PROTOCOL_VERSION,
+  type ChatRequestContext,
+  type FeedbackReason,
+  type BackendChatMessageV2,
+  type SmartChatFrame,
+  type TurnStatusResponse,
+  type UndoResponse,
+} from '@/lib/chat/protocol';
+import {
+  chatReducer,
+  historyToTurns,
+  initialChatState,
+  selectStatus,
+  turnText,
+  type AnswerPayload,
+  type ChatTurn,
+  type TurnRequest,
+} from '@/lib/chat/reducer';
 
 export type SmartChatStatus = 'idle' | 'streaming' | 'tool_running' | 'error';
 
 interface UseSmartChatOptions {
   chatId: string;
-  /** Seed with previously-fetched messages so the stream continues on top. */
-  initialMessages?: SmartChatMessage[];
-  tripContext?: { id?: string; destination?: string; dates?: string };
+  activeTripId?: string;
   city?: string;
+  /** Protocol-v2 `context` (what the user is looking at). */
+  context?: ChatRequestContext;
 }
 
-interface SendOptions {
-  /** When set, the backend correlates this turn to a pending question slot. */
+interface StreamOptions {
   answersQuestionId?: string;
-  /** When set, this is a confirmed action — sends `confirm_action` payload. */
-  confirmAction?: { actionId: string; actionType: string; params: Record<string, unknown> };
-  /** When true, do NOT push a visible user bubble (used for question answers). */
+  confirmAction?: TurnRequest['confirmAction'];
+  /** Don't push a visible user bubble (confirmations, retries). */
   silentUser?: boolean;
+  /** Bubble text when it differs from the sent message. */
+  visibleUserContent?: string;
+  /** Reuse an idempotency key (retries). */
+  clientMessageId?: string;
 }
 
-/** Web port of the mobile useSmartChat. Handles SSE token streaming, tool
- *  status (with inline bubble), action lifecycle (pending → confirmed →
- *  executed/failed), and the four question-card types. Dedupe by event_id. */
-export function useSmartChat(opts: UseSmartChatOptions) {
-  const { chatId, initialMessages, tripContext, city } = opts;
-  const { getToken } = useAuth();
+const HISTORY_TURNS = 12;
+/** Resume after an unexpected disconnect: poll every 2s for up to 90s. */
+const RESUME_POLL_MS = 2000;
+const RESUME_MAX_MS = 90_000;
 
-  const [messages, setMessages] = useState<SmartChatMessage[]>(
-    initialMessages ?? [],
-  );
-  const [status, setStatus] = useState<SmartChatStatus>('idle');
-  const [activeTool, setActiveTool] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+function newId(prefix: string) {
+  const rand =
+    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  return `${prefix}-${rand}`;
+}
+
+function errorMessage(err: unknown, fallback: string): string {
+  if (err instanceof ApiError) {
+    const body = err.body as Record<string, unknown> | string | null;
+    if (typeof body === 'string' && body) return body;
+    if (body && typeof body === 'object') {
+      const detail = body.detail ?? body.message;
+      if (typeof detail === 'string') return detail;
+    }
+  }
+  return fallback;
+}
+
+/**
+ * Smart-chat client (protocol v2, v1-compatible). All transcript state lives
+ * in the pure reducer (`@/lib/chat/reducer`); this hook owns the side
+ * effects: SSE transport, auth headers, queued sends, undo + feedback calls,
+ * and trip-cache invalidation after edits.
+ */
+export function useSmartChat(opts: UseSmartChatOptions) {
+  const { chatId, activeTripId, city, context } = opts;
+  const { getToken } = useAuth();
+  const queryClient = useQueryClient();
+
+  const [state, dispatch] = useReducer(chatReducer, initialChatState);
+  const stateRef = useRef(state);
+  stateRef.current = state;
+
   const abortRef = useRef<AbortController | null>(null);
-  const assistantIdRef = useRef<string | null>(null);
-  const seenEventIdsRef = useRef<Set<string>>(new Set());
-  const confirmingActionIdRef = useRef<string | null>(null);
+  /** Bumped on every new stream / cancel; stale callbacks compare against it. */
+  const genRef = useRef(0);
 
   useEffect(() => {
     return () => {
+      genRef.current += 1;
       abortRef.current?.abort();
       abortRef.current = null;
     };
   }, []);
 
-  const resetMessages = useCallback((next: SmartChatMessage[]) => {
-    setMessages(next);
-    seenEventIdsRef.current = new Set();
+  const resetTurns = useCallback((turns: ChatTurn[]) => {
+    dispatch({ type: 'reset', turns });
   }, []);
 
-  const stream = useCallback(
-    async (
-      content: string,
-      sendOpts: SendOptions = {},
-      visibleUserContent?: string,
-    ) => {
-      abortRef.current?.abort();
-
-      const userId = `u-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-      const assistantId = `a-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-      assistantIdRef.current = assistantId;
-
-      setError(null);
-      setMessages((prev) => {
-        const next = [...prev];
-        if (!sendOpts.silentUser && (visibleUserContent ?? content).trim()) {
-          next.push({
-            id: userId,
-            role: 'user',
-            content: (visibleUserContent ?? content).trim(),
-            timestamp: new Date(),
-            messageType: 'text',
-          });
+  /**
+   * Server-owned v2 turns keep running after the socket drops. Poll the
+   * turn's status, then reload history once it completes; fall back to an
+   * inline retryable error if it never does.
+   */
+  const resume = useCallback(
+    async (gen: number, turnId: string, serverChatId: string) => {
+      dispatch({ type: 'set_progress', message: 'Reconnecting…' });
+      const started = Date.now();
+      while (Date.now() - started < RESUME_MAX_MS) {
+        await sleep(RESUME_POLL_MS);
+        if (gen !== genRef.current) return;
+        let res: TurnStatusResponse | null = null;
+        try {
+          res = await api.get<TurnStatusResponse>(endpoints.chatTurn(serverChatId, turnId));
+        } catch {
+          continue; // still offline — keep polling
         }
-        next.push({
-          id: assistantId,
-          role: 'assistant',
-          content: '',
-          timestamp: new Date(),
-          messageType: 'text',
-        });
-        return next;
+        if (gen !== genRef.current) return;
+        if (res?.status === 'running') continue;
+        if (res?.status === 'complete') {
+          try {
+            const page = await api.get<{ messages: BackendChatMessageV2[] }>(
+              `${endpoints.chatMessages(serverChatId)}?limit=100&latest=true`,
+            );
+            if (gen !== genRef.current) return;
+            dispatch({ type: 'reset', turns: historyToTurns(page.messages ?? []) });
+            void queryClient.invalidateQueries({ queryKey: queryKeys.chats.messages(chatId) });
+            return;
+          } catch {
+            break;
+          }
+        }
+        break; // unknown
+      }
+      if (gen !== genRef.current) return;
+      dispatch({ type: 'set_progress', message: undefined });
+      dispatch({ type: 'transport_error', message: 'Connection lost.' });
+    },
+    [chatId, queryClient],
+  );
+
+  const stream = useCallback(
+    async (content: string, sendOpts: StreamOptions = {}) => {
+      genRef.current += 1;
+      const gen = genRef.current;
+      abortRef.current?.abort();
+      abortRef.current = null;
+
+      const assistantTurnId = newId('a');
+      const request: TurnRequest = {
+        content,
+        clientMessageId: sendOpts.clientMessageId ?? newId('m'),
+        answersQuestionId: sendOpts.answersQuestionId,
+        confirmAction: sendOpts.confirmAction,
+        context,
+      };
+      const visible = (sendOpts.visibleUserContent ?? content).trim();
+
+      // Legacy history for chats the server doesn't own; ignored otherwise.
+      const conversationHistory = stateRef.current.turns
+        .slice(-HISTORY_TURNS)
+        .map((t) => ({ role: t.role, content: turnText(t) }))
+        .filter((m) => m.content);
+
+      dispatch({
+        type: 'begin',
+        assistantTurnId,
+        request,
+        now: Date.now(),
+        userTurn: sendOpts.silentUser || !visible ? undefined : { id: newId('u'), content: visible },
       });
-      setStatus('streaming');
-      setActiveTool(null);
 
       const token = await getToken();
-      const sessionId = getSessionId();
+      if (gen !== genRef.current) return;
 
-      const headers: Record<string, string> = { 'X-Session-Id': sessionId };
+      const headers: Record<string, string> = {
+        'X-Session-Id': getSessionId(),
+        'X-Chat-Protocol': String(CHAT_PROTOCOL_VERSION),
+      };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
       const body: Record<string, unknown> = {
-        chat_id: chatId,
         message: content,
+        protocol: CHAT_PROTOCOL_VERSION,
+        chat_id: chatId,
+        client_message_id: request.clientMessageId,
+        conversation_history: conversationHistory,
       };
-      if (tripContext?.id) {
-        body.trip_context = {
-          id: tripContext.id,
-          destination: tripContext.destination,
-          dates: tripContext.dates,
-        };
-      }
+      if (activeTripId) body.active_trip_id = activeTripId;
       if (city) body.city = city;
-      if (sendOpts.answersQuestionId) body.answers_question_id = sendOpts.answersQuestionId;
-      if (sendOpts.confirmAction) {
+      if (context && Object.keys(context).length) body.context = context;
+      if (request.answersQuestionId) body.answers_question_id = request.answersQuestionId;
+      if (request.confirmAction) {
         body.confirm_action = {
-          action_id: sendOpts.confirmAction.actionId,
-          action_type: sendOpts.confirmAction.actionType,
-          params: sendOpts.confirmAction.params,
+          action_id: request.confirmAction.actionId,
+          action_type: request.confirmAction.actionType,
+          params: request.confirmAction.params,
         };
       }
+
+      // Per-stream facts for the resume decision.
+      let serverTurnId: string | undefined;
+      let serverChatId = chatId;
+      let serverOwned = false;
+      let sawTerminal = false;
 
       abortRef.current = createSSEStream({
         url: endpoints.smartChat,
         body,
         headers,
         onEvent: (raw) => {
-          const event = raw as unknown as SmartChatSSEEvent;
-          // Dedupe — backend may resend on retry.
-          if (event.event_id) {
-            if (seenEventIdsRef.current.has(event.event_id)) return;
-            seenEventIdsRef.current.add(event.event_id);
+          if (gen !== genRef.current) return;
+          const frame = raw as unknown as SmartChatFrame;
+          if (!frame || typeof frame.type !== 'string') return;
+          if (frame.type === 'hello') {
+            serverTurnId = frame.turn_id;
+            serverChatId = frame.chat_id ?? chatId;
+            serverOwned = frame.server_history === true;
           }
+          if (frame.type === 'done' || frame.type === 'error') sawTerminal = true;
+          dispatch({ type: 'frame', frame });
 
-          switch (event.type) {
-            case 'chat_token': {
-              const chunk = event.content ?? '';
-              if (!chunk) break;
-              setMessages((prev) =>
-                prev.map((m) =>
-                  m.id === assistantId ? { ...m, content: m.content + chunk } : m,
-                ),
-              );
-              break;
-            }
-            case 'tool_call': {
-              setStatus('tool_running');
-              setActiveTool(event.tool ?? null);
-              if (event.tool === 'google_search') {
-                const statusId = `tool-${event.call_id ?? event.tool}`;
-                setMessages((prev) => {
-                  if (prev.some((m) => m.id === statusId)) return prev;
-                  return [
-                    ...prev,
-                    {
-                      id: statusId,
-                      role: 'assistant',
-                      content: 'Searching the web…',
-                      timestamp: new Date(),
-                      messageType: 'tool_status',
-                      toolName: event.tool,
-                    },
-                  ];
-                });
-              }
-              break;
-            }
-            case 'tool_result': {
-              setActiveTool(null);
-              setStatus('streaming');
-              if (event.tool === 'google_search') {
-                const statusId = `tool-${event.call_id ?? event.tool}`;
-                setMessages((prev) => prev.filter((m) => m.id !== statusId));
-              }
-              break;
-            }
-            case 'generation_progress': {
-              const id = confirmingActionIdRef.current;
-              if (id && event.message) {
-                setMessages((prev) =>
-                  prev.map((m) =>
-                    m.messageType === 'action_request'
-                    && m.actionRequest?.actionId === id
-                    && m.actionRequest.status === 'confirmed'
-                      ? {
-                          ...m,
-                          actionRequest: { ...m.actionRequest, description: event.message! },
-                        }
-                      : m,
-                  ),
-                );
-              }
-              if (event.step) setActiveTool(event.step);
-              break;
-            }
-            case 'action_request': {
-              const actionReq: ActionRequest = {
-                actionId: event.action_id ?? '',
-                actionType: event.action_type ?? 'unknown',
-                params: event.params ?? {},
-                description: event.description ?? '',
-                status: 'pending',
-              };
-              const msgId = `action-${actionReq.actionId || event.event_id || Date.now()}`;
-              setMessages((prev) => {
-                if (prev.some((m) => m.id === msgId)) return prev;
-                return [
-                  ...prev,
-                  {
-                    id: msgId,
-                    role: 'assistant',
-                    content: actionReq.description,
-                    timestamp: new Date(),
-                    messageType: 'action_request',
-                    actionRequest: actionReq,
-                    eventId: event.event_id,
-                    streamId: event.stream_id,
-                    seq: event.seq,
-                  },
-                ];
-              });
-              break;
-            }
-            case 'action_executed': {
-              setActiveTool(null);
-              const isSuccess = event.success !== false;
-              const id = event.action_id ?? confirmingActionIdRef.current;
-              setMessages((prev) =>
-                prev.map((m) => {
-                  if (
-                    m.messageType === 'action_request'
-                    && m.actionRequest?.actionId === id
-                    && m.actionRequest.status === 'confirmed'
-                  ) {
-                    return {
-                      ...m,
-                      actionRequest: {
-                        ...m.actionRequest,
-                        status: isSuccess ? 'executed' : 'failed',
-                        result: event as unknown as Record<string, unknown>,
-                      },
-                    };
-                  }
-                  return m;
-                }),
-              );
-              confirmingActionIdRef.current = null;
-              setStatus('streaming');
-
-              if (isSuccess && event.search_id && event.action_type === 'plan_trip') {
-                const navId = `nav-trip-${event.search_id}`;
-                setMessages((prev) => {
-                  if (prev.some((m) => m.id === navId)) return prev;
-                  return [
-                    ...prev,
-                    {
-                      id: navId,
-                      role: 'system',
-                      content: 'View your trip',
-                      timestamp: new Date(),
-                      messageType: 'navigation',
-                      navigation: {
-                        screen: `/trip/${event.search_id}`,
-                        navigationId: navId,
-                      },
-                    },
-                  ];
-                });
-              }
-              break;
-            }
-            case 'navigation': {
-              const navId = event.navigation_id ?? `nav-${Date.now()}`;
-              setMessages((prev) => {
-                if (prev.some((m) => m.id === navId)) return prev;
-                return [
-                  ...prev,
-                  {
-                    id: navId,
-                    role: 'system',
-                    content: `Open ${event.screen ?? ''}`,
-                    timestamp: new Date(),
-                    messageType: 'navigation',
-                    navigation: {
-                      screen: event.screen ?? '',
-                      params: event.params,
-                      navigationId: navId,
-                    },
-                  },
-                ];
-              });
-              break;
-            }
-            case 'interactive_question': {
-              const qid = event.question_id ?? event.event_id ?? `iq-${Date.now()}`;
-              const msgId = `iq-${qid}`;
-              setMessages((prev) => {
-                if (prev.some((m) => m.id === msgId)) return prev;
-                return [
-                  ...prev,
-                  {
-                    id: msgId,
-                    role: 'assistant',
-                    content: event.question ?? 'Pick one:',
-                    timestamp: new Date(),
-                    messageType: 'interactive_question',
-                    interactiveQuestion: {
-                      questionId: qid,
-                      question: event.question ?? '',
-                      options: event.options ?? [],
-                      allowCustom: !!event.allow_custom,
-                      status: 'pending',
-                    },
-                  },
-                ];
-              });
-              break;
-            }
-            case 'single_select_question': {
-              const qid = event.question_id ?? event.event_id ?? `ssq-${Date.now()}`;
-              const msgId = `ssq-${qid}`;
-              setMessages((prev) => {
-                if (prev.some((m) => m.id === msgId)) return prev;
-                return [
-                  ...prev,
-                  {
-                    id: msgId,
-                    role: 'assistant',
-                    content: event.question ?? event.prompt ?? '',
-                    timestamp: new Date(),
-                    messageType: 'single_select_question',
-                    singleSelectQuestion: {
-                      questionId: qid,
-                      prompt: event.question ?? event.prompt ?? '',
-                      options: (event.options ?? []) as Array<{
-                        id: string; label: string; description?: string; icon?: string;
-                      }>,
-                      allowFreeText: event.allow_free_text ?? false,
-                      status: 'pending',
-                    },
-                  },
-                ];
-              });
-              break;
-            }
-            case 'multi_select_question': {
-              const qid = event.question_id ?? event.event_id ?? `msq-${Date.now()}`;
-              const msgId = `msq-${qid}`;
-              setMessages((prev) => {
-                if (prev.some((m) => m.id === msgId)) return prev;
-                return [
-                  ...prev,
-                  {
-                    id: msgId,
-                    role: 'assistant',
-                    content: event.question ?? event.prompt ?? '',
-                    timestamp: new Date(),
-                    messageType: 'multi_select_question',
-                    multiSelectQuestion: {
-                      questionId: qid,
-                      prompt: event.question ?? event.prompt ?? '',
-                      options: (event.options ?? []) as Array<{
-                        id: string; label: string; description?: string; icon?: string;
-                      }>,
-                      min: event.min ?? 0,
-                      max: event.max ?? null,
-                      allowFreeText: event.allow_free_text ?? false,
-                      status: 'pending',
-                    },
-                  },
-                ];
-              });
-              break;
-            }
-            case 'confirm_question': {
-              const qid = event.question_id ?? event.event_id ?? `cq-${Date.now()}`;
-              const msgId = `cq-${qid}`;
-              setMessages((prev) => {
-                if (prev.some((m) => m.id === msgId)) return prev;
-                return [
-                  ...prev,
-                  {
-                    id: msgId,
-                    role: 'assistant',
-                    content: event.prompt ?? event.question ?? '',
-                    timestamp: new Date(),
-                    messageType: 'confirm_question',
-                    confirmQuestion: {
-                      questionId: qid,
-                      prompt: event.prompt ?? event.question ?? '',
-                      confirmLabel: event.confirm_label,
-                      cancelLabel: event.cancel_label,
-                      destructive: event.destructive ?? false,
-                      context: event.context,
-                      status: 'pending',
-                    },
-                  },
-                ];
-              });
-              break;
-            }
-            case 'done': {
-              setStatus('idle');
-              setActiveTool(null);
-              break;
-            }
-            default:
-              break;
+          // Side effects the reducer must not own.
+          if (frame.type === 'action_executed' && frame.success !== false && frame.search_id) {
+            void queryClient.invalidateQueries({ queryKey: queryKeys.trips.detail(frame.search_id) });
+          }
+          if (frame.type === 'done') {
+            void queryClient.invalidateQueries({ queryKey: ['chats', 'list'] });
           }
         },
         onError: (err) => {
-          setStatus('error');
-          setError(err.message);
+          if (gen !== genRef.current) return;
+          const status = (err as Error & { status?: number }).status;
+          const clientError = typeof status === 'number' && status >= 400 && status < 500;
+          if (!clientError && !sawTerminal && serverOwned && serverTurnId) {
+            void resume(gen, serverTurnId, serverChatId);
+            return;
+          }
+          dispatch({ type: 'transport_error', message: err.message, status });
         },
         onComplete: () => {
-          setStatus((prev) => (prev === 'error' ? prev : 'idle'));
-          setActiveTool(null);
+          if (gen !== genRef.current) return;
+          if (!sawTerminal && serverOwned && serverTurnId) {
+            void resume(gen, serverTurnId, serverChatId);
+            return;
+          }
+          dispatch({ type: 'complete' });
         },
       });
     },
-    [chatId, city, getToken, tripContext],
+    [activeTripId, chatId, city, context, getToken, queryClient, resume],
   );
 
+  const status: SmartChatStatus = selectStatus(state);
+  const busy = state.activeTurnId !== null;
+
+  /** Send, or queue if a turn is still streaming (composer stays enabled). */
   const send = useCallback(
     async (content: string) => {
       const trimmed = content.trim();
       if (!trimmed) return;
+      if (stateRef.current.activeTurnId) {
+        dispatch({ type: 'enqueue', item: { id: newId('q'), content: trimmed } });
+        return;
+      }
       await stream(trimmed);
+    },
+    [stream],
+  );
+
+  // Drain the queue one message per finished turn.
+  const nextQueued = state.queue[0];
+  useEffect(() => {
+    if (busy || !nextQueued) return;
+    dispatch({ type: 'dequeue', id: nextQueued.id });
+    void stream(nextQueued.content);
+  }, [busy, nextQueued, stream]);
+
+  const removeQueued = useCallback((id: string) => {
+    dispatch({ type: 'dequeue', id });
+  }, []);
+
+  /** Re-send the request behind an assistant turn (error Retry or regenerate). */
+  const retry = useCallback(
+    async (turnLocalId: string) => {
+      if (stateRef.current.activeTurnId) return;
+      const turn = stateRef.current.turns.find((t) => t.id === turnLocalId);
+      const req = turn?.request;
+      if (!turn || !req) return;
+      dispatch({ type: 'discard_turn', id: turnLocalId });
+      if (req.confirmAction) {
+        dispatch({ type: 'action_status', actionId: req.confirmAction.actionId, status: 'confirmed' });
+      }
+      await stream(req.content, {
+        silentUser: true,
+        answersQuestionId: req.answersQuestionId,
+        confirmAction: req.confirmAction,
+        clientMessageId: req.clientMessageId,
+      });
     },
     [stream],
   );
 
   const confirmAction = useCallback(
     async (actionId: string) => {
-      let target: ActionRequest | null = null;
-      setMessages((prev) =>
-        prev.map((m) => {
-          if (
-            m.messageType === 'action_request'
-            && m.actionRequest?.actionId === actionId
-            && m.actionRequest.status === 'pending'
-          ) {
-            target = m.actionRequest;
-            return { ...m, actionRequest: { ...m.actionRequest, status: 'confirmed' } };
+      let target: { actionType: string; params: Record<string, unknown> } | null = null;
+      for (const t of stateRef.current.turns) {
+        for (const p of t.parts) {
+          if (p.type === 'action_request' && p.action.actionId === actionId && p.action.status === 'pending') {
+            target = { actionType: p.action.actionType, params: p.action.params };
           }
-          return m;
-        }),
-      );
+        }
+      }
       if (!target) return;
-      confirmingActionIdRef.current = actionId;
-      const captured: ActionRequest = target;
+      dispatch({ type: 'action_status', actionId, status: 'confirmed' });
       await stream('', {
-        confirmAction: {
-          actionId,
-          actionType: captured.actionType,
-          params: captured.params,
-        },
+        confirmAction: { actionId, actionType: target.actionType, params: target.params },
         silentUser: true,
       });
     },
@@ -465,95 +333,124 @@ export function useSmartChat(opts: UseSmartChatOptions) {
   );
 
   const rejectAction = useCallback((actionId: string) => {
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.messageType === 'action_request' && m.actionRequest?.actionId === actionId
-          ? { ...m, actionRequest: { ...m.actionRequest, status: 'rejected' } }
-          : m,
-      ),
-    );
+    dispatch({ type: 'action_status', actionId, status: 'rejected' });
   }, []);
 
   const answerQuestion = useCallback(
-    async (
-      questionId: string,
-      payload: { optionId?: string; freeText?: string; selectedIds?: string[]; label: string },
-    ) => {
-      setMessages((prev) =>
-        prev.map((m) => {
-          if (m.messageType === 'interactive_question' && m.interactiveQuestion?.questionId === questionId) {
-            return {
-              ...m,
-              interactiveQuestion: {
-                ...m.interactiveQuestion,
-                status: 'answered',
-                selectedAnswer: payload.label,
-              },
-            };
-          }
-          if (m.messageType === 'single_select_question' && m.singleSelectQuestion?.questionId === questionId) {
-            return {
-              ...m,
-              singleSelectQuestion: {
-                ...m.singleSelectQuestion,
-                status: 'answered',
-                selectedId: payload.optionId,
-                selectedFreeText: payload.freeText,
-              },
-            };
-          }
-          if (m.messageType === 'multi_select_question' && m.multiSelectQuestion?.questionId === questionId) {
-            return {
-              ...m,
-              multiSelectQuestion: {
-                ...m.multiSelectQuestion,
-                status: 'answered',
-                selectedIds: payload.selectedIds ?? [],
-                selectedFreeText: payload.freeText,
-              },
-            };
-          }
-          return m;
-        }),
-      );
-      await stream(payload.label, { answersQuestionId: questionId }, payload.label);
+    async (questionId: string, payload: AnswerPayload) => {
+      dispatch({ type: 'answer_question', questionId, payload });
+      await stream(payload.label, { answersQuestionId: questionId });
     },
     [stream],
   );
 
   const respondConfirm = useCallback(
     async (questionId: string, result: 'confirmed' | 'cancelled', label: string) => {
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.messageType === 'confirm_question' && m.confirmQuestion?.questionId === questionId
-            ? { ...m, confirmQuestion: { ...m.confirmQuestion, status: result } }
-            : m,
-        ),
-      );
+      dispatch({ type: 'confirm_question', questionId, result });
       const reply = result === 'confirmed' ? 'Yes, please proceed.' : 'No, cancel that.';
-      await stream(reply, { answersQuestionId: questionId }, label);
+      await stream(reply, { answersQuestionId: questionId, visibleUserContent: label });
     },
     [stream],
   );
 
+  const undo = useCallback(
+    async (actionId: string, undoToken: string) => {
+      dispatch({ type: 'undo_status', actionId, undo: { status: 'pending' } });
+      try {
+        const res = await api.post<UndoResponse>(endpoints.smartChatUndo, { undo_token: undoToken });
+        if (res?.success === false) {
+          dispatch({
+            type: 'undo_status',
+            actionId,
+            undo: { status: 'failed', message: res.message || "Couldn't undo that change." },
+          });
+          return;
+        }
+        dispatch({ type: 'undo_status', actionId, undo: { status: 'done', message: res?.message || 'Change undone.' } });
+        if (res?.search_id) {
+          void queryClient.invalidateQueries({ queryKey: queryKeys.trips.detail(res.search_id) });
+        }
+      } catch (err) {
+        const status = err instanceof ApiError ? err.status : undefined;
+        const message =
+          status === 409
+            ? errorMessage(err, 'Your trip changed since this edit, so it can no longer be undone.')
+            : status === 410
+              ? errorMessage(err, 'This change can no longer be undone.')
+              : errorMessage(err, "Couldn't undo that change. Try again.");
+        dispatch({ type: 'undo_status', actionId, undo: { status: 'failed', message } });
+      }
+    },
+    [queryClient],
+  );
+
+  const sendFeedback = useCallback(
+    async (turnLocalId: string, rating: 'up' | 'down', reason?: FeedbackReason) => {
+      const turn = stateRef.current.turns.find((t) => t.id === turnLocalId);
+      if (!turn?.turnId) return;
+      const prev = turn.feedback;
+      dispatch({ type: 'feedback', id: turnLocalId, rating });
+      try {
+        await api.post(endpoints.chatTurnFeedback(stateRef.current.chatId ?? chatId, turn.turnId), {
+          rating,
+          ...(reason ? { reason } : {}),
+        });
+        if (reason || rating === 'up') toast.success('Thanks for the feedback');
+      } catch {
+        dispatch({ type: 'feedback', id: turnLocalId, rating: prev });
+        toast.error("Couldn't send feedback");
+      }
+    },
+    [chatId],
+  );
+
+  /** Stop the in-flight turn. v2 turns run detached server-side, so closing
+   *  the socket isn't enough — also ask the server to cancel. */
   const cancel = useCallback(() => {
+    const active = stateRef.current.turns.find((t) => t.id === stateRef.current.activeTurnId);
+    genRef.current += 1;
     abortRef.current?.abort();
     abortRef.current = null;
-    setStatus('idle');
-    setActiveTool(null);
+    dispatch({ type: 'cancel' });
+    if (active?.turnId) {
+      void api.post(endpoints.smartChatCancel, { turn_id: active.turnId }).catch(() => undefined);
+    }
   }, []);
 
-  return {
-    messages,
-    status,
-    activeTool,
-    error,
-    send,
-    confirmAction,
-    rejectAction,
-    answerQuestion,
-    respondConfirm,
-    cancel,
-    resetMessages,
-  };
+  return useMemo(
+    () => ({
+      turns: state.turns,
+      queue: state.queue,
+      status,
+      busy,
+      send,
+      retry,
+      confirmAction,
+      rejectAction,
+      answerQuestion,
+      respondConfirm,
+      undo,
+      sendFeedback,
+      removeQueued,
+      cancel,
+      resetTurns,
+    }),
+    [
+      state.turns,
+      state.queue,
+      status,
+      busy,
+      send,
+      retry,
+      confirmAction,
+      rejectAction,
+      answerQuestion,
+      respondConfirm,
+      undo,
+      sendFeedback,
+      removeQueued,
+      cancel,
+      resetTurns,
+    ],
+  );
 }

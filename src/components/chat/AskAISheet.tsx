@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Box from '@mui/material/Box';
 import { ExternalLink, Sparkles } from 'lucide-react';
 import { Sheet } from '@/components/ui/Sheet';
-import { ChatConversation } from './ChatConversation';
+import { ChatConversation, type ChatEntryContext } from './ChatConversation';
 import { useCreateChat } from '@/hooks/useChats';
 
 interface Props {
@@ -13,6 +13,9 @@ interface Props {
   onClose: () => void;
   /** City context — used to scope the chat and key the cached chat id. */
   city: string | null | undefined;
+  /** What the user was looking at (trip / day / place) — sent as protocol-v2
+   *  `context` and shown as removable chips above the composer. */
+  context?: ChatEntryContext;
 }
 
 const STORAGE_PREFIX = 'tripgen_ask_ai_chat_';
@@ -39,7 +42,7 @@ function writeCachedChatId(city: string, chatId: string) {
   }
 }
 
-export function AskAISheet({ open, onClose, city }: Props) {
+export function AskAISheet({ open, onClose, city, context }: Props) {
   const [chatId, setChatId] = useState<string | null>(() =>
     city ? readCachedChatId(city) : null,
   );
@@ -127,7 +130,7 @@ export function AskAISheet({ open, onClose, city }: Props) {
 
         <Box sx={{ flex: 1, overflow: 'hidden' }}>
           {chatId ? (
-            <ChatConversation key={chatId} chatId={chatId} embed />
+            <ChatConversation key={chatId} chatId={chatId} embed context={context} />
           ) : (
             <Box
               sx={{

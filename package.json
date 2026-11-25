@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "test": "tsx --test 'src/**/*.test.ts'",
     "sync:types": "tsx scripts/sync-types.ts",
     "sync:endpoints": "tsx scripts/sync-endpoints.ts",
     "sync:check": "tsx scripts/sync-types.ts --check && tsx scripts/sync-endpoints.ts --check"

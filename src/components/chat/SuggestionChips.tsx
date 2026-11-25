@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useRef } from 'react';
 import Box from '@mui/material/Box';
 import { useChatSuggestions } from '@/hooks/useChatSuggestions';
-import type { SmartChatMessage } from '@/types';
+import { turnText, type ChatTurn } from '@/lib/chat/reducer';
+import { stripEntityLinks } from '@/lib/chat/markdown';
 
 interface Props {
   city?: string;
   activeTripId?: string;
-  messages: SmartChatMessage[];
+  turns: ChatTurn[];
   onPick: (prompt: string) => void;
   disabled?: boolean;
 }
@@ -19,16 +20,16 @@ interface Props {
  * trip / last message shifts. Rate-limited by `chat_suggestions` on the
  * backend; we de-dupe by a coarse context signature to avoid flooding.
  */
-export function SuggestionChips({ city, activeTripId, messages, onPick, disabled }: Props) {
+export function SuggestionChips({ city, activeTripId, turns, onPick, disabled }: Props) {
   const suggest = useChatSuggestions();
   const lastKey = useRef<string | null>(null);
 
   const lastTwo = useMemo(() => {
-    return messages
+    return turns
       .slice(-2)
-      .filter((m) => m.role === 'user' || m.role === 'assistant')
-      .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
-  }, [messages]);
+      .map((t) => ({ role: t.role, content: stripEntityLinks(turnText(t)) }))
+      .filter((m) => m.content);
+  }, [turns]);
 
   const key = useMemo(
     () => [city ?? '', activeTripId ?? '', lastTwo.map((m) => m.content).join('|')].join('⟂'),
@@ -52,12 +53,15 @@ export function SuggestionChips({ city, activeTripId, messages, onPick, disabled
         display: 'flex',
         flexWrap: 'nowrap',
         gap: 1,
-        justifyContent: 'center',
+        justifyContent: { xs: 'flex-start', sm: 'center' },
         maxWidth: 940,
         mx: 'auto',
         px: 1,
-        overflow: 'visible',
+        py: 0.25,
+        overflowX: 'auto',
+        scrollbarWidth: 'none',
       }}
+      role="group"
       aria-label="Suggested prompts"
     >
       {suggestions.map((s) => (
@@ -70,7 +74,8 @@ export function SuggestionChips({ city, activeTripId, messages, onPick, disabled
           sx={{
             display: 'inline-flex',
             alignItems: 'center',
-            height: 32,
+            minHeight: 44,
+            flexShrink: 0,
             cursor: 'pointer',
             borderRadius: 999,
             border: 1,
@@ -83,6 +88,7 @@ export function SuggestionChips({ city, activeTripId, messages, onPick, disabled
             whiteSpace: 'nowrap',
             transition: 'background-color 0.15s, border-color 0.15s',
             '&:hover:not(:disabled)': { bgcolor: 'action.hover' },
+            '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main', outlineOffset: 2 },
             '&:disabled': { opacity: 0.4, cursor: 'not-allowed' },
           }}
         >

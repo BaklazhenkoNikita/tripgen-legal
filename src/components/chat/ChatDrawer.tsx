@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Box from '@mui/material/Box';
 import { ExternalLink, MessageSquare } from 'lucide-react';
 import { Sheet } from '@/components/ui/Sheet';
-import { ChatConversation } from './ChatConversation';
+import { ChatConversation, type ChatEntryContext } from './ChatConversation';
 import { useCreateChat } from '@/hooks/useChats';
 
 interface Props {
@@ -13,6 +13,8 @@ interface Props {
   onClose: () => void;
   tripId: string;
   tripDestination?: string;
+  /** Optional day / entity the user asked about (removable chips). */
+  context?: Omit<ChatEntryContext, 'trip_id' | 'trip_label'>;
 }
 
 const STORAGE_PREFIX = 'tripgen_trip_chat_';
@@ -35,7 +37,7 @@ function writeCachedChatId(tripId: string, chatId: string) {
   }
 }
 
-export function ChatDrawer({ open, onClose, tripId, tripDestination }: Props) {
+export function ChatDrawer({ open, onClose, tripId, tripDestination, context }: Props) {
   const [chatId, setChatId] = useState<string | null>(() => readCachedChatId(tripId));
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -124,7 +126,12 @@ export function ChatDrawer({ open, onClose, tripId, tripDestination }: Props) {
 
         <Box sx={{ flex: 1, overflow: 'hidden' }}>
           {chatId ? (
-            <ChatConversation key={chatId} chatId={chatId} embed />
+            <ChatConversation
+              key={chatId}
+              chatId={chatId}
+              embed
+              context={{ trip_id: tripId, trip_label: tripDestination, ...context }}
+            />
           ) : (
             <Box
               sx={{

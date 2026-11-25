@@ -6,6 +6,7 @@ import { endpoints } from '@/lib/api/endpoints';
 import { getGuestId } from '@/lib/auth/guestId';
 import { queryKeys } from '@/lib/query/keys';
 import type { ChatSummary } from '@/types';
+import type { BackendChatMessageV2 } from '@/lib/chat/protocol';
 
 interface ChatListResponse {
   chats: ChatSummary[];
@@ -46,6 +47,8 @@ export interface BackendChatMessage {
   timestamp: string;
   message_type?: string;
   trip_context_id?: string;
+  /** Protocol v2: server-owned `rich` turns carry `metadata.parts[]`. */
+  metadata?: BackendChatMessageV2['metadata'];
 }
 
 interface ChatMessagesResponse {
@@ -59,7 +62,7 @@ export function useChatMessages(chatId: string | null) {
     queryFn: async (): Promise<BackendChatMessage[]> => {
       if (!chatId) return [];
       const res = await api.get<ChatMessagesResponse>(
-        `${endpoints.chatMessages(chatId)}?limit=100&skip=0`,
+        `${endpoints.chatMessages(chatId)}?limit=100&latest=true`,
       );
       return res.messages ?? [];
     },

@@ -16,10 +16,12 @@ import {
   XCircle,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import type { ActionRequest } from '@/types';
+import type { ActionRequestV2 } from '@/lib/chat/reducer';
+import type { PlanPreview } from '@/lib/chat/protocol';
+import { minTap } from '@/theme/standards';
 
 interface Props {
-  action: ActionRequest;
+  action: ActionRequestV2;
   onConfirm: (actionId: string) => void;
   onReject: (actionId: string) => void;
 }
@@ -28,6 +30,7 @@ type Tone = 'accent' | 'success' | 'danger' | 'info';
 
 const ACTION_ICONS: Record<string, LucideIcon> = {
   plan_trip: Plane,
+  apply_plan: ListOrdered,
   add_activities: PlusCircle,
   add_day: Calendar,
   delete_activity: Trash2,
@@ -36,6 +39,7 @@ const ACTION_ICONS: Record<string, LucideIcon> = {
 
 const ACTION_TONES: Record<string, Tone> = {
   plan_trip: 'accent',
+  apply_plan: 'info',
   add_activities: 'success',
   add_day: 'success',
   delete_activity: 'danger',
@@ -44,6 +48,7 @@ const ACTION_TONES: Record<string, Tone> = {
 
 const CONFIRMED_VERB: Record<string, string> = {
   plan_trip: 'Generating your trip',
+  apply_plan: 'Applying the plan',
   add_activities: 'Adding activities',
   add_day: 'Adding a new day',
   delete_activity: 'Removing activity',
@@ -225,6 +230,7 @@ export function ActionCard({ action, onConfirm, onReject }: Props) {
           {action.description}
         </Box>
       </Box>
+      {action.preview ? <PlanPreviewList preview={action.preview} /> : null}
       <Box sx={{ mt: 1.5, display: 'flex', gap: 1 }}>
         <Box
           component="button"
@@ -237,11 +243,12 @@ export function ActionCard({ action, onConfirm, onReject }: Props) {
             borderRadius: 1.5,
             bgcolor: 'action.hover',
             px: 1.5,
-            py: 1,
-            fontSize: 12,
+            minHeight: minTap,
+            fontSize: 14,
             fontWeight: 600,
             color: 'text.secondary',
             '&:hover': { bgcolor: t.palette.divider },
+            '&:focus-visible': { outline: `2px solid ${t.palette.primary.main}`, outlineOffset: 2 },
           })}
         >
           Cancel
@@ -260,17 +267,81 @@ export function ActionCard({ action, onConfirm, onReject }: Props) {
             gap: 0.75,
             borderRadius: 1.5,
             px: 1.5,
-            py: 1,
-            fontSize: 12,
+            minHeight: minTap,
+            fontSize: 14,
             fontWeight: 600,
             color: 'common.white',
             bgcolor: btn.bg,
             '&:hover': { bgcolor: btn.hover },
+            '&:focus-visible': { outline: '2px solid', outlineColor: btn.bg, outlineOffset: 2 },
           }}
         >
           <Check size={14} aria-hidden />
           Confirm
         </Box>
+      </Box>
+    </Box>
+  );
+}
+
+/** Compact before → after list per day for batch `apply_plan` proposals. */
+function PlanPreviewList({ preview }: { preview: PlanPreview }) {
+  const days = Array.isArray(preview.days) ? preview.days : [];
+  if (!days.length && !preview.summary) return null;
+  return (
+    <Box sx={{ mt: 1.25, pl: 5.5 }}>
+      {preview.summary ? (
+        <Box component="p" sx={{ m: 0, mb: 0.75, fontSize: 13, fontWeight: 600, color: 'text.primary' }}>
+          {preview.summary}
+        </Box>
+      ) : null}
+      <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+        {days.map((d) => {
+          const before = d.before ?? [];
+          const after = d.after ?? [];
+          const afterSet = new Set(after);
+          const beforeSet = new Set(before);
+          return (
+            <Box component="li" key={d.day_number} sx={{ fontSize: 13 }}>
+              <Box component="span" sx={{ fontWeight: 600, color: 'text.secondary' }}>
+                Day {d.day_number}
+              </Box>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.5, mt: 0.25 }}>
+                {before.map((name, i) => (
+                  <Box
+                    key={`b-${i}`}
+                    component="span"
+                    sx={{
+                      color: afterSet.has(name) ? 'text.secondary' : 'error.main',
+                      textDecoration: afterSet.has(name) ? 'none' : 'line-through',
+                    }}
+                  >
+                    {name}
+                    {i < before.length - 1 ? ',' : ''}
+                  </Box>
+                ))}
+                <Box component="span" aria-label="becomes" sx={{ color: 'text.disabled', px: 0.5 }}>
+                  →
+                </Box>
+                {after.map((name, i) => (
+                  <Box
+                    key={`a-${i}`}
+                    component="span"
+                    sx={{ color: beforeSet.has(name) ? 'text.primary' : 'success.main', fontWeight: beforeSet.has(name) ? 400 : 600 }}
+                  >
+                    {name}
+                    {i < after.length - 1 ? ',' : ''}
+                  </Box>
+                ))}
+                {!after.length ? (
+                  <Box component="span" sx={{ color: 'text.disabled', fontStyle: 'italic' }}>
+                    empty
+                  </Box>
+                ) : null}
+              </Box>
+            </Box>
+          );
+        })}
       </Box>
     </Box>
   );

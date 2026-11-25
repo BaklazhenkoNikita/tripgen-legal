@@ -17,6 +17,7 @@ import {
 import { CreditsCard } from '@/components/credits/CreditsCard';
 import { WelcomeProDialog } from '@/components/credits/WelcomeProDialog';
 import { PreferencesForm } from '@/components/profile/PreferencesForm';
+import { MemorySection } from '@/components/profile/MemorySection';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Badge } from '@/components/ui/Badge';
@@ -286,6 +287,8 @@ function ProfilePageInner() {
           </Typography>
         )}
       </Box>
+
+      <MemorySection />
 
       <Box
         component="section"

@@ -369,6 +369,17 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+.tg-spin { animation: spin 1s linear infinite; }
+
+/* Chat surface: honor reduced-motion (spinners, pulses, smooth scroll). */
+@media (prefers-reduced-motion: reduce) {
+  .tg-chat *, .tg-chat *::before, .tg-chat *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* Disable double-tap-zoom flash on mobile */
 button, a { -webkit-tap-highlight-color: transparent; }

@@ -51,7 +51,17 @@ export const endpoints = {
   chatMessages: (chatId: string) =>
     `${API_BASE_URL}/api/chats/${encodeURIComponent(chatId)}/messages`,
   smartChat: `${API_BASE_URL}/api/smart-chat`,
+  smartChatUndo: `${API_BASE_URL}/api/smart-chat/undo`,
+  smartChatCancel: `${API_BASE_URL}/api/smart-chat/cancel`,
+  chatTurn: (chatId: string, turnId: string) =>
+    `${API_BASE_URL}/api/chats/${encodeURIComponent(chatId)}/turns/${encodeURIComponent(turnId)}`,
   chatSuggestions: `${API_BASE_URL}/api/chat/suggestions`,
+  chatTurnFeedback: (chatId: string, turnId: string) =>
+    `${API_BASE_URL}/api/chats/${encodeURIComponent(chatId)}/turns/${encodeURIComponent(turnId)}/feedback`,
+  chatTripInsights: (tripId: string) =>
+    `${API_BASE_URL}/api/chat/trip-insights?trip_id=${encodeURIComponent(tripId)}`,
+  chatMemory: `${API_BASE_URL}/api/chat/memory`,
+  chatMemoryById: (id: string) => `${API_BASE_URL}/api/chat/memory/${encodeURIComponent(id)}`,
 
   // --- Profiles ---
   profiles: `${API_BASE_URL}/api/profiles`,

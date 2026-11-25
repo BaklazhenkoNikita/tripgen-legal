@@ -42,7 +42,7 @@ export function QuickActions({ city, hasActiveTrip, onPick, disabled }: Props) {
             cursor: 'pointer',
             display: 'inline-flex',
             alignItems: 'center',
-            height: 38,
+            minHeight: 44,
             borderRadius: 999,
             border: 1,
             borderColor: 'divider',
@@ -54,6 +54,7 @@ export function QuickActions({ city, hasActiveTrip, onPick, disabled }: Props) {
             whiteSpace: 'nowrap',
             transition: 'background-color 0.15s, border-color 0.15s',
             '&:hover:not(:disabled)': { bgcolor: 'action.hover' },
+            '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main', outlineOffset: 2 },
             '&:disabled': { opacity: 0.4, cursor: 'not-allowed' },
           }}
         >
