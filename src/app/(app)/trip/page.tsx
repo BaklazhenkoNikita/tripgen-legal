@@ -4,6 +4,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { RotateCcw, AlertTriangle } from 'lucide-react';
 import Box from '@mui/material/Box';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { SectionHeader } from '@/components/layout/SectionHeader';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 import { TripInputForm } from '@/components/trip/TripInputForm';
@@ -206,8 +208,8 @@ function TripPageInner() {
   }
 
   return (
-    <Box sx={{ pt: { xs: 5, sm: 8 }, pb: { xs: 5, sm: 8 } }}>
-      <Box sx={{ mx: 'auto', maxWidth: 1320, px: { xs: 2, sm: 3 } }}>
+    <PageContainer width="content" sx={{ pt: { xs: 4, sm: 6 }, pb: { xs: 5, sm: 8 } }}>
+      <Box>
         {phase === 'error' && error ? (
           <Box
             sx={(t) => ({
@@ -252,8 +254,6 @@ function TripPageInner() {
         <Box
           ref={formRef}
           sx={{
-            mx: 'auto',
-            maxWidth: 1120,
             scrollMarginTop: '32px',
             ...(tripGenDisabled && { pointerEvents: 'none', opacity: 0.6 }),
           }}
@@ -270,18 +270,14 @@ function TripPageInner() {
         </Box>
       </Box>
 
-      <Box sx={{ mt: { xs: 5, sm: 7 } }}>
-        <Typography
-          variant="overline"
-          sx={{
-            display: 'block',
-            textAlign: 'center',
-            color: 'text.secondary',
-            mb: 2.5,
-          }}
-        >
-          Or start from a popular trip
-        </Typography>
+      <Box component="section" aria-labelledby="popular-trips" sx={{ mt: { xs: 5, sm: 6 } }}>
+        <SectionHeader
+          id="popular-trips"
+          eyebrow="Popular trips"
+          title="Or start from a ready-made trip"
+          size="md"
+          sx={{ mb: 2 }}
+        />
         <PopularCitiesRow onSelect={handlePrefill} />
       </Box>
 
@@ -292,7 +288,7 @@ function TripPageInner() {
           onCancel={reset}
         />
       ) : null}
-    </Box>
+    </PageContainer>
   );
 }
 
