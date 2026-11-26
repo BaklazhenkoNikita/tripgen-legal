@@ -4,7 +4,7 @@ import { Check } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useCitySuggestions } from '@/hooks/useCitySuggestions';
-import { formatPlaceName } from '@/lib/cities/normalizeCity';
+import { displayPlaceName } from '@/lib/cities/normalizeCity';
 import type { DestinationListItem } from '@/types';
 
 const POPULAR_FALLBACK = [
@@ -123,12 +123,9 @@ const sectionLabelSx = {
 };
 
 function pickDisplayName(item: DestinationListItem): string {
-  const candidate = item.name || item.city || '';
-  if (!candidate) return '';
-  if (item.source === 'cities' && candidate === item.city) {
-    return formatPlaceName(candidate);
-  }
-  return candidate;
+  // Every source (incl. lowercase `db` rows) goes through the display
+  // formatter; it's a no-op for names that are already cased.
+  return displayPlaceName(item.name || item.city || '');
 }
 
 interface SuggestionRowProps {

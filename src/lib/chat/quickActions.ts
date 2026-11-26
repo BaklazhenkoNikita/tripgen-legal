@@ -5,6 +5,7 @@
  */
 
 import type { LucideIcon } from 'lucide-react';
+import { displayPlaceName } from '@/lib/cities/normalizeCity';
 import {
   Calendar,
   Compass,
@@ -33,7 +34,7 @@ export const TRIP_QUICK_ACTIONS: QuickAction[] = [
 ];
 
 export function getGeneralQuickActions(city: string): QuickAction[] {
-  const name = formatPlaceName(city) || 'your city';
+  const name = displayPlaceName(city) || 'your city';
   return [
     { label: "What's On?", icon: Calendar, prompt: `What events, exhibitions, and things are happening in ${name} today?` },
     { label: 'Plan a trip', icon: Plane, prompt: `I want to plan a trip to ${name}` },
@@ -43,12 +44,3 @@ export function getGeneralQuickActions(city: string): QuickAction[] {
   ];
 }
 
-function formatPlaceName(raw: string | null | undefined): string {
-  if (!raw) return '';
-  return raw
-    .trim()
-    .toLowerCase()
-    .split(/(\s+|-)/)
-    .map((part) => (part.length > 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part))
-    .join('');
-}

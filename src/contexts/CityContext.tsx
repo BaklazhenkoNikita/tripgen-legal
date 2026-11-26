@@ -8,6 +8,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from 'react';
+import { displayPlaceName } from '@/lib/cities/normalizeCity';
 
 const STORAGE_KEY = 'tripgen_active_city';
 const CITY_EVENT = 'tripgen:city-change';
@@ -60,11 +61,17 @@ export function CityProvider({
     getCitySnapshot,
     getServerCitySnapshot,
   );
-  const city = stored ?? defaultCity ?? null;
+  // Normalise on read too — older sessions stored whatever was typed
+  // ("taipei"), and every consumer renders this value directly.
+  const city = useMemo(() => {
+    const raw = stored ?? defaultCity ?? null;
+    return raw ? displayPlaceName(raw) || null : null;
+  }, [stored, defaultCity]);
 
   const setCity = useCallback((next: string | null) => {
     try {
-      if (next) localStorage.setItem(STORAGE_KEY, next);
+      const display = next ? displayPlaceName(next) : '';
+      if (display) localStorage.setItem(STORAGE_KEY, display);
       else localStorage.removeItem(STORAGE_KEY);
       window.dispatchEvent(new Event(CITY_EVENT));
     } catch {
