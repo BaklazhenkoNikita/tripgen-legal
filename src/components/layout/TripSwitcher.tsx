@@ -12,32 +12,16 @@ import { ChevronDown, MapPin, Plus, Map as MapIcon, Check } from 'lucide-react';
 import { useActiveTripOptional } from '@/contexts/ActiveTripContext';
 import { useSearchHistory, type SearchHistoryItem } from '@/hooks/useSearchHistory';
 import { tgShadow } from '@/theme/shadows';
+import { formatDateRange } from '@/lib/date';
+import { displayDestination } from '@/lib/cities/normalizeCity';
 
 /** Short date range for a trip pill, e.g. "Jul 8–10" or "Jul 8 – Aug 2". */
-function formatDateRange(item: SearchHistoryItem): string | null {
-  const preset = item.result_summary?.date_range;
-  if (preset) return preset;
-  const start = item.start_date ? new Date(item.start_date) : null;
-  const end = item.end_date ? new Date(item.end_date) : null;
-  if (!start || Number.isNaN(start.getTime())) return null;
-  const mon = (d: Date) => d.toLocaleDateString(undefined, { month: 'short' });
-  if (!end || Number.isNaN(end.getTime())) {
-    return `${mon(start)} ${start.getDate()}`;
-  }
-  if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-    return `${mon(start)} ${start.getDate()}–${end.getDate()}`;
-  }
-  return `${mon(start)} ${start.getDate()} – ${mon(end)} ${end.getDate()}`;
+function tripDateRange(item: SearchHistoryItem): string | null {
+  return formatDateRange(item.start_date, item.end_date);
 }
 
 function tripLabel(item: SearchHistoryItem): string {
-  return (
-    item.user_title ||
-    item.result_summary?.destination_display ||
-    item.destination ||
-    item.parameters?.destination ||
-    'Trip'
-  );
+  return item.user_title || displayDestination(item.destination).full || 'Trip';
 }
 
 /**
@@ -68,7 +52,7 @@ export const TripSwitcher = memo(function TripSwitcher({
   if (!activeTripId) return null;
 
   const label = current ? tripLabel(current) : 'Current trip';
-  const dateRange = current ? formatDateRange(current) : null;
+  const dateRange = current ? tripDateRange(current) : null;
 
   const go = (href: string, tripId?: string) => {
     if (tripId) active?.setActiveTripId(tripId);
@@ -185,7 +169,7 @@ export const TripSwitcher = memo(function TripSwitcher({
         </Typography>
         {(trips ?? []).map((t) => {
           const isCurrent = t.search_id === activeTripId;
-          const range = formatDateRange(t);
+          const range = tripDateRange(t);
           return (
             <MenuItem
               key={t.search_id}
