@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Box from '@mui/material/Box';
 import { alpha } from '@mui/material/styles';
 import { Photo } from '@/components/ui/Photo';
+import { useOrderedImages } from '@/lib/brokenImages';
 
 type Aspect = '21/9' | '16/9' | '4/3';
 
@@ -31,8 +32,11 @@ export function ImageCarousel({
 }: ImageCarouselProps) {
   const [index, setIndex] = useState(0);
   const startX = useRef<number | null>(null);
+  // Photos that fail to load move to the end: when the visible photo breaks,
+  // the next working one slides into the same slot.
+  const { ordered } = useOrderedImages(images.map((img) => img.url));
 
-  const total = images.length;
+  const total = ordered.length;
   const hasMany = total > 1;
 
   const goTo = useCallback(
@@ -66,11 +70,11 @@ export function ImageCarousel({
   };
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
 
-  const current = images[index];
+  const current = ordered[index];
   const slide = (
     <Photo
-      key={index}
-      src={current?.url ?? null}
+      key={current ?? index}
+      src={current ?? null}
       alt={alt}
       aspect={aspect}
       gradient={gradient}
@@ -163,7 +167,7 @@ export function ImageCarousel({
               zIndex: 3,
             }}
           >
-            {images.map((_, i) => (
+            {ordered.map((_, i) => (
               <Box
                 key={i}
                 component="button"

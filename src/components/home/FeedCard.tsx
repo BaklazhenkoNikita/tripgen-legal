@@ -310,11 +310,11 @@ function cardMetaParts(item: FeedItem): MetaParts | null {
   return parts.duration || parts.cost || parts.rating !== undefined ? parts : null;
 }
 
-function firstImage(item: FeedItem): string | null {
+function firstImage(item: FeedItem): string[] {
   const images = item.item.images as Array<{ url?: string | null }> | undefined;
-  if (!images?.length) return null;
-  const url = images[0]?.url;
-  return url ?? null;
+  if (!images?.length) return [];
+  // Every photo, so Photo can fall back to the next one if the first is broken.
+  return images.map((img) => img?.url).filter((u): u is string => !!u);
 }
 
 function entityTone(t: FeedItem['entity_type']) {

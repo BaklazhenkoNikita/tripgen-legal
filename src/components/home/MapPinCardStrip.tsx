@@ -260,10 +260,11 @@ function cardTitle(item: FeedItem): string {
   );
 }
 
-function firstImage(item: FeedItem): string | null {
+function firstImage(item: FeedItem): string[] {
   const images = item.item.images as Array<{ url?: string | null }> | undefined;
-  if (!images?.length) return null;
-  return images[0]?.url ?? null;
+  if (!images?.length) return [];
+  // Every photo, so Photo can fall back to the next one if the first is broken.
+  return images.map((img) => img?.url).filter((u): u is string => !!u);
 }
 
 function cardSubtitle(item: FeedItem): string | null {

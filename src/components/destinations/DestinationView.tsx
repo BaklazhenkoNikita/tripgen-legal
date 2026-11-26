@@ -116,8 +116,14 @@ export function DestinationView({ city }: Props) {
     [itemById, city, router],
   );
 
-  const fallbackImage =
-    (feed?.exploration?.[0]?.item?.images?.[0]?.url as string | undefined) ?? null;
+  // Every photo of the first exploration item, so the hero can skip a broken one.
+  const fallbackImages = useMemo(
+    () =>
+      ((feed?.exploration?.[0]?.item?.images ?? []) as Array<{ url?: string | null } | null>)
+        .map((img) => img?.url)
+        .filter((url): url is string => !!url),
+    [feed?.exploration],
+  );
 
   return (
     <Box
@@ -144,7 +150,7 @@ export function DestinationView({ city }: Props) {
         city={city}
         info={info}
         isLoading={infoLoading}
-        fallbackImage={fallbackImage}
+        fallbackImages={fallbackImages}
       />
 
       <Box

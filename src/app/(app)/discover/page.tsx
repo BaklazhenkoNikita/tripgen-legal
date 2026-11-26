@@ -249,7 +249,8 @@ export default function DiscoverPage() {
 
 function ResultCard({ result }: { result: DiscoverResult }) {
   const title = result.title ?? '(untitled)';
-  const imageUrl = result.images?.[0]?.url ?? null;
+  // Every photo, so Photo can fall back to the next one if the first is broken.
+  const imageUrls = (result.images ?? []).map((img) => img?.url).filter((url): url is string => !!url);
   return (
     <Box
       component="article"
@@ -266,7 +267,7 @@ function ResultCard({ result }: { result: DiscoverResult }) {
         '&:hover': { borderColor: 'text.disabled', boxShadow: 'var(--tg-shadow-card-hover)', transform: 'translateY(-1px)' },
       }}
     >
-      {imageUrl ? <Photo src={imageUrl} alt={title} aspect="3/2" zoomOnHover /> : null}
+      {imageUrls.length > 0 ? <Photo src={imageUrls} alt={title} aspect="3/2" zoomOnHover /> : null}
       <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', gap: 0.75, p: 2 }}>
         <Typography
           component="h3"

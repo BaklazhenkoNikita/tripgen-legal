@@ -11,6 +11,7 @@ import { useCity } from '@/contexts';
 import { useRecentDestinations } from '@/hooks/useRecentDestinations';
 import { destinationSlug } from '@/lib/destinationSlug';
 import { isPreOptimizedImage } from '@/lib/imageSource';
+import { markImageBroken, useOrderedImages } from '@/lib/brokenImages';
 import { CityPickerPopover } from './CityPickerPopover';
 import type { DestinationInfo } from '@/types';
 
@@ -18,7 +19,8 @@ interface Props {
   city: string;
   info?: DestinationInfo | null;
   isLoading?: boolean;
-  fallbackImage?: string | null;
+  /** Photos to use when the destination info has none of its own. */
+  fallbackImages?: readonly string[];
 }
 
 const SWIPE_THRESHOLD = 40;
@@ -37,19 +39,21 @@ const HERO_GRADIENT_DARK =
 export function DestinationHero({
   city,
   info,
-  fallbackImage,
+  fallbackImages,
 }: Props) {
   const country = info?.country;
   const altText = `${city}${country ? `, ${country}` : ''}`;
 
-  const photos = useMemo(() => {
+  const candidatePhotos = useMemo(() => {
     const fromInfo = (info?.images ?? [])
       .map((img) => img?.url ?? '')
       .filter((url) => url.length > 0);
     if (fromInfo.length > 0) return fromInfo;
-    if (fallbackImage) return [fallbackImage];
-    return [];
-  }, [info?.images, fallbackImage]);
+    return fallbackImages ?? [];
+  }, [info?.images, fallbackImages]);
+  // Photos that fail to load move to the end, so the hero opens on a working
+  // photo instead of an empty slide when the first one is broken.
+  const { ordered: photos, isBroken } = useOrderedImages(candidatePhotos);
 
   const [index, setIndex] = useState(0);
   const startX = useRef<number | null>(null);
@@ -132,7 +136,7 @@ export function DestinationHero({
     >
       {photos.map((url, i) => (
         <Box
-          key={url + i}
+          key={url}
           sx={{
             position: 'absolute',
             inset: 0,
@@ -141,15 +145,18 @@ export function DestinationHero({
           }}
           aria-hidden={i !== index}
         >
-          <Image
-            src={url}
-            alt={i === 0 ? altText : ''}
-            fill
-            priority={i === 0}
-            sizes="(max-width: 1024px) 100vw, 1400px"
-            unoptimized={isPreOptimizedImage(url)}
-            style={{ objectFit: 'cover' }}
-          />
+          {isBroken(url) ? null : (
+            <Image
+              src={url}
+              alt={i === 0 ? altText : ''}
+              fill
+              priority={i === 0}
+              sizes="(max-width: 1024px) 100vw, 1400px"
+              unoptimized={isPreOptimizedImage(url)}
+              onError={() => markImageBroken(url)}
+              style={{ objectFit: 'cover' }}
+            />
+          )}
         </Box>
       ))}
 

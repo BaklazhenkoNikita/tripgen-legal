@@ -494,7 +494,7 @@ function RelatedViator({
                 }}
               >
                 <Photo
-                  src={v.images[0] ?? null}
+                  src={v.images}
                   alt={v.title}
                   aspect="3/2"
                   sizes="160px"

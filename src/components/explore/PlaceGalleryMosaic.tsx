@@ -8,6 +8,7 @@ import { ImageCarousel } from '@/components/ui/ImageCarousel';
 import { Lightbox } from '@/components/ui/Lightbox';
 import { tgShadow } from '@/theme/shadows';
 import { isPreOptimizedImage } from '@/lib/imageSource';
+import { markImageBroken, useOrderedImages } from '@/lib/brokenImages';
 
 interface Props {
   images: string[];
@@ -19,14 +20,21 @@ interface Props {
  *  Empty / missing tiles show a soft gradient fill that matches the brand. */
 export function PlaceGalleryMosaic({ images, alt }: Props) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const carouselImages = images.map((url) => ({ url }));
-  const tiles = [0, 1, 2, 3, 4].map((i) => images[i] ?? null);
+  // Broken photos sink to the end, so the big tile always leads with a
+  // working photo. Carousel + Lightbox order the same list from the same
+  // registry, so tile/slide index i is the same photo everywhere.
+  const { ordered, isBroken } = useOrderedImages(images);
+  const carouselImages = ordered.map((url) => ({ url }));
+  const tiles = [0, 1, 2, 3, 4].map((i) => {
+    const url = ordered[i];
+    return url && !isBroken(url) ? url : null;
+  });
 
   return (
     <>
       {/* Mobile: carousel */}
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-        {images.length > 0 ? (
+        {ordered.length > 0 ? (
           <ImageCarousel
             images={carouselImages}
             alt={alt}
@@ -58,7 +66,7 @@ export function PlaceGalleryMosaic({ images, alt }: Props) {
           alt={alt}
           priority
           sx={{ gridColumn: '1 / span 2', gridRow: '1 / span 2' }}
-          onClick={() => images.length > 0 && setLightboxIndex(0)}
+          onClick={() => tiles[0] && setLightboxIndex(0)}
         />
         <Tile
           src={tiles[1]}
@@ -85,12 +93,12 @@ export function PlaceGalleryMosaic({ images, alt }: Props) {
           onClick={() => tiles[4] && setLightboxIndex(4)}
         />
 
-        {images.length > 0 ? (
+        {ordered.length > 0 ? (
           <Box
             component="button"
             type="button"
             onClick={() => setLightboxIndex(0)}
-            aria-label={`View all ${images.length} photos`}
+            aria-label={`View all ${ordered.length} photos`}
             sx={{
               position: 'absolute',
               right: 16,
@@ -117,7 +125,7 @@ export function PlaceGalleryMosaic({ images, alt }: Props) {
             }}
           >
             <Grid3x3 size={16} aria-hidden />
-            Show all {images.length} photos
+            Show all {ordered.length} photos
           </Box>
         ) : null}
       </Box>
@@ -176,6 +184,7 @@ function Tile({
           sizes="(max-width: 768px) 100vw, 50vw"
           priority={priority}
           unoptimized={isPreOptimizedImage(src)}
+          onError={() => markImageBroken(src)}
           style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }}
         />
       ) : (

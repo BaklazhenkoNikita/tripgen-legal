@@ -1,15 +1,17 @@
 'use client';
 
 import Image, { type ImageProps } from 'next/image';
-import { useState } from 'react';
 import { ImageOff } from 'lucide-react';
 import Box from '@mui/material/Box';
 import { isPreOptimizedImage } from '@/lib/imageSource';
+import { markImageBroken, useOrderedImages } from '@/lib/brokenImages';
 
 type Aspect = '16/9' | '16/10' | '4/3' | '3/2' | '1/1' | '5/4' | '21/9';
 
 export interface PhotoProps extends Omit<ImageProps, 'src' | 'alt' | 'width' | 'height' | 'fill'> {
-  src: string | null | undefined;
+  /** One URL, or a place's photo list: if a photo fails to load the next one
+   *  is shown, and the placeholder only appears once every photo has failed. */
+  src: string | readonly string[] | null | undefined;
   alt: string;
   aspect?: Aspect;
   rounded?: 'none' | 'sm' | 'md' | 'lg';
@@ -38,10 +40,10 @@ export function Photo({
   zoomOnHover,
   sizes = '(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw',
   priority,
+  onError,
   ...rest
 }: PhotoProps) {
-  const [errored, setErrored] = useState(false);
-  const showImage = !!src && !errored;
+  const { current } = useOrderedImages(typeof src === 'string' || src == null ? [src] : src);
   const radius = radiusMap[rounded];
 
   return (
@@ -59,15 +61,19 @@ export function Photo({
           : undefined,
       }}
     >
-      {showImage ? (
+      {current ? (
         <Image
-          src={src}
+          key={current}
+          src={current}
           alt={alt}
           fill
           sizes={sizes}
           priority={priority}
-          unoptimized={isPreOptimizedImage(src)}
-          onError={() => setErrored(true)}
+          unoptimized={isPreOptimizedImage(current)}
+          onError={(e) => {
+            markImageBroken(current);
+            onError?.(e);
+          }}
           className={zoomOnHover ? 'zoomable' : undefined}
           style={{
             objectFit: 'cover',

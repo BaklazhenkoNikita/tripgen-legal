@@ -1,11 +1,12 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ImageOff, X } from 'lucide-react';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { alpha } from '@mui/material/styles';
+import { markImageBroken, useOrderedImages } from '@/lib/brokenImages';
 
 interface LightboxProps {
   images: Array<{ url: string }>;
@@ -17,12 +18,15 @@ interface LightboxProps {
 
 export function Lightbox({ images, alt, initialIndex = 0, open, onClose }: LightboxProps) {
   const [index, setIndex] = useState(initialIndex);
+  // Same order as the carousel / mosaic that opened us (shared registry), so
+  // `initialIndex` points at the photo that was clicked; broken photos last.
+  const { ordered, isBroken } = useOrderedImages(images.map((img) => img.url));
 
   useEffect(() => {
-    if (open) setIndex(Math.max(0, Math.min(initialIndex, images.length - 1)));
-  }, [open, initialIndex, images.length]);
+    if (open) setIndex(Math.max(0, Math.min(initialIndex, ordered.length - 1)));
+  }, [open, initialIndex, ordered.length]);
 
-  const total = images.length;
+  const total = ordered.length;
   const next = useCallback(
     () => setIndex((i) => (i + 1) % Math.max(total, 1)),
     [total],
@@ -44,7 +48,7 @@ export function Lightbox({ images, alt, initialIndex = 0, open, onClose }: Light
   }, [open, onClose, next, prev]);
 
   if (total === 0) return null;
-  const current = images[index];
+  const current = ordered[index];
 
   return (
     <Dialog
@@ -123,15 +127,27 @@ export function Lightbox({ images, alt, initialIndex = 0, open, onClose }: Light
         </>
       ) : null}
 
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <Box
-        component="img"
-        key={index}
-        src={current?.url}
-        alt={alt}
-        sx={{ maxHeight: '90vh', maxWidth: '92vw', objectFit: 'contain' }}
-        onClick={(e) => e.stopPropagation()}
-      />
+      {!current || isBroken(current) ? (
+        <Box
+          role="img"
+          aria-label={alt}
+          onClick={(e) => e.stopPropagation()}
+          sx={{ color: (t) => alpha(t.palette.common.white, 0.7), display: 'inline-flex' }}
+        >
+          <ImageOff size={40} aria-hidden />
+        </Box>
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <Box
+          component="img"
+          key={current}
+          src={current}
+          alt={alt}
+          sx={{ maxHeight: '90vh', maxWidth: '92vw', objectFit: 'contain' }}
+          onClick={(e) => e.stopPropagation()}
+          onError={() => markImageBroken(current)}
+        />
+      )}
     </Dialog>
   );
 }
