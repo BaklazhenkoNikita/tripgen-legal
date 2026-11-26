@@ -3,6 +3,7 @@
 import { forwardRef, type KeyboardEvent, type MouseEvent } from 'react';
 import { Heart, Star } from 'lucide-react';
 import type { FeedItem } from '@/hooks/useHomeFeed';
+import { entityLabel } from '@/lib/map/categoryColors';
 import { useShortlistAdd, useShortlistRemove, useShortlistIds } from '@/hooks/useShortlist';
 import { emitSignal } from '@/hooks/useSignals';
 import type { EntityType } from '@/types';
@@ -328,16 +329,6 @@ function entityTone(t: FeedItem['entity_type']) {
   }
 }
 
-function entityLabel(t: FeedItem['entity_type']): string {
-  switch (t) {
-    case 'activity': return 'Activity';
-    case 'restaurant': return 'Food';
-    case 'live_event': return 'Event';
-    case 'exploration': return 'Spot';
-    case 'viator': return 'Tour';
-    default: return 'Item';
-  }
-}
 
 function formatEventDate(iso: string): string {
   try {

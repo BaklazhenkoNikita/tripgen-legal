@@ -5,6 +5,7 @@
  */
 
 import type { LucideIcon } from 'lucide-react';
+import { formatPlaceName } from '@/lib/cities/normalizeCity';
 import {
   Calendar,
   Compass,
@@ -43,12 +44,3 @@ export function getGeneralQuickActions(city: string): QuickAction[] {
   ];
 }
 
-function formatPlaceName(raw: string | null | undefined): string {
-  if (!raw) return '';
-  return raw
-    .trim()
-    .toLowerCase()
-    .split(/(\s+|-)/)
-    .map((part) => (part.length > 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part))
-    .join('');
-}

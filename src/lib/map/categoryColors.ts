@@ -32,10 +32,24 @@ export function colorForEntity(entityType: string | undefined, theme: 'light' | 
   return palette[entityType] ?? fallback;
 }
 
+/** Plural labels for legends and filters. */
 export const CATEGORY_LABELS: Record<string, string> = {
-  exploration: 'Exploration',
+  exploration: 'Sights',
   activity: 'Activities',
   live_event: 'Events',
   restaurant: 'Food',
   viator: 'Tours',
 };
+
+/** Singular labels for a single item's type chip ("Sight", "Tour"). */
+const ENTITY_LABELS: Record<string, string> = {
+  exploration: 'Sight',
+  activity: 'Activity',
+  live_event: 'Event',
+  restaurant: 'Food',
+  viator: 'Tour',
+};
+
+export function entityLabel(entityType: string | null | undefined): string {
+  return (entityType && ENTITY_LABELS[entityType]) || 'Place';
+}

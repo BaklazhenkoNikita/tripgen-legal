@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import { ChevronRight } from 'lucide-react';
 import { alpha } from '@mui/material/styles';
 import type { FeedItem } from '@/hooks/useHomeFeed';
+import { entityLabel } from '@/lib/map/categoryColors';
 import { Photo } from '@/components/ui/Photo';
 import { Badge } from '@/components/ui/Badge';
 import { tgShadow } from '@/theme/shadows';
@@ -298,19 +299,3 @@ function entityTone(t: FeedItem['entity_type']) {
   }
 }
 
-function entityLabel(t: FeedItem['entity_type']): string {
-  switch (t) {
-    case 'activity':
-      return 'Activity';
-    case 'restaurant':
-      return 'Food';
-    case 'live_event':
-      return 'Event';
-    case 'exploration':
-      return 'Spot';
-    case 'viator':
-      return 'Tour';
-    default:
-      return 'Item';
-  }
-}
