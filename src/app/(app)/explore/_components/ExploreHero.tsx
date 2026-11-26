@@ -2,8 +2,9 @@
 
 import { useMemo, useRef, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Compass, MapPin, Search } from 'lucide-react';
+import { ArrowRight, MapPin, Search } from 'lucide-react';
 import Box from '@mui/material/Box';
+import { textScale } from '@/theme/standards';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
 import Paper from '@mui/material/Paper';
@@ -61,8 +62,8 @@ export function ExploreHero() {
       component="header"
       sx={{
         position: 'relative',
-        pt: { xs: 4, sm: 6, md: 7 },
-        pb: { xs: 3, sm: 4, md: 5 },
+        pt: { xs: 4, md: 6 },
+        pb: { xs: 3, md: 5 },
       }}
     >
       <Box
@@ -86,38 +87,13 @@ export function ExploreHero() {
         }}
       >
         <Box sx={{ minWidth: 0 }}>
-          <Box
-            component="span"
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 0.75,
-              mb: 2,
-              px: 1.5,
-              py: 0.6,
-              borderRadius: 999,
-              border: (t) => `1px solid ${alpha(t.palette.primary.main, 0.24)}`,
-              bgcolor: (t) => alpha(t.palette.primary.main, 0.08),
-              color: 'primary.main',
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: 0,
-            }}
-          >
-            <Compass size={14} aria-hidden />
-            Explore
-          </Box>
-
           <Typography
             component="h1"
             sx={{
+              ...textScale.hero,
               maxWidth: 720,
-              fontWeight: 700,
-              letterSpacing: 0,
-              lineHeight: 1.04,
-              fontSize: { xs: 42, sm: 54, md: 64 },
               color: 'text.primary',
-              mb: { xs: 1.5, sm: 2 },
+              mb: 2,
             }}
           >
             Start with {currentCity}
@@ -125,10 +101,9 @@ export function ExploreHero() {
 
           <Typography
             sx={{
+              ...textScale.body,
               maxWidth: 600,
-              mb: { xs: 3, sm: 3.5 },
-              fontSize: { xs: 15, sm: 17 },
-              lineHeight: 1.6,
+              mb: { xs: 3, sm: 4 },
               color: 'text.secondary',
             }}
           >

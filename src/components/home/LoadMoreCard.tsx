@@ -3,6 +3,7 @@
 import { type KeyboardEvent } from 'react';
 import { Plus, Sparkles } from 'lucide-react';
 import Box from '@mui/material/Box';
+import { radii } from '@/theme/standards';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
@@ -50,12 +51,12 @@ export function LoadMoreCard({ onClick, isPending, mode, disabled }: Props) {
         alignItems: 'center',
         justifyContent: 'center',
         gap: 1.25,
-        width: 288,
-        // Match the adjacent FeedCard's 3:2 photo aspect (288 × 192) so the
-        // dashed outline draws a card-shaped rectangle, not a short pill.
+        width: '100%',
+        // Match the adjacent FeedCard's 3:2 photo aspect so the dashed
+        // outline draws a card-shaped rectangle, not a short pill.
         aspectRatio: '3 / 2',
         flexShrink: 0,
-        borderRadius: 2,
+        borderRadius: radii.card,
         border: '2px dashed',
         borderColor: isAi ? 'primary.main' : 'divider',
         bgcolor: 'transparent',

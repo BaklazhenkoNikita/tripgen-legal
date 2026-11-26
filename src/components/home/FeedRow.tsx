@@ -7,13 +7,16 @@ import { FeedCard, cardId } from './FeedCard';
 import { LoadMoreCard } from './LoadMoreCard';
 import { SkeletonRail } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { HorizontalScrollRow } from '@/components/ui/HorizontalScrollRow';
+import { HorizontalScrollRow, RailArrows, useScrollRail } from '@/components/ui/HorizontalScrollRow';
 import { useLoadMoreFeed, type LoadMoreSource } from '@/hooks/useLoadMoreFeed';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { textScale } from '@/theme/standards';
 
 interface Props {
   title: string;
+  /** Heading element for the row title. Use `h3` under a section `h2`. */
+  headingLevel?: 'h2' | 'h3';
   items: FeedItem[];
   isLoading: boolean;
   isGenerating?: boolean;
@@ -38,6 +41,7 @@ interface Props {
 
 export function FeedRow({
   title,
+  headingLevel = 'h2',
   items,
   isLoading,
   isGenerating,
@@ -50,6 +54,7 @@ export function FeedRow({
   loadMore,
 }: Props) {
   const safe = items.filter((it): it is FeedItem => !!it && !!it.item);
+  const rail = useScrollRail();
 
   // Hooks must run unconditionally — the pager is a no-op when sources is empty.
   const sourcesKey = useMemo(
@@ -83,56 +88,56 @@ export function FeedRow({
     Boolean(loadMore) && (pager.hasMoreInDB || pager.canGenerate);
 
   return (
-    <Box component="section" sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-      <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-        <Typography
-          component="h2"
-          sx={{
-            fontSize: 20,
-            fontWeight: 600,
-            lineHeight: 1.2,
-            color: 'text.primary',
-          }}
-        >
-          {title}
-        </Typography>
-        {isGenerating ? (
-          <Box
-            component="span"
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 0.75,
-              fontSize: 11,
-              color: 'text.disabled',
-              '& .spin': {
-                animation: 'feedrow-spin 1s linear infinite',
-              },
-              '@keyframes feedrow-spin': {
-                to: { transform: 'rotate(360deg)' },
-              },
-            }}
+    <Box component="section" sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, minHeight: 44 }}>
+        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, minWidth: 0 }}>
+          <Typography
+            component={headingLevel}
+            sx={{ ...textScale.title, fontSize: '1.25rem', color: 'text.primary', m: 0 }}
           >
-            <Box component="span" className="spin" sx={{ display: 'inline-flex' }} aria-hidden>
-              <Loader2 size={12} />
+            {title}
+          </Typography>
+          {isGenerating ? (
+            <Box
+              component="span"
+              sx={{
+                ...textScale.meta,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.75,
+                color: 'text.secondary',
+                '& .spin': {
+                  animation: 'feedrow-spin 1s linear infinite',
+                },
+                '@keyframes feedrow-spin': {
+                  to: { transform: 'rotate(360deg)' },
+                },
+              }}
+            >
+              <Box component="span" className="spin" sx={{ display: 'inline-flex' }} aria-hidden>
+                <Loader2 size={12} />
+              </Box>
+              Loading more
             </Box>
-            Loading more
-          </Box>
-        ) : null}
+          ) : null}
+        </Box>
+        <RailArrows label={title} canPrev={rail.canPrev} canNext={rail.canNext} onPage={rail.scrollPage} />
       </Box>
 
       {isLoading || (isEmpty && isGenerating) ? (
-        <SkeletonRail count={4} />
+        <SkeletonRail count={4} fitted />
       ) : isEmpty ? (
         <EmptyState title={emptyTitle} description={emptyDescription} variant="subtle" />
       ) : (
-        <HorizontalScrollRow ariaLabel={title} maskWidth={56}>
+        <HorizontalScrollRow ariaLabel={title} fitted railRef={rail.ref}>
           {allItems.map((it) => {
             const id = cardId(it);
             return (
-              <Box key={id} sx={{ flexShrink: 0, scrollSnapAlign: 'start' }}>
+              <Box key={id}>
                 <FeedCard
                   item={it}
+                  variant="grid"
+                  showTypeBadge={false}
                   onHover={onHoverItem}
                   isActive={activeItemId === id}
                   onClick={onCardClick ? () => onCardClick(it) : undefined}
@@ -141,7 +146,7 @@ export function FeedRow({
             );
           })}
           {showLoadMoreCard ? (
-            <Box sx={{ flexShrink: 0, scrollSnapAlign: 'start' }}>
+            <Box>
               <LoadMoreCard
                 onClick={() => void pager.loadMore()}
                 isPending={pager.isPending}

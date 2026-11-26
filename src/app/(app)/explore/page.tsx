@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { ArrowRight, ChevronUp, MapPinned, Sparkles } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 import { destinations } from '@/data/destinations';
 import { useCity } from '@/contexts';
@@ -12,6 +11,11 @@ import { useHomeFeed, type FeedItem, type HomeFeedResponse } from '@/hooks/useHo
 import { FeedRow } from '@/components/home/FeedRow';
 import { ViatorRow } from '@/components/home/ViatorRow';
 import { FeedItemDrawer } from '@/components/explore/FeedItemDrawer';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { SectionHeader } from '@/components/layout/SectionHeader';
+import { Button } from '@/components/ui/Button';
+import { destinationSlug } from '@/lib/destinationSlug';
+import Link from 'next/link';
 import { ExploreHero } from './_components/ExploreHero';
 import { DestinationCard } from './_components/DestinationCard';
 
@@ -31,76 +35,35 @@ export default function DestinationsPage() {
   const cityCards = showAllCities ? destinations : destinations.slice(0, INITIAL_CITIES);
 
   return (
-    <Box component="main" sx={{ overflow: 'hidden' }}>
-      <Box sx={{ mx: 'auto', maxWidth: 1220, px: { xs: 2.25, sm: 4 } }}>
+    <Box sx={{ overflow: 'hidden' }}>
+      <PageContainer width="wide">
         <ExploreHero />
 
         <Box
           component="section"
           aria-labelledby="active-city-heading"
           sx={{
-            pt: { xs: 2, sm: 3, md: 4 },
-            pb: { xs: 5, sm: 7 },
+            pt: { xs: 2, md: 3 },
+            pb: { xs: 6, md: 8 },
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: { xs: 'flex-start', md: 'flex-end' },
-              flexDirection: { xs: 'column', md: 'row' },
-              justifyContent: 'space-between',
-              gap: { xs: 1.5, md: 4 },
-              mb: { xs: 3, md: 4 },
-            }}
-          >
-            <Box sx={{ minWidth: 0 }}>
-              <Typography
-                component="span"
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 0.75,
-                  fontSize: 12,
-                  fontWeight: 700,
-                  letterSpacing: 0,
-                  color: 'primary.main',
-                  mb: 1.25,
-                }}
-              >
-                <Sparkles size={14} aria-hidden />
-                City picks
-              </Typography>
-              <Typography
-                id="active-city-heading"
-                component="h2"
-                sx={{
-                  maxWidth: 760,
-                  fontWeight: 700,
-                  letterSpacing: 0,
-                  lineHeight: 1.12,
-                  fontSize: { xs: 30, sm: 38, md: 44 },
-                  color: 'text.primary',
-                }}
-              >
-                What to do in {activeCity}
-              </Typography>
-            </Box>
-            <Typography
-              sx={{
-                maxWidth: 390,
-                fontSize: 14.5,
-                lineHeight: 1.6,
-                color: 'text.secondary',
-                pb: { md: 0.5 },
-              }}
-            >
-              A live reference board for the city: places, activities, food,
-              events, and tours surfaced before you commit to a full trip plan.
-            </Typography>
-          </Box>
+          <SectionHeader
+            id="active-city-heading"
+            eyebrow="City picks"
+            eyebrowIcon={Sparkles}
+            title={`What to do in ${activeCity}`}
+            description="A live reference board for the city: places, activities, food, events, and tours surfaced before you commit to a full trip plan."
+            action={
+              <Button asChild variant="ghost" size="sm" iconRight={<ArrowRight size={16} aria-hidden />}>
+                <Link href={`/explore/${destinationSlug(activeCity)}`}>Open full {activeCity} guide</Link>
+              </Button>
+            }
+            sx={{ mb: { xs: 3, md: 4 } }}
+          />
 
-          <Stack spacing={{ xs: 3.5, md: 4 }}>
+          <Stack spacing={{ xs: 4, md: 5 }}>
             <FeedRow
+              headingLevel="h3"
               title={`Must see in ${activeCity}`}
               items={sections.mustSee}
               isLoading={isLoading}
@@ -119,6 +82,7 @@ export default function DestinationsPage() {
             />
 
             <FeedRow
+              headingLevel="h3"
               title="Things to do"
               items={sections.activities}
               isLoading={isLoading}
@@ -137,6 +101,7 @@ export default function DestinationsPage() {
             />
 
             <FeedRow
+              headingLevel="h3"
               title="Where to eat"
               items={sections.restaurants}
               isLoading={isLoading}
@@ -148,6 +113,7 @@ export default function DestinationsPage() {
             />
 
             <FeedRow
+              headingLevel="h3"
               title="Happening now"
               items={sections.events}
               isLoading={isLoading}
@@ -159,6 +125,7 @@ export default function DestinationsPage() {
             />
 
             <ViatorRow
+              headingLevel="h3"
               city={activeCity}
               activeItemId={activeItemId}
               onHoverItem={setActiveItemId}
@@ -171,72 +138,25 @@ export default function DestinationsPage() {
           component="section"
           aria-labelledby="cities-heading"
           sx={{
-            pt: { xs: 4, sm: 5, md: 6 },
-            pb: { xs: 7, sm: 9 },
+            pt: { xs: 5, md: 7 },
+            pb: { xs: 7, md: 9 },
             borderTop: '1px solid',
             borderColor: 'divider',
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: { xs: 'flex-start', md: 'flex-end' },
-              flexDirection: { xs: 'column', md: 'row' },
-              justifyContent: 'space-between',
-              gap: { xs: 1.5, md: 4 },
-              mb: { xs: 3.25, sm: 4 },
-            }}
-          >
-            <Box>
-              <Typography
-                component="span"
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 0.75,
-                  fontSize: 12,
-                  fontWeight: 700,
-                  letterSpacing: 0,
-                  color: 'primary.main',
-                  mb: 1.25,
-                }}
-              >
-                <MapPinned size={14} aria-hidden />
-                Browse cities
-              </Typography>
-              <Typography
-                id="cities-heading"
-                component="h2"
-                sx={{
-                  fontWeight: 700,
-                  letterSpacing: 0,
-                  lineHeight: 1.1,
-                  fontSize: { xs: 30, sm: 38, md: 44 },
-                  color: 'text.primary',
-                }}
-              >
-                City references, not trip templates
-              </Typography>
-            </Box>
-            <Typography
-              sx={{
-                maxWidth: 390,
-                fontSize: 14.5,
-                lineHeight: 1.6,
-                color: 'text.secondary',
-                pb: { md: 0.5 },
-              }}
-            >
-              Open a city to browse its sights, neighborhoods, restaurants,
-              events, and planning context. Build a trip only when you are
-              ready.
-            </Typography>
-          </Box>
+          <SectionHeader
+            id="cities-heading"
+            eyebrow="Browse cities"
+            eyebrowIcon={MapPinned}
+            title="City references, not trip templates"
+            description="Open a city to browse its sights, neighborhoods, restaurants, events, and planning context. Build a trip only when you are ready."
+            sx={{ mb: { xs: 3, md: 4 } }}
+          />
 
           <Box
             sx={{
               display: 'grid',
-              gap: { xs: 2.25, sm: 2.75, md: 3 },
+              gap: { xs: 2, md: 3 },
               gridTemplateColumns: {
                 xs: '1fr',
                 sm: 'repeat(2, 1fr)',
@@ -297,7 +217,7 @@ export default function DestinationsPage() {
             </Box>
           </Box>
         </Box>
-      </Box>
+      </PageContainer>
 
       <FeedItemDrawer item={openItem} city={activeCity} onClose={() => setOpenItem(null)} />
     </Box>

@@ -18,6 +18,7 @@ interface Props {
    *  destination view to avoid duplicating tours that were already mixed
    *  into the For You row. */
   excludeIds?: Set<string>;
+  headingLevel?: 'h2' | 'h3';
 }
 
 /** Viator bookable-tours row. Separate from the main home feed because the
@@ -30,6 +31,7 @@ export function ViatorRow({
   onCardClick,
   hideWhenEmpty,
   excludeIds,
+  headingLevel,
 }: Props) {
   const { data, isLoading, isError } = useViatorFeed(city);
   const all = (data?.viator_activities ?? []) as FeedItem[];
@@ -39,6 +41,7 @@ export function ViatorRow({
   return (
     <FeedRow
       title="Bookable tours"
+      headingLevel={headingLevel}
       items={items}
       isLoading={isLoading}
       activeItemId={activeItemId}
