@@ -125,7 +125,15 @@ export function Sheet({
           {description}
         </Box>
       )}
-      <Box data-sheet-scroll="true" sx={{ flex: 1, overflowY: 'auto' }}>{children}</Box>
+      <Box
+        data-sheet-scroll="true"
+        // overflowX must be explicit: with only overflowY set, CSS computes
+        // overflow-x to auto too, so any over-wide child (nowrap badge, long
+        // unbroken string) produced a horizontal scrollbar in every sheet.
+        sx={{ flex: 1, minWidth: 0, overflowY: 'auto', overflowX: 'hidden' }}
+      >
+        {children}
+      </Box>
     </Drawer>
   );
 }
