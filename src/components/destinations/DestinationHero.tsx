@@ -14,6 +14,7 @@ import { displayDestination } from '@/lib/cities/normalizeCity';
 import { isPreOptimizedImage } from '@/lib/imageSource';
 import { CityPickerPopover } from './CityPickerPopover';
 import type { DestinationInfo } from '@/types';
+import { Eyebrow } from '@/components/layout/Eyebrow';
 
 interface Props {
   city: string;
@@ -264,18 +265,7 @@ export function DestinationHero({
         }}
       >
         {country ? (
-          <Typography
-            sx={{
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: (t) => alpha(t.palette.common.white, 0.85),
-              textShadow: '0 1px 4px rgba(0,0,0,0.45)',
-            }}
-          >
-            {country}
-          </Typography>
+          <Eyebrow tone="inverse">{country}</Eyebrow>
         ) : null}
         {compact ? (
           <Typography

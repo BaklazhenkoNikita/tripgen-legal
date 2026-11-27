@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { destinations } from '@/data/destinations';
+import { Eyebrow } from '@/components/layout/Eyebrow';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -72,18 +73,9 @@ export default async function GuidePage({ params }: Props) {
             pb: 5,
           }}
         >
-          <Typography
-            sx={{
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: 'rgba(255,255,255,0.85)',
-              textShadow: '0 1px 4px rgba(0,0,0,0.45)',
-            }}
-          >
+          <Eyebrow tone="inverse">
             {dest.country} &middot; {dest.continent}
-          </Typography>
+          </Eyebrow>
           <Typography
             variant="h1"
             component="h1"
@@ -119,17 +111,7 @@ export default async function GuidePage({ params }: Props) {
           }}
         >
           <Box>
-            <Typography
-              sx={{
-                fontSize: 11,
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-                color: 'primary.dark',
-              }}
-            >
-              Live picks
-            </Typography>
+            <Eyebrow>Live picks</Eyebrow>
             <Typography sx={{ mt: 0.25, fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
               See what&apos;s on in {dest.city} right now — must-see spots, food, and events
             </Typography>

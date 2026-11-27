@@ -14,8 +14,9 @@ export interface EyebrowProps {
   /**
    * `brand` — terracotta (`primary.dark`, 6.2:1 on white): section eyebrows.
    * `neutral` — `text.secondary`: group labels (month headers, menus).
+   * `inverse` — white over photos (hero eyebrows), with a legibility shadow.
    */
-  tone?: 'brand' | 'neutral';
+  tone?: 'brand' | 'neutral' | 'inverse';
   component?: ElementType;
   sx?: SxProps<Theme>;
 }
@@ -38,7 +39,9 @@ export function Eyebrow({ children, icon: Icon, tone = 'brand', component = 'p',
           fontWeight: 700,
           letterSpacing: '0.08em',
           textTransform: 'uppercase',
-          color: tone === 'brand' ? 'primary.dark' : 'text.secondary',
+          color:
+            tone === 'brand' ? 'primary.dark' : tone === 'inverse' ? 'rgba(255,255,255,0.88)' : 'text.secondary',
+          ...(tone === 'inverse' ? { textShadow: '0 1px 4px rgba(0,0,0,0.45)' } : null),
         },
         // primary.dark is too dim on the dark background; main reads ~5.5:1.
         (t: Theme) => (tone === 'brand' ? t.applyStyles('dark', { color: t.palette.primary.main }) : {}),
