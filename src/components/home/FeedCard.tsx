@@ -1,8 +1,9 @@
 'use client';
 
 import { forwardRef, type KeyboardEvent, type MouseEvent } from 'react';
-import { Heart, Star } from 'lucide-react';
+import { Compass, Heart, Landmark, Sparkles, Star, Ticket, Utensils, type LucideIcon } from 'lucide-react';
 import type { FeedItem } from '@/hooks/useHomeFeed';
+import { entityLabel } from '@/lib/map/categoryColors';
 import { useShortlistAdd, useShortlistRemove, useShortlistIds } from '@/hooks/useShortlist';
 import { emitSignal } from '@/hooks/useSignals';
 import type { EntityType } from '@/types';
@@ -14,16 +15,26 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 import { tgShadow } from '@/theme/shadows';
-import { photoTextShadow, radii } from '@/theme/standards';
+import { photoTextShadow, radii, textScale } from '@/theme/standards';
 
 interface Props {
   item: FeedItem;
   onHover?: (id: string | null) => void;
   isActive?: boolean;
   onClick?: () => void;
-  /** 'rail' = fixed 288px (horizontal scroll rows). 'grid' = fluid 100% (vertical grids). */
+  /** 'rail' = fixed 288px (legacy flex rails). 'grid' = fluid 100% (grids, fitted rails). */
   variant?: 'rail' | 'grid';
+  /** Show the "Sight / Food / Tour" chip. Off in category rows whose title already says it. */
+  showTypeBadge?: boolean;
 }
+
+const ENTITY_ICONS: Record<string, LucideIcon> = {
+  exploration: Landmark,
+  activity: Sparkles,
+  restaurant: Utensils,
+  live_event: Ticket,
+  viator: Compass,
+};
 
 function mapEntityType(t: FeedItem['entity_type']): EntityType | null {
   if (t === 'activity') return 'activity';
@@ -33,7 +44,7 @@ function mapEntityType(t: FeedItem['entity_type']): EntityType | null {
 }
 
 export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
-  { item, onHover, isActive, onClick, variant = 'rail' },
+  { item, onHover, isActive, onClick, variant = 'rail', showTypeBadge = true },
   ref,
 ) {
   const title = cardTitle(item);
@@ -116,6 +127,7 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
         aspect="3/2"
         zoomOnHover
         gradient
+        fallbackIcon={ENTITY_ICONS[item.entity_type ?? '']}
         sizes={variant === 'grid' ? '(max-width: 600px) 100vw, 320px' : '288px'}
       />
       <Box
@@ -130,7 +142,7 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
           gap: 1,
         }}
       >
-        {tone ? (
+        {tone && showTypeBadge ? (
           <Box
             component="span"
             sx={{
@@ -157,8 +169,10 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
               size="small"
               sx={{
                 pointerEvents: 'auto',
-                height: 32,
-                width: 32,
+                height: 36,
+                width: 36,
+                // 44px hit area around the 36px visual.
+                '&::after': { content: '""', position: 'absolute', inset: -4 },
                 borderRadius: '50%',
                 border: '1px solid',
                 borderColor: 'divider',
@@ -188,7 +202,7 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
           position: 'absolute',
           insetInline: 0,
           bottom: 0,
-          px: 1.75,
+          px: 2,
           py: 1.5,
           color: 'common.white',
           display: 'flex',
@@ -200,9 +214,9 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
           <Typography
             component="h4"
             sx={{
-              fontSize: 15,
+              fontSize: '1rem',
               fontWeight: 600,
-              lineHeight: 1.25,
+              lineHeight: 1.3,
               color: 'common.white',
               display: '-webkit-box',
               WebkitLineClamp: 1,
@@ -216,8 +230,8 @@ export const FeedCard = forwardRef<HTMLDivElement, Props>(function FeedCard(
           {overlaySubtitle ? (
             <Typography
               sx={{
+                ...textScale.meta,
                 mt: 0.25,
-                fontSize: 12,
                 color: (t) => alpha(t.palette.common.white, 0.88),
                 display: '-webkit-box',
                 WebkitLineClamp: 1,
@@ -328,16 +342,6 @@ function entityTone(t: FeedItem['entity_type']) {
   }
 }
 
-function entityLabel(t: FeedItem['entity_type']): string {
-  switch (t) {
-    case 'activity': return 'Activity';
-    case 'restaurant': return 'Food';
-    case 'live_event': return 'Event';
-    case 'exploration': return 'Spot';
-    case 'viator': return 'Tour';
-    default: return 'Item';
-  }
-}
 
 function formatEventDate(iso: string): string {
   try {

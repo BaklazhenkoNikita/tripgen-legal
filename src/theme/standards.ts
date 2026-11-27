@@ -74,6 +74,10 @@ export const photoTextShadow = '0 1px 2px rgba(0,0,0,0.45)';
  */
 export const minTap = 44;
 
+/** Height of the sticky top AppBar (Navigation.tsx Toolbar). Sticky page
+ * chrome (trip tab row, map panel) offsets from this. */
+export const NAV_HEIGHT = 64;
+
 /**
  * Button hierarchy — one primary action per surface.
  * - `primary`   filled terracotta. Exactly ONE per screen/section (the main CTA).

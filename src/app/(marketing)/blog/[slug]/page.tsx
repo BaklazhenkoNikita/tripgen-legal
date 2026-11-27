@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { blogPosts } from '@/data/blogPosts';
 import { breadcrumbListJsonLd, stringifyJsonLd } from '@/lib/seo/jsonld';
+import { Eyebrow } from '@/components/layout/Eyebrow';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -87,18 +88,7 @@ export default async function BlogPostPage({ params }: Props) {
             pb: 4,
           }}
         >
-          <Typography
-            sx={{
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: 'rgba(255,255,255,0.85)',
-              textShadow: '0 1px 4px rgba(0,0,0,0.45)',
-            }}
-          >
-            {post.category}
-          </Typography>
+          <Eyebrow tone="inverse">{post.category}</Eyebrow>
           <Typography
             variant="h2"
             component="h1"

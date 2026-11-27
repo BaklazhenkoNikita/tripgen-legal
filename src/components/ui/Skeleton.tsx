@@ -4,6 +4,7 @@ import { type CSSProperties, type HTMLAttributes } from 'react';
 import MuiSkeleton from '@mui/material/Skeleton';
 import { alpha, type Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import { FITTED_COLUMNS, FITTED_GAP } from './HorizontalScrollRow';
 
 /**
  * Shared pulse style for route-level loading.tsx skeletons that mirror page
@@ -56,7 +57,39 @@ export function Skeleton({
   );
 }
 
-export function SkeletonRail({ count = 4, className }: { count?: number; className?: string }) {
+export function SkeletonRail({
+  count = 4,
+  className,
+  fitted = false,
+}: {
+  count?: number;
+  className?: string;
+  /** Match a `fitted` HorizontalScrollRow: container-sized 3:2 cards. */
+  fitted?: boolean;
+}) {
+  if (fitted) {
+    return (
+      <Box
+        className={className}
+        sx={{
+          display: 'grid',
+          gridAutoFlow: 'column',
+          gridAutoColumns: FITTED_COLUMNS,
+          gap: FITTED_GAP,
+          overflow: 'hidden',
+          py: 1,
+        }}
+      >
+        {Array.from({ length: count }).map((_, i) => (
+          <Skeleton
+            key={i}
+            variant="card"
+            style={{ width: '100%', aspectRatio: '3 / 2', animationDelay: `${i * 0.08}s` }}
+          />
+        ))}
+      </Box>
+    );
+  }
   return (
     <Box className={className} sx={{ display: 'flex', gap: 1.5, overflow: 'hidden' }}>
       {Array.from({ length: count }).map((_, i) => (

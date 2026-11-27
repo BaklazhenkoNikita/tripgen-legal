@@ -3,83 +3,56 @@
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { ChevronRight, Heart, MapPin, Sparkles, AlertTriangle, Plus } from 'lucide-react';
+import { ChevronRight, Heart, Sparkles, AlertTriangle, Plus } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
-import { useSearchHistory } from '@/hooks/useSearchHistory';
+import { useSearchHistory, type SearchHistoryItem } from '@/hooks/useSearchHistory';
+import { useCityHeroFallback } from '@/hooks/useCityHeroFallback';
 import { prefetchTripDetail } from '@/lib/query/prefetch';
+import { displayDestination } from '@/lib/cities/normalizeCity';
+import { formatDateRange, tripDayCount } from '@/lib/date';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Photo } from '@/components/ui/Photo';
 import { Skeleton } from '@/components/ui/Skeleton';
-
-interface TripRow {
-  search_id: string;
-  user_title?: string;
-  destination?: string;
-  is_favorite?: boolean;
-  created_at?: string;
-  parameters?: { destination?: string };
-  result_summary?: {
-    destination_display?: string;
-    thumbnail_image_url?: string;
-    date_range?: string;
-    total_days?: number;
-    total_activities?: number;
-  };
-}
+import { PageContainer } from '@/components/layout/PageContainer';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { Eyebrow } from '@/components/layout/Eyebrow';
+import { radii, textScale } from '@/theme/standards';
+import { HISTORY_PAGE_PY, TRIP_GRID_SX } from './tripGrid';
 
 export default function HistoryPage() {
   const { data: trips, isLoading, error } = useSearchHistory({ limit: 50 });
   const queryClient = useQueryClient();
 
-  const grouped = useMemo(() => groupByMonth((trips ?? []) as TripRow[]), [trips]);
+  const grouped = useMemo(() => groupByMonth(trips ?? []), [trips]);
+  const needsFallbackArt = useMemo(
+    () => (trips ?? []).some((t) => !t.thumbnail_image_url),
+    [trips],
+  );
+  const fallbackHero = useCityHeroFallback(needsFallbackArt);
 
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 896, px: { xs: 2, sm: 3 }, py: 5 }}>
-      <Box
-        component="header"
-        sx={{
-          mb: 4,
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'space-between',
-          gap: 1.5,
-        }}
-      >
-        <Box>
-          <Typography
-            component="h1"
-            sx={{
-              fontSize: '2.25rem',
-              fontWeight: 600,
-              letterSpacing: '-0.02em',
-              color: 'text.primary',
-            }}
-          >
-            My trips
-          </Typography>
-          <Typography sx={{ mt: 0.5, fontSize: 14, color: 'text.secondary' }}>
-            Itineraries you&apos;ve generated, kept, and refined.
-          </Typography>
-        </Box>
-        <Button asChild iconLeft={<Plus className="size-4" />}>
-          <Link href="/trip?new=1">New trip</Link>
-        </Button>
-      </Box>
+    <PageContainer width="wide" sx={{ py: HISTORY_PAGE_PY }}>
+      <PageHeader
+        title="My trips"
+        subtitle="Itineraries you've generated, kept, and refined."
+        actions={
+          <Button asChild iconLeft={<Plus className="size-4" />}>
+            <Link href="/trip?new=1">New trip</Link>
+          </Button>
+        }
+        sx={{ mb: { xs: 4, md: 5 } }}
+      />
 
       {isLoading ? (
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-            gap: 2.5,
-          }}
-        >
+        <Box sx={TRIP_GRID_SX}>
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} style={{ height: 268, width: '100%', borderRadius: 16, animationDelay: `${i * 0.08}s` }} />
+            <Skeleton
+              key={i}
+              style={{ aspectRatio: '1 / 1', width: '100%', borderRadius: 16, animationDelay: `${i * 0.08}s` }}
+            />
           ))}
         </Box>
       ) : null}
@@ -90,12 +63,13 @@ export default function HistoryPage() {
             display: 'flex',
             alignItems: 'flex-start',
             gap: 1,
-            borderRadius: 1.5,
+            borderRadius: radii.card,
             border: '1px solid',
             borderColor: alpha(t.palette.error.main, 0.3),
             bgcolor: alpha(t.palette.error.main, 0.1),
             p: 2,
-            fontSize: 14,
+            ...textScale.label,
+            fontWeight: 500,
             color: t.palette.error.dark,
           })}
         >
@@ -118,176 +92,149 @@ export default function HistoryPage() {
       ) : null}
 
       {trips && trips.length > 0 ? (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 4, md: 5 } }}>
           {grouped.map(({ key, label, rows }) => (
-            <Box component="section" key={key}>
-              <Typography
-                component="h2"
-                sx={{
-                  mb: 1.5,
-                  fontSize: 11,
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.18em',
-                  color: 'text.disabled',
-                }}
-              >
-                {label} <Box component="span" sx={{ color: 'text.secondary' }}>· {rows.length}</Box>
-              </Typography>
-              <Box
-                component="ul"
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-                  gap: 2.5,
-                  listStyle: 'none',
-                  p: 0,
-                  m: 0,
-                }}
-              >
-                {rows.map((trip) => {
-                  const summary = trip.result_summary;
-                  const params = trip.parameters;
-                  const displayName =
-                    trip.user_title ??
-                    summary?.destination_display ??
-                    params?.destination ??
-                    trip.destination ??
-                    'Untitled trip';
-                  const createdLabel = formatCreated(trip.created_at);
-
-                  return (
-                    <Box component="li" key={trip.search_id}>
-                      <Box
-                        component={Link}
-                        href={`/trip/${trip.search_id}`}
-                        onMouseEnter={() => prefetchTripDetail(queryClient, trip.search_id)}
-                        onFocus={() => prefetchTripDetail(queryClient, trip.search_id)}
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          height: '100%',
-                          borderRadius: 2,
-                          border: '1px solid',
-                          borderColor: 'divider',
-                          bgcolor: 'background.paper',
-                          overflow: 'hidden',
-                          textDecoration: 'none',
-                          transition: 'all 200ms ease',
-                          boxShadow: 'var(--tg-shadow-card)',
-                          '&:hover': {
-                            borderColor: 'text.disabled',
-                            boxShadow: 'var(--tg-shadow-card-hover)',
-                            transform: 'translateY(-2px)',
-                          },
-                          '&:hover .hero img.zoomable': { transform: 'scale(1.05)' },
-                          '&:hover .chev': { transform: 'translateX(2px)', color: 'primary.main' },
-                        }}
-                      >
-                        <Box className="hero" sx={{ position: 'relative' }}>
-                          {summary?.thumbnail_image_url ? (
-                            <Photo
-                              src={summary.thumbnail_image_url}
-                              alt={displayName}
-                              aspect="16/9"
-                              zoomOnHover
-                              sizes="(max-width: 600px) 100vw, 440px"
-                            />
-                          ) : (
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                aspectRatio: '16 / 9',
-                                width: '100%',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                background: (t) =>
-                                  `linear-gradient(135deg, ${alpha(t.palette.primary.main, 0.16)}, ${alpha(t.palette.primary.main, 0.06)})`,
-                                color: 'primary.main',
-                              }}
-                            >
-                              <MapPin className="size-8" aria-hidden />
-                            </Box>
-                          )}
-                          {trip.is_favorite ? (
-                            <Box
-                              aria-label="Favorite"
-                              sx={{
-                                position: 'absolute',
-                                top: 10,
-                                right: 10,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: 32,
-                                height: 32,
-                                borderRadius: '50%',
-                                bgcolor: (t) => alpha(t.palette.background.paper, 0.9),
-                                backdropFilter: 'blur(6px)',
-                                boxShadow: 'var(--tg-shadow-card)',
-                              }}
-                            >
-                              <Box
-                                component={Heart}
-                                sx={{ width: 15, height: 15, color: 'primary.main', fill: 'currentColor' }}
-                              />
-                            </Box>
-                          ) : null}
-                        </Box>
-
-                        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 1, p: 2 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Typography
-                              component="h3"
-                              sx={{
-                                minWidth: 0,
-                                flex: 1,
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                                fontSize: 18,
-                                fontWeight: 600,
-                                letterSpacing: '-0.01em',
-                                color: 'text.primary',
-                              }}
-                            >
-                              {displayName}
-                            </Typography>
-                            <Box
-                              component={ChevronRight}
-                              className="chev"
-                              aria-hidden
-                              sx={{ width: 18, height: 18, flexShrink: 0, color: 'text.disabled', transition: 'all 200ms' }}
-                            />
-                          </Box>
-
-                          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.75 }}>
-                            {summary?.date_range ? (
-                              <Badge tone="neutral" size="sm">{summary.date_range}</Badge>
-                            ) : null}
-                            {summary?.total_days ? (
-                              <Badge tone="accent" size="sm">{summary.total_days} {summary.total_days === 1 ? 'day' : 'days'}</Badge>
-                            ) : null}
-                            {summary?.total_activities != null ? (
-                              <Badge tone="neutral" size="sm">{summary.total_activities} activities</Badge>
-                            ) : null}
-                          </Box>
-
-                          {createdLabel ? (
-                            <Typography sx={{ mt: 'auto', pt: 0.5, fontSize: 12, color: 'text.disabled' }}>
-                              Created {createdLabel}
-                            </Typography>
-                          ) : null}
-                        </Box>
-                      </Box>
-                    </Box>
-                  );
-                })}
+            <Box component="section" key={key} aria-labelledby={`trips-${key}`}>
+              <Eyebrow tone="neutral" component="h2" sx={{ mb: 2 }}>
+                <span id={`trips-${key}`}>{label}</span>
+                <Box component="span" sx={{ fontWeight: 500 }}>
+                  · {rows.length}
+                </Box>
+              </Eyebrow>
+              <Box component="ul" sx={TRIP_GRID_SX}>
+                {rows.map((trip) => (
+                  <TripCard
+                    key={trip.search_id}
+                    trip={trip}
+                    fallbackHero={fallbackHero}
+                    onPrefetch={() => prefetchTripDetail(queryClient, trip.search_id)}
+                  />
+                ))}
               </Box>
             </Box>
           ))}
         </Box>
       ) : null}
+    </PageContainer>
+  );
+}
+
+function TripCard({
+  trip,
+  fallbackHero,
+  onPrefetch,
+}: {
+  trip: SearchHistoryItem;
+  fallbackHero: (city: string) => string | null;
+  onPrefetch: () => void;
+}) {
+  const place = displayDestination(trip.destination);
+  const title = trip.user_title || place.full || 'Untitled trip';
+  const cover = trip.thumbnail_image_url || (place.city ? fallbackHero(place.city) : null);
+  const dayCount = tripDayCount(trip.start_date, trip.end_date);
+  const meta = [
+    formatDateRange(trip.start_date, trip.end_date),
+    dayCount ? `${dayCount} ${dayCount === 1 ? 'day' : 'days'}` : null,
+    trip.activity_count ? `${trip.activity_count} ${trip.activity_count === 1 ? 'stop' : 'stops'}` : null,
+  ].filter(Boolean);
+  const createdLabel = formatCreated(trip.created_at);
+
+  return (
+    <Box component="li" sx={{ minWidth: 0 }}>
+      <Box
+        component={Link}
+        href={`/trip/${trip.search_id}`}
+        onMouseEnter={onPrefetch}
+        onFocus={onPrefetch}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          borderRadius: radii.card,
+          border: '1px solid',
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+          overflow: 'hidden',
+          textDecoration: 'none',
+          transition: 'box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease',
+          boxShadow: 'var(--tg-shadow-card)',
+          '&:hover': {
+            borderColor: 'text.disabled',
+            boxShadow: 'var(--tg-shadow-card-hover)',
+            transform: 'translateY(-2px)',
+          },
+          '&:hover .chev': { transform: 'translateX(2px)', color: 'primary.main' },
+        }}
+      >
+        <Box sx={{ position: 'relative' }}>
+          <Photo
+            src={cover}
+            alt={title}
+            aspect="3/2"
+            zoomOnHover
+            sizes="(max-width: 600px) 100vw, 320px"
+          />
+          {trip.is_favorite ? (
+            <Box
+              aria-label="Favorite"
+              sx={{
+                position: 'absolute',
+                top: 12,
+                right: 12,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                bgcolor: (t) => alpha(t.palette.background.paper, 0.92),
+                backdropFilter: 'blur(6px)',
+                boxShadow: 'var(--tg-shadow-card)',
+              }}
+            >
+              <Box component={Heart} sx={{ width: 16, height: 16, color: 'primary.main', fill: 'currentColor' }} />
+            </Box>
+          ) : null}
+        </Box>
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 0.5, p: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography
+              component="h3"
+              sx={{
+                ...textScale.title,
+                minWidth: 0,
+                flex: 1,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                color: 'text.primary',
+                m: 0,
+              }}
+            >
+              {title}
+            </Typography>
+            <Box
+              component={ChevronRight}
+              className="chev"
+              aria-hidden
+              sx={{ width: 18, height: 18, flexShrink: 0, color: 'text.disabled', transition: 'all 200ms' }}
+            />
+          </Box>
+
+          {meta.length > 0 ? (
+            <Typography sx={{ ...textScale.label, fontWeight: 500, color: 'text.secondary', m: 0 }}>
+              {meta.join(' · ')}
+            </Typography>
+          ) : null}
+
+          {createdLabel ? (
+            <Typography sx={{ ...textScale.meta, mt: 'auto', pt: 1, color: 'text.secondary' }}>
+              Created {createdLabel}
+            </Typography>
+          ) : null}
+        </Box>
+      </Box>
     </Box>
   );
 }
@@ -298,7 +245,7 @@ function formatCreated(iso?: string): string | null {
   if (Number.isNaN(date.getTime())) return null;
   const now = new Date();
   const sameYear = date.getFullYear() === now.getFullYear();
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     ...(sameYear ? {} : { year: 'numeric' }),
@@ -308,19 +255,17 @@ function formatCreated(iso?: string): string | null {
 interface Group {
   key: string;
   label: string;
-  rows: TripRow[];
+  rows: SearchHistoryItem[];
 }
 
-function groupByMonth(rows: TripRow[]): Group[] {
+function groupByMonth(rows: SearchHistoryItem[]): Group[] {
   const map = new Map<string, Group>();
   for (const r of rows) {
     const date = r.created_at ? new Date(r.created_at) : null;
-    const key = date && !Number.isNaN(date.getTime())
-      ? `${date.getFullYear()}-${date.getMonth()}`
-      : 'unknown';
-    const label = date && !Number.isNaN(date.getTime())
-      ? date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
-      : 'Earlier';
+    const valid = date && !Number.isNaN(date.getTime());
+    // Zero-padded month so "2026-10" sorts after "2026-09" (string compare).
+    const key = valid ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : '0000-00';
+    const label = valid ? date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Earlier';
     if (!map.has(key)) map.set(key, { key, label, rows: [] });
     map.get(key)!.rows.push(r);
   }

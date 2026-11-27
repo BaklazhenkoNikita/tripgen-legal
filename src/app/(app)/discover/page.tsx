@@ -15,6 +15,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Photo } from '@/components/ui/Photo';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { AskAISheet } from '@/components/chat/AskAISheet';
+import { Eyebrow } from '@/components/layout/Eyebrow';
 
 export default function DiscoverPage() {
   const { city } = useCity();
@@ -54,26 +55,9 @@ export default function DiscoverPage() {
   return (
     <Box sx={{ mx: 'auto', maxWidth: 896, px: { xs: 2, sm: 3 }, py: 5 }}>
       <Box component="header" sx={{ mb: 4 }}>
-        <Box
-          component="span"
-          sx={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 0.75,
-            borderRadius: 999,
-            bgcolor: (t) => alpha(t.palette.primary.main, 0.12),
-            px: 1.5,
-            py: 0.5,
-            fontSize: 11,
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.04em',
-            color: 'primary.main',
-          }}
-        >
-          <Sparkles className="size-3" aria-hidden />
+        <Eyebrow component="span" icon={Sparkles}>
           AI Discovery
-        </Box>
+        </Eyebrow>
         <Typography
           component="h1"
           sx={{

@@ -39,8 +39,10 @@ const lightShadows: Record<TgShadowKey, string> = {
   sheet:              '0 24px 48px rgba(34, 34, 34, 0.18)',
   toast:              '0 8px 24px rgba(34, 34, 34, 0.10)',
   tooltip:            '0 2px 6px rgba(0, 0, 0, 0.18)',
-  primaryButton:      '0 14px 32px rgba(196, 96, 58, 0.18)',
-  primaryButtonHover: '0 18px 40px rgba(154, 74, 45, 0.22)',
+  // Kept low: a deep drop made every filled CTA look like it floated off
+  // the page (e.g. "New trip" next to a heading).
+  primaryButton:      '0 2px 8px rgba(196, 96, 58, 0.18)',
+  primaryButtonHover: '0 6px 16px rgba(154, 74, 45, 0.22)',
   // Map glass chips (close button, place-count, legend pills): inset hairline
   // + low-opacity drop. Inset hairline reads on top of the blurred backdrop.
   mapOverlay:         'inset 0 0 0 1px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.10)',
@@ -62,8 +64,8 @@ const darkShadows: Record<TgShadowKey, string> = {
   toast:              '0 0 0 1px rgba(255, 255, 255, 0.06), 0 12px 28px rgba(0, 0, 0, 0.6)',
   tooltip:            '0 2px 6px rgba(0, 0, 0, 0.6)',
   // Slightly muted tint so the terracotta glow doesn't blow out on dark.
-  primaryButton:      '0 12px 28px rgba(196, 96, 58, 0.32)',
-  primaryButtonHover: '0 16px 36px rgba(196, 96, 58, 0.42)',
+  primaryButton:      '0 2px 8px rgba(196, 96, 58, 0.28)',
+  primaryButtonHover: '0 6px 16px rgba(196, 96, 58, 0.36)',
   mapOverlay:         'inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 4px 12px rgba(0, 0, 0, 0.5)',
   mapOverlaySmall:    'inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.5)',
   popup:              '0 8px 24px rgba(0, 0, 0, 0.6)',

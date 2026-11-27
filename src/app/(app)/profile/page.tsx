@@ -25,6 +25,7 @@ import { ProBadge } from '@/components/credits/ProBadge';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Dialog } from '@/components/ui/Dialog';
 import { useSubscriptionOptional } from '@/contexts/SubscriptionContext';
+import { Eyebrow } from '@/components/layout/Eyebrow';
 
 export default function ProfilePage() {
   return (
@@ -224,18 +225,7 @@ function ProfilePageInner() {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography
-            component="h2"
-            sx={{
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.04em',
-              color: 'text.disabled',
-            }}
-          >
-            Preferences
-          </Typography>
+          <Eyebrow tone="neutral" component="h2">Preferences</Eyebrow>
           {!editingPrefs ? (
             <Button
               variant="ghost"
@@ -305,18 +295,7 @@ function ProfilePageInner() {
         }}
       >
         <Box>
-          <Typography
-            component="h2"
-            sx={{
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.04em',
-              color: 'text.disabled',
-            }}
-          >
-            Appearance
-          </Typography>
+          <Eyebrow tone="neutral" component="h2">Appearance</Eyebrow>
           <Typography sx={{ mt: 0.5, fontSize: 14, color: 'text.secondary' }}>
             Light, dark, or follow your system.
           </Typography>
@@ -351,22 +330,7 @@ function ProfilePageInner() {
               p: 2.5,
             }}
           >
-            <Typography
-              component="h2"
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 1,
-                fontSize: 11,
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-                color: 'text.disabled',
-              }}
-            >
-              <Box component={Sparkles} aria-hidden sx={{ width: 12, height: 12, color: 'primary.main' }} />
-              Travel personality
-            </Typography>
+            <Eyebrow tone="neutral" component="h2" icon={Sparkles}>Travel personality</Eyebrow>
             <Typography sx={{ mt: 1, fontSize: 14, color: 'text.secondary', textTransform: 'capitalize' }}>{text}</Typography>
           </Box>
         );
@@ -383,18 +347,7 @@ function ProfilePageInner() {
           p: 2.5,
         }}
       >
-        <Typography
-          component="h2"
-          sx={{
-            fontSize: 11,
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.04em',
-            color: 'text.disabled',
-          }}
-        >
-          Data &amp; privacy
-        </Typography>
+        <Eyebrow tone="neutral" component="h2">Data &amp; privacy</Eyebrow>
         <Typography sx={{ mt: 1, fontSize: 14, color: 'text.secondary' }}>
           Download your trips, signals, and preferences as JSON, or delete your account permanently.
         </Typography>
@@ -517,18 +470,7 @@ function SubscriptionSection() {
     >
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
         <Box>
-          <Typography
-            component="h2"
-            sx={{
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.04em',
-              color: 'text.disabled',
-            }}
-          >
-            Subscription
-          </Typography>
+          <Eyebrow tone="neutral" component="h2">Subscription</Eyebrow>
           {isPro ? (
             <Typography sx={{ mt: 0.75, display: 'inline-flex', alignItems: 'center', gap: 1, fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
               <ProBadge size="sm" />

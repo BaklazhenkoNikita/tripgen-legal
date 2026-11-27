@@ -15,7 +15,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { alpha, type Theme } from '@mui/material/styles';
 import {
   Sparkles,
-  Calendar,
   Wallet,
   Compass,
   Users,
@@ -554,16 +553,9 @@ export function TripInputForm({
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
           fullWidth
+          // The browser draws its own picker icon; a second (start) icon
+          // made the field show two calendars.
           InputLabelProps={{ shrink: true }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Box component="span" sx={{ display: 'inline-flex', color: 'text.disabled' }}>
-                  <Calendar size={18} aria-hidden />
-                </Box>
-              </InputAdornment>
-            ),
-          }}
         />
         <TextField
           id="days"
@@ -583,30 +575,7 @@ export function TripInputForm({
       </Box>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-        <SectionHeading
-          icon={<Heart size={14} aria-hidden />}
-          action={
-            ACTIVITY_TYPES.length > INTERESTS_VISIBLE_BY_DEFAULT ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowAllInterests((v) => !v)}
-                iconRight={
-                  showAllInterests ? (
-                    <ChevronUp size={14} aria-hidden />
-                  ) : (
-                    <ChevronDown size={14} aria-hidden />
-                  )
-                }
-              >
-                {showAllInterests ? 'Show less' : 'Show more'}
-              </Button>
-            ) : undefined
-          }
-        >
-          Interests
-        </SectionHeading>
+        <SectionHeading icon={<Heart size={14} aria-hidden />}>Interests</SectionHeading>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
           {(showAllInterests ? ACTIVITY_TYPES : ACTIVITY_TYPES.slice(0, INTERESTS_VISIBLE_BY_DEFAULT)).map((t) => {
             const on = selectedTypes.includes(t.value);
@@ -621,15 +590,31 @@ export function TripInputForm({
               </ButtonBase>
             );
           })}
+          {ACTIVITY_TYPES.length > INTERESTS_VISIBLE_BY_DEFAULT ? (
+            <ButtonBase
+              type="button"
+              onClick={() => setShowAllInterests((v) => !v)}
+              aria-expanded={showAllInterests}
+              sx={{
+                ...pillChipSx(false),
+                borderStyle: 'dashed',
+                color: 'primary.main',
+                '&:hover': { color: 'primary.dark', borderColor: 'primary.main' },
+              }}
+            >
+              {showAllInterests
+                ? 'Show less'
+                : `+ ${ACTIVITY_TYPES.length - INTERESTS_VISIBLE_BY_DEFAULT} more`}
+            </ButtonBase>
+          ) : null}
         </Box>
       </Box>
 
-      <Box>
+      <Box sx={{ borderTop: 1, borderColor: 'divider', pt: 2 }}>
         <Button
           type="button"
           variant="ghost"
           size="md"
-          fullWidth
           onClick={() => setAdvancedOpen((v) => !v)}
           iconRight={
             advancedOpen ? (

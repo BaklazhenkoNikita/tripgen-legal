@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Box from '@mui/material/Box';
-import { Download, ChevronDown, FileText, Calendar, FileSpreadsheet } from 'lucide-react';
+import { Download, FileText, Calendar, FileSpreadsheet } from 'lucide-react';
 import { toast } from 'sonner';
 import { useExportTrip, type ExportFormat } from '@/hooks/useExport';
 import {
@@ -56,13 +56,13 @@ export function ExportMenu({ searchId, disabled }: Props) {
     <DropdownMenu>
       <DropdownTrigger asChild>
         <Button
-          variant="secondary"
-          size="sm"
-          iconLeft={<Download size={14} />}
-          iconRight={<ChevronDown size={14} />}
+          variant="outline"
+          size="icon"
+          aria-label="Export trip"
+          title="Export trip"
           disabled={disabled}
         >
-          Export
+          <Download size={16} aria-hidden />
         </Button>
       </DropdownTrigger>
       <DropdownContent>

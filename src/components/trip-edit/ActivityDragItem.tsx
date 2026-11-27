@@ -4,13 +4,14 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { alpha, type Theme } from '@mui/material/styles';
-import { ArrowRight, Clock, MapPin, Sparkles, Star, X } from 'lucide-react';
+import { ArrowRight, Clock, Sparkles, Star, X } from 'lucide-react';
 import { Draggable, type DraggableProvided } from '@hello-pangea/dnd';
 import type { TravelActivity } from '@/types';
 import { getActivityImageUrl } from '@/hooks/useActivityPhotos';
 import { Photo } from '@/components/ui/Photo';
 import { Badge } from '@/components/ui/Badge';
 import { tgShadow } from '@/theme/shadows';
+import { radii, textScale } from '@/theme/standards';
 
 interface Props {
   activity: TravelActivity;
@@ -45,10 +46,18 @@ export function ActivityDragItem({
 }: Props) {
   const imageUrl = getActivityImageUrl(activity, photoMap);
   const primaryCategory = activity.category?.[0];
-  const secondarySubtitle =
-    activity.category && activity.category.length > 1
-      ? activity.category.slice(0, 3).join(' · ')
-      : null;
+  const categoryLabel = primaryCategory ? humanizeCategory(primaryCategory) : null;
+  // Body meta line: duration first (it left the photo so the delete button
+  // no longer covers it), then the remaining categories / time of visit.
+  const extraCategories = (activity.category ?? []).slice(1, 3).map(humanizeCategory);
+  const metaParts = [
+    activity.duration ?? null,
+    ...(extraCategories.length > 0
+      ? extraCategories
+      : activity.time_of_visit
+        ? [humanizeCategory(activity.time_of_visit)]
+        : []),
+  ].filter((x): x is string => Boolean(x));
 
   // Card body shared by the draggable and read-only variants. `dragProps`
   // carries the ref + drag handle bindings when draggable; `isDragging`
@@ -67,7 +76,7 @@ export function ActivityDragItem({
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        borderRadius: 2,
+        borderRadius: radii.card,
         border: '1px solid',
         borderColor: 'divider',
         bgcolor: 'background.paper',
@@ -117,21 +126,21 @@ export function ActivityDragItem({
                 gap: 1,
               }}
             >
-              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, minWidth: 0 }}>
                 {stopNumber != null ? (
                   <Box
                     component="span"
                     aria-hidden
                     sx={{
+                      ...textScale.meta,
+                      fontWeight: 700,
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      width: 22,
-                      height: 22,
+                      width: 24,
+                      height: 24,
                       borderRadius: '50%',
                       flexShrink: 0,
-                      fontSize: 12,
-                      fontWeight: 700,
                       color: 'primary.contrastText',
                       bgcolor: 'primary.main',
                       boxShadow: (t: Theme) => tgShadow(t, 'markerLabel'),
@@ -140,27 +149,30 @@ export function ActivityDragItem({
                     {stopNumber}
                   </Box>
                 ) : null}
-                <Badge
-                  tone="activity"
-                  size="sm"
-                  iconLeft={<MapPin size={12} />}
-                >
-                  {primaryCategory ?? 'Activity'}
-                </Badge>
+                {categoryLabel ? (
+                  <Box
+                    component="span"
+                    sx={{
+                      ...textScale.meta,
+                      fontWeight: 600,
+                      px: 1,
+                      height: 24,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      minWidth: 0,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      borderRadius: 999,
+                      color: 'text.primary',
+                      bgcolor: (t: Theme) => alpha(t.palette.background.paper, 0.92),
+                      backdropFilter: 'blur(8px)',
+                    }}
+                  >
+                    {categoryLabel}
+                  </Box>
+                ) : null}
               </Box>
-              {activity.duration ? (
-                <Badge
-                  tone="neutral"
-                  size="sm"
-                  iconLeft={<Clock size={12} />}
-                  style={{
-                    backgroundColor: 'rgb(var(--tg-palette-background-paperChannel) / 0.92)',
-                    backdropFilter: 'blur(8px)',
-                  }}
-                >
-                  {activity.duration}
-                </Badge>
-              ) : null}
             </Box>
 
             {onDelete && (
@@ -172,11 +184,15 @@ export function ActivityDragItem({
                 }}
                 onMouseDown={(e) => e.stopPropagation()}
                 title="Remove activity"
+                aria-label={`Remove ${activity.name}`}
                 size="small"
                 sx={{
                   position: 'absolute',
                   top: 8,
                   right: 8,
+                  width: 32,
+                  height: 32,
+                  '&::after': { content: '""', position: 'absolute', inset: -6 },
                   opacity: { xs: 1, md: 0 },
                   transition: 'opacity 0.15s ease, background-color 0.15s ease',
                   bgcolor: (t: Theme) => alpha(t.palette.common.white, 0.95),
@@ -193,16 +209,16 @@ export function ActivityDragItem({
             )}
           </Box>
 
-          <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', gap: 0.5, p: 1.5 }}>
+          <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', gap: 0.5, p: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
               <Typography
                 component="h4"
                 sx={{
                   flex: 1,
+                  fontSize: '1rem',
                   fontWeight: 600,
-                  lineHeight: 1.25,
+                  lineHeight: 1.3,
                   color: 'text.primary',
-                  fontSize: 14,
                   m: 0,
                   display: '-webkit-box',
                   WebkitBoxOrient: 'vertical',
@@ -236,19 +252,31 @@ export function ActivityDragItem({
                 ) : null}
               </Box>
             </Box>
-            {secondarySubtitle ? (
-              <Typography sx={{ fontSize: 11, color: 'text.disabled' }}>
-                {secondarySubtitle}
-              </Typography>
-            ) : activity.time_of_visit ? (
-              <Typography sx={{ fontSize: 11, color: 'text.disabled', textTransform: 'capitalize' }}>
-                {activity.time_of_visit}
+            {metaParts.length > 0 ? (
+              <Typography
+                component="div"
+                sx={{
+                  ...textScale.meta,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                  color: 'text.secondary',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {activity.duration ? <Clock size={12} aria-hidden style={{ flexShrink: 0 }} /> : null}
+                <Box component="span" sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {metaParts.join(' · ')}
+                </Box>
               </Typography>
             ) : null}
             {activity.description ? (
               <Typography
                 sx={{
-                  fontSize: 12,
+                  ...textScale.label,
+                  fontWeight: 400,
+                  mt: 0.5,
                   color: 'text.secondary',
                   display: '-webkit-box',
                   WebkitBoxOrient: 'vertical',
@@ -266,11 +294,11 @@ export function ActivityDragItem({
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.75,
-                px: 1.5,
-                py: 0.75,
+                px: 2,
+                py: 1,
                 borderTop: '1px solid',
                 borderColor: 'divider',
-                fontSize: 11,
+                ...textScale.meta,
                 fontWeight: 600,
                 color: (t: Theme) => t.palette.route.main,
               }}
@@ -291,4 +319,10 @@ export function ActivityDragItem({
       {(provided, snapshot) => renderCard(provided, snapshot.isDragging)}
     </Draggable>
   );
+}
+
+/** "street_food" / "hiking" → "Street food" / "Hiking". */
+function humanizeCategory(raw: string): string {
+  const text = raw.replace(/[_-]+/g, ' ').trim();
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }

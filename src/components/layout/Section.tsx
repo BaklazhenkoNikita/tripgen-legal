@@ -8,8 +8,10 @@ import Box from '@mui/material/Box';
  * - wide:    card grids, nav/footer, hero (1280)
  * - content: mixed text + media layouts (1120)
  * - prose:   long-form reading measure (768)
+ * - workspace: map + itinerary tool surfaces (1440)
  */
 export const CONTAINER_WIDTHS = {
+  workspace: 1440,
   wide: 1280,
   content: 1120,
   prose: 768,

@@ -8,6 +8,7 @@ import Collapse from '@mui/material/Collapse';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import type { DestinationInfo } from '@/types';
+import { Eyebrow } from '@/components/layout/Eyebrow';
 
 interface Props {
   city: string;
@@ -275,19 +276,7 @@ function SectionTitle({ children }: { children: ReactNode }) {
 
 function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <Typography
-      component="h3"
-      sx={{
-        m: 0,
-        fontSize: '0.6875rem',
-        fontWeight: 600,
-        textTransform: 'uppercase',
-        letterSpacing: '0.12em',
-        color: 'primary.dark',
-      }}
-    >
-      {children}
-    </Typography>
+    <Eyebrow component="h3">{children}</Eyebrow>
   );
 }
 

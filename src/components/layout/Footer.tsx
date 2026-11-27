@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { ChevronDown } from 'lucide-react';
+import { Eyebrow } from '@/components/layout/Eyebrow';
 
 type FooterLink = { label: string; href: string; external?: boolean };
 
@@ -231,19 +232,9 @@ export function Footer() {
 
             {footerLinks.map((group) => (
               <Box key={group.title}>
-                <Typography
-                  component="h3"
-                  sx={{
-                    m: 0,
-                    fontSize: '0.6875rem',
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
-                    color: 'text.disabled',
-                  }}
-                >
+                <Eyebrow tone="neutral" component="h3">
                   {group.title}
-                </Typography>
+                </Eyebrow>
                 <Stack component="ul" sx={{ listStyle: 'none', m: 0, mt: 1.5, p: 0 }} spacing={1.25}>
                   {group.links.map((link) => (
                     <Box component="li" key={link.href}>

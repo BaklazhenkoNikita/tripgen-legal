@@ -12,6 +12,7 @@ import { HorizontalScrollRow } from '@/components/ui/HorizontalScrollRow';
 import { Hero } from '@/components/marketing/Hero';
 import { Section } from '@/components/layout/Section';
 import { textScale } from '@/theme/standards';
+import { Eyebrow } from '@/components/layout/Eyebrow';
 
 export const metadata: Metadata = {
   title: 'Periplo — AI Travel Planner',
@@ -319,18 +320,7 @@ export default function LandingPage() {
       {/* MCP connector callout (legal-merge addition) */}
       <Section width="prose" containerSx={{ textAlign: 'center' }}>
         <Box>
-          <Typography
-            component="span"
-            sx={{
-              ...textScale.meta,
-              fontWeight: 700,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'primary.main',
-            }}
-          >
-            New
-          </Typography>
+          <Eyebrow component="span">New</Eyebrow>
           <Typography variant="h3" component="h3" sx={{ mt: 1.5, color: 'text.primary' }}>
             Connect Periplo to Claude or ChatGPT
           </Typography>

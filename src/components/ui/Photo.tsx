@@ -1,7 +1,7 @@
 'use client';
 
 import Image, { type ImageProps } from 'next/image';
-import { ImageOff } from 'lucide-react';
+import { Image as ImageIcon, type LucideIcon } from 'lucide-react';
 import Box from '@mui/material/Box';
 import { isPreOptimizedImage } from '@/lib/imageSource';
 import { markImageBroken, useOrderedImages } from '@/lib/brokenImages';
@@ -25,6 +25,8 @@ export interface PhotoProps extends Omit<ImageProps, 'src' | 'alt' | 'width' | '
   zoomOnHover?: boolean;
   /** Sizing hint for next/image (defaults are reasonable for cards). */
   sizes?: string;
+  /** Icon on the no-photo placeholder (e.g. the item's category icon). */
+  fallbackIcon?: LucideIcon;
 }
 
 const radiusMap = { none: 0, sm: 1, md: 1.5, lg: 2 } as const;
@@ -41,6 +43,7 @@ export function Photo({
   sizes = '(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw',
   priority,
   onError,
+  fallbackIcon: FallbackIcon = ImageIcon,
   ...rest
 }: PhotoProps) {
   const { current } = useOrderedImages(typeof src === 'string' || src == null ? [src] : src);
@@ -83,23 +86,23 @@ export function Photo({
         />
       ) : (
         <Box
+          aria-hidden
           sx={(t) => ({
             position: 'absolute',
             inset: 0,
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 0.5,
-            color: 'text.disabled',
-            background:
-              t.palette.mode === 'dark'
-                ? `linear-gradient(135deg, ${t.palette.primary.dark} 0%, ${t.palette.primary.main} 100%)`
-                : `linear-gradient(135deg, ${t.palette.primary.main} 0%, ${t.palette.primary.light} 100%)`,
+            // Deep warm neutral, not brand terracotta: reads as "no photo"
+            // rather than an error, and keeps white overlay text legible.
+            background: 'linear-gradient(135deg, #4A403A 0%, #6B5D54 100%)',
+            ...t.applyStyles('dark', {
+              background: 'linear-gradient(135deg, #2A2522 0%, #3A3330 100%)',
+            }),
           })}
         >
-          <Box sx={{ color: 'common.white', opacity: 0.85, display: 'inline-flex' }}>
-            <ImageOff size={20} aria-hidden />
+          <Box sx={{ color: 'common.white', opacity: 0.5, display: 'inline-flex' }}>
+            <FallbackIcon size={28} strokeWidth={1.5} aria-hidden />
           </Box>
         </Box>
       )}

@@ -4,6 +4,7 @@ import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import { alpha, type Theme } from '@mui/material/styles';
 import { tgShadow } from '@/theme/shadows';
+import { radii } from '@/theme/standards';
 
 type CardElevation = 'flat' | 'raised' | 'floating';
 
@@ -49,7 +50,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
         {
           position: 'relative',
           overflow: 'hidden',
-          borderRadius: 1, // 8px via theme.shape.borderRadius
+          borderRadius: radii.card, // 16px — matches hand-built cards
           textAlign: 'left',
           transition: 'all 0.2s ease',
         },

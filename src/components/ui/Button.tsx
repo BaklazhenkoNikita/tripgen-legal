@@ -49,6 +49,20 @@ const muiVariantFor = (
   }
 };
 
+/** Icon buttons bypass MUI's Button variants; mirror the bordered ones so an
+ *  icon-only action sits flush with its labelled outline siblings. */
+const iconVariantStyle = (v: ButtonVariant) =>
+  v === 'outline' || v === 'secondary'
+    ? {
+        border: '1px solid',
+        borderColor: 'divider',
+        color: 'text.primary',
+        '&:hover': { bgcolor: 'action.hover', borderColor: 'text.disabled' },
+      }
+    : v === 'ghost'
+      ? { color: 'text.secondary' }
+      : {};
+
 const sizeStyle = (s: ButtonSize) => {
   switch (s) {
     case 'xs':       return { height: 28, fontSize: 12, px: 1.25 };
@@ -93,7 +107,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         type={type ?? 'button'}
         disabled={disabled || loading}
         className={className}
-        sx={sizeStyle(size)}
+        sx={{ ...sizeStyle(size), ...iconVariantStyle(variant) }}
         {...(rest as Record<string, unknown>)}
       >
         {loading ? <CircularProgress size={16} thickness={4} /> : iconLeft ?? children ?? iconRight}

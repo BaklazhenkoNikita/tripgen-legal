@@ -3,59 +3,64 @@ export function normalizeCity(raw: string): string {
   return raw.trim().toLowerCase().replace(/\s*\/\s*/g, '-');
 }
 
-// Joining words that stay lowercase mid-name ("Rio de Janeiro",
-// "Frankfurt am Main", "Stoke-on-Trent", "Newcastle upon Tyne"). The first
-// word is always capitalised ("La Paz", "Den Haag", "Los Angeles").
-const LOWERCASE_PARTICLES = new Set([
-  'am',
-  'da',
-  'das',
-  'de',
-  'del',
-  'della',
-  'der',
-  'des',
-  'di',
-  'do',
-  'dos',
-  'du',
-  'en',
-  'la',
-  'le',
-  'les',
-  'of',
-  'on',
-  'sur',
-  'upon',
+/**
+ * Connector words that stay lowercase mid-name ("Rio de Janeiro",
+ * "Aix-en-Provence", "Frankfurt am Main", "Stoke-on-Trent"). Never applied to
+ * the first word of a segment, so "La Paz" / "Le Havre" keep their capital.
+ */
+const LOWER_PARTICLES = new Set([
+  'am', 'an', 'and', 'da', 'das', 'de', 'del', 'della', 'der', 'des', 'di', 'do',
+  'dos', 'du', 'en', 'im', 'la', 'le', 'les', 'of', 'on', 'sur', 'the', 'upon', 'y',
 ]);
 
-const HAS_UPPERCASE = /\p{Lu}/u;
+const SEPARATOR = /^[\s,\-–/]+$/;
 
 /**
  * Display formatter for city / place names typed by users or stored as
  * lowercase lookup keys ("taipei" → "Taipei", "rio de janeiro" →
  * "Rio de Janeiro", "zürich" → "Zürich").
  *
- * Only rewrites input with NO uppercase letters — anything already cased
- * ("McLaren Vale", "Xi'an", "NYC") is trusted and returned as-is (trimmed,
- * whitespace collapsed), so curated names are never mangled.
+ * Title-cases words that were typed all-lowercase and leaves authored casing
+ * alone, so "taipei, Taiwan" → "Taipei, Taiwan" while "USA", "NYC", "Xi'an"
+ * and "McLaren Vale" survive intact.
  */
 export function displayPlaceName(raw: string | null | undefined): string {
   if (!raw) return '';
-  const cleaned = raw.trim().replace(/\s+/g, ' ');
-  if (!cleaned || HAS_UPPERCASE.test(cleaned)) return cleaned;
-  let wordIndex = 0;
-  return cleaned
-    .split(/(\s+|-)/)
+  let segmentStart = true;
+  return raw
+    .trim()
+    .replace(/\s+/g, ' ')
+    .split(/([\s,\-–/]+)/)
     .map((part) => {
-      if (part === ' ' || part === '-' || part.length === 0) return part;
-      const isFirst = wordIndex === 0;
-      wordIndex += 1;
-      if (!isFirst && LOWERCASE_PARTICLES.has(part)) return part;
-      return part.charAt(0).toLocaleUpperCase() + part.slice(1);
+      if (part === '' || SEPARATOR.test(part)) {
+        if (part.includes(',')) segmentStart = true;
+        return part;
+      }
+      const isFirst = segmentStart;
+      segmentStart = false;
+      if (part !== part.toLowerCase()) return part;
+      if (!isFirst && LOWER_PARTICLES.has(part)) return part;
+      return part.charAt(0).toUpperCase() + part.slice(1);
     })
     .join('');
 }
 
-/** @deprecated alias — use `displayPlaceName`. Kept for existing imports. */
+/** Alias of `displayPlaceName`, kept for existing imports. */
 export const formatPlaceName = displayPlaceName;
+
+export interface DestinationDisplay {
+  /** First comma segment, e.g. "Taipei". */
+  city: string;
+  /** Last comma segment when there is more than one, e.g. "Taiwan". */
+  country: string | null;
+  /** The whole cased string, e.g. "Taipei, Taiwan". */
+  full: string;
+}
+
+/** Splits a free-text destination ("taipei, Taiwan") into cased display parts. */
+export function displayDestination(raw: string | null | undefined): DestinationDisplay {
+  const full = displayPlaceName(raw);
+  const segments = full.split(',').map((s) => s.trim()).filter(Boolean);
+  if (segments.length <= 1) return { city: full, country: null, full };
+  return { city: segments[0], country: segments[segments.length - 1], full };
+}

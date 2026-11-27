@@ -1,11 +1,12 @@
 'use client';
 
 import Box from '@mui/material/Box';
+import { CONTAINER_WIDTHS } from '@/components/layout/Section';
 import { skeletonPulseSx } from '@/components/ui/Skeleton';
 
 export default function ExploreLoading() {
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 1320, px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
+    <Box sx={{ width: '100%', mx: 'auto', maxWidth: CONTAINER_WIDTHS.wide, px: { xs: 2, sm: 3 }, py: 4 }}>
       <Box
         sx={{
           height: 40,
