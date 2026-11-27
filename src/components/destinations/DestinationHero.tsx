@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
@@ -10,6 +10,7 @@ import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCity } from '@/contexts';
 import { useRecentDestinations } from '@/hooks/useRecentDestinations';
 import { destinationSlug } from '@/lib/destinationSlug';
+import { displayDestination } from '@/lib/cities/normalizeCity';
 import { isPreOptimizedImage } from '@/lib/imageSource';
 import { CityPickerPopover } from './CityPickerPopover';
 import type { DestinationInfo } from '@/types';
@@ -19,6 +20,14 @@ interface Props {
   info?: DestinationInfo | null;
   isLoading?: boolean;
   fallbackImage?: string | null;
+  /**
+   * `compact` — trip workspace banner: 200/240px tall, static title (no city
+   * picker), city-only title with the country as eyebrow. `default` — the
+   * full explore hero with the city picker.
+   */
+  variant?: 'default' | 'compact';
+  /** Bottom-right slot (compact), e.g. the trip's dates/budget band. */
+  trailing?: ReactNode;
 }
 
 const SWIPE_THRESHOLD = 40;
@@ -38,9 +47,14 @@ export function DestinationHero({
   city,
   info,
   fallbackImage,
+  variant = 'default',
+  trailing,
 }: Props) {
-  const country = info?.country;
-  const altText = `${city}${country ? `, ${country}` : ''}`;
+  const compact = variant === 'compact';
+  const place = displayDestination(city);
+  const country = info?.country ?? (compact ? place.country : undefined);
+  const titleText = compact ? place.city : city;
+  const altText = `${titleText}${country ? `, ${country}` : ''}`;
 
   const photos = useMemo(() => {
     const fromInfo = (info?.images ?? [])
@@ -118,7 +132,7 @@ export function DestinationHero({
         position: 'relative',
         overflow: 'hidden',
         borderRadius: 3,
-        height: { xs: 280, md: 400 },
+        height: compact ? { xs: 200, md: 240 } : { xs: 280, md: 400 },
         bgcolor: 'action.hover',
         outline: 'none',
         // Neutral fallback when there is no image at all.
@@ -222,7 +236,7 @@ export function DestinationHero({
         </>
       ) : null}
 
-      {/* Bottom-left content stack. */}
+      {/* Bottom content: title stack left, optional trailing slot right. */}
       <Box
         sx={{
           position: 'absolute',
@@ -231,11 +245,21 @@ export function DestinationHero({
           bottom: 0,
           zIndex: 2,
           display: 'flex',
-          flexDirection: 'column',
-          gap: 1,
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'flex-start', sm: 'flex-end' },
+          justifyContent: 'space-between',
+          gap: 2,
           p: { xs: 2.5, sm: 3 },
           // Reserve room for the dot strip.
           pb: hasMany ? { xs: 4.5, sm: 5 } : { xs: 2.5, sm: 3 },
+        }}
+      >
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+          minWidth: 0,
           maxWidth: 720,
         }}
       >
@@ -253,6 +277,22 @@ export function DestinationHero({
             {country}
           </Typography>
         ) : null}
+        {compact ? (
+          <Typography
+            component="h1"
+            sx={{
+              fontSize: { xs: 28, sm: 36 },
+              fontWeight: 700,
+              color: 'common.white',
+              lineHeight: 1.12,
+              letterSpacing: '-0.02em',
+              textShadow: '0 2px 12px rgba(0,0,0,0.5)',
+              m: 0,
+            }}
+          >
+            {titleText}
+          </Typography>
+        ) : (
         <Box
           component="button"
           ref={triggerRef}
@@ -322,7 +362,9 @@ export function DestinationHero({
             <ChevronDown size={22} />
           </Box>
         </Box>
+        )}
 
+        {compact ? null : (
         <CityPickerPopover
           open={pickerOpen}
           anchorEl={triggerRef.current}
@@ -330,6 +372,7 @@ export function DestinationHero({
           onPick={onPickCity}
           selectedCity={activeCity ?? city}
         />
+        )}
 
         {facts.length > 0 ? (
           <Box
@@ -366,6 +409,8 @@ export function DestinationHero({
           </Box>
         ) : null}
 
+      </Box>
+      {trailing ? <Box sx={{ flexShrink: 0, maxWidth: '100%' }}>{trailing}</Box> : null}
       </Box>
     </Box>
   );

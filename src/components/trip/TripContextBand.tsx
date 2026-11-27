@@ -5,6 +5,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 import { Calendar, Coins, Pencil } from 'lucide-react';
+import { formatDateRange } from '@/lib/date';
 
 interface Props {
   startDate?: string;
@@ -144,16 +145,3 @@ function Slot({
   );
 }
 
-function formatDateRange(start?: string, end?: string): string | null {
-  if (!start && !end) return null;
-  const fmt = (s?: string) => {
-    if (!s) return '';
-    const d = new Date(s);
-    if (Number.isNaN(d.getTime())) return s;
-    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-  };
-  const a = fmt(start);
-  const b = fmt(end);
-  if (a && b) return `${a} – ${b}`;
-  return a || b || null;
-}

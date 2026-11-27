@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { displayDestination } from '@/lib/cities/normalizeCity';
+import { textScale } from '@/theme/standards';
 import { useAuth } from '@clerk/nextjs';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -39,7 +42,6 @@ interface Props {
 
 export function TripDetailClient({ searchId, initialDestination }: Props) {
   const { userId } = useAuth();
-  const [activeDayNumber, setActiveDayNumber] = useState<number | null>(null);
   const [collabOpen, setCollabOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const {
@@ -67,7 +69,7 @@ export function TripDetailClient({ searchId, initialDestination }: Props) {
     if (error) setActiveTripId(null);
   }, [error, setActiveTripId]);
   const { data: photoMap } = useActivityPhotosBatch(activityPool, destination, restaurants);
-  const { reorganize, surpriseDay } = useTripMutations({
+  const { reorganize } = useTripMutations({
     searchId,
     tripData,
     setTripData,
@@ -223,31 +225,22 @@ export function TripDetailClient({ searchId, initialDestination }: Props) {
       onOpenShare={() => setCollabOpen(true)}
       onOpenChat={() => setChatOpen(true)}
       onReorganize={() => reorganize()}
-      onSurpriseDay={activeDayNumber ? () => surpriseDay(activeDayNumber) : undefined}
-      activeDayNumber={activeDayNumber}
     />
   );
 
   return (
-    <Box sx={{ mx: 'auto', maxWidth: 1440, px: { xs: 2, sm: 3 }, py: 3 }}>
+    <PageContainer width="workspace" sx={{ pt: 2, pb: { xs: 3, md: 4 } }}>
       <Box
-        sx={{
-          mb: 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-        }}
+        component="nav"
+        aria-label="Breadcrumb"
+        sx={{ ...textScale.label, fontWeight: 500, mb: 1.5, color: 'text.secondary' }}
       >
-        <Box component="nav" sx={{ fontSize: 14, color: 'text.secondary' }}>
-          <Box component={Link} href="/trip?new=1" sx={breadcrumbLinkSx}>
-            Plan a trip
-          </Box>
-          <Box component="span" sx={{ mx: 1 }}>/</Box>
-          <Box component={Link} href="/history" sx={breadcrumbLinkSx}>
-            My Trips
-          </Box>
-          <Box component="span" sx={{ mx: 1 }}>/</Box>
-          <Box component="span" sx={{ color: 'text.primary' }}>{destination}</Box>
+        <Box component={Link} href="/history" sx={breadcrumbLinkSx}>
+          My Trips
+        </Box>
+        <Box component="span" aria-hidden sx={{ mx: 1 }}>/</Box>
+        <Box component="span" aria-current="page" sx={{ color: 'text.primary' }}>
+          {displayDestination(destination).full}
         </Box>
       </Box>
 
@@ -271,11 +264,10 @@ export function TripDetailClient({ searchId, initialDestination }: Props) {
         setTripData={setTripData}
         photoMap={photoMap}
         toolbar={toolbar}
-        onActiveDayChange={setActiveDayNumber}
         canEdit={canEdit}
         viewerBanner
         onRequestEditAccess={() => setCollabOpen(true)}
       />
-    </Box>
+    </PageContainer>
   );
 }

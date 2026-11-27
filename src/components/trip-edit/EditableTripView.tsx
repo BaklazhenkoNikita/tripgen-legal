@@ -8,11 +8,12 @@ import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
 import { alpha, type Theme } from '@mui/material/styles';
 import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
-import { ChevronDown, Eye, Utensils } from 'lucide-react';
+import { ChevronDown, Eye, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
 import type { TravelData, TravelActivity } from '@/types';
 import { useTripMutations } from '@/hooks/useTripMutations';
 import { useDestinationInfo } from '@/hooks/useDestinationInfo';
-import { DragDropDay } from './DragDropDay';
+import { DAY_TITLE_SX, DragDropDay } from './DragDropDay';
 import { DayTabs } from './DayTabs';
 import { AddDayButton } from './AddDayButton';
 import { AddActivityToDayPicker } from './AddActivityToDayPicker';
@@ -25,8 +26,17 @@ import { RestaurantCard } from '../trip/RestaurantCard';
 import { Button } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
 import { DestinationHero } from '../destinations/DestinationHero';
-import { CityOverviewIntro, CityOverviewDetails } from '../destinations/CityOverview';
-import { WeatherForecastStrip } from '../destinations/WeatherForecastStrip';
+import { CityOverviewDetails } from '../destinations/CityOverview';
+import { TripAboutStrip } from '../trip/TripAboutStrip';
+import { useTripWeather } from '@/hooks/useTripWeather';
+import { displayDestination } from '@/lib/cities/normalizeCity';
+import { NAV_HEIGHT, textScale } from '@/theme/standards';
+
+/** Sticky day-tabs row height (44px pills + 8px padding each side). */
+const TAB_ROW_HEIGHT = 60;
+/** Map panel sticks just below the nav + tab row. */
+const MAP_STICKY_TOP = NAV_HEIGHT + TAB_ROW_HEIGHT + 16;
+
 import { destinationSlug } from '@/lib/destinationSlug';
 
 interface Props {
@@ -76,6 +86,8 @@ export function EditableTripView({
     dayNumber: number;
   } | null>(null);
   const [overviewOpen, setOverviewOpen] = useState(false);
+  const [suggestDay, setSuggestDay] = useState<number | null>(null);
+  const [suggestRunning, setSuggestRunning] = useState(false);
   const overviewId = useId();
 
   const destination = tripData.destination;
@@ -261,116 +273,75 @@ export function EditableTripView({
   const dayCounts = useMemo(() => days.map((d) => d.activities.length), [days]);
 
   const exploreHref = `/explore/${destinationSlug(destination)}`;
+  const place = displayDestination(destination);
+  const weather = useTripWeather(destination, tripData.start_date, tripData.total_trip_days);
 
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Box sx={{ position: 'relative' }}>
-        <DestinationHero
-          city={destination}
-          info={info}
-          isLoading={infoLoading}
-        />
-        <Box
-          sx={{
-            position: 'absolute',
-            top: { xs: 12, sm: 16 },
-            right: { xs: 12, sm: 16 },
-            zIndex: 3,
-            maxWidth: 'calc(100% - 24px)',
-          }}
-        >
-          <TripContextBand
-            startDate={tripData.start_date}
-            endDate={tripData.end_date}
-            durationDays={tripData.total_trip_days}
-            budget={tripData.budget}
-          />
-        </Box>
-      </Box>
+  // Map day pills drive the tabs too, so the map and the itinerary can't show
+  // different days. "All days" / "Restaurants" leave the focused tab alone.
+  const handleMapFilterChange = useCallback(
+    (next: MapFilter) => {
+      setMapFilter(next);
+      if (next.kind === 'day') {
+        const idx = days.findIndex((d, i) => (d.day_number ?? i + 1) === next.dayNumber);
+        if (idx >= 0) setActiveDayIndex(idx);
+      }
+    },
+    [days],
+  );
 
+  const runSuggestAlternatives = useCallback(async () => {
+    if (suggestDay == null) return;
+    setSuggestRunning(true);
+    try {
+      await mutations.surpriseDay(suggestDay);
+      toast.success(`Day ${suggestDay} refreshed with new picks.`);
+    } catch (err) {
+      toast.error(err instanceof Error ? `Couldn't complete: ${err.message}` : "Couldn't complete.");
+    } finally {
+      setSuggestRunning(false);
+      setSuggestDay(null);
+    }
+  }, [suggestDay, mutations]);
+
+  const dayWeather = activeDay?.date ? weather.byDate.get(activeDay.date.slice(0, 10)) ?? null : null;
+
+  // Tabs + trip actions share one row that sticks under the nav on md+, so
+  // switching days and the trip actions stay in reach while scrolling.
+  const workspace = (
+    <>
       <Box
         sx={{
-          display: 'grid',
-          gap: 2,
-          gridTemplateColumns: {
-            xs: 'minmax(0, 1fr)',
-            md: 'minmax(0, 3fr) minmax(0, 2fr)',
-          },
-          alignItems: 'stretch',
-          mt: 2.5,
+          position: { md: 'sticky' },
+          top: { md: NAV_HEIGHT },
+          zIndex: 5,
+          height: { md: TAB_ROW_HEIGHT },
+          display: 'flex',
+          flexWrap: { xs: 'wrap', md: 'nowrap' },
+          alignItems: 'center',
+          gap: { xs: 1.5, md: 2 },
+          py: { xs: 1, md: 0 },
+          bgcolor: 'background.default',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
         }}
       >
-        <Box sx={{ minWidth: 0, display: 'flex', '& > *': { width: '100%' } }}>
-          <CityOverviewIntro
-            key={destination}
-            city={destination}
-            info={info}
-            open={overviewOpen}
-            onToggle={() => setOverviewOpen((v) => !v)}
-            controlsId={overviewId}
-            fill
+        <Box sx={{ flex: '1 1 320px', minWidth: 0 }}>
+          <DayTabs
+            days={days}
+            activeIndex={safeDayIndex}
+            onSelect={setActiveDayIndex}
+            counts={dayCounts}
+            droppable={canEdit}
           />
         </Box>
-
-        <Box sx={{ minWidth: 0, display: 'flex', '& > *': { width: '100%' } }}>
-          <WeatherForecastStrip
-            location={destination}
-            startDate={tripData.start_date}
-            numDays={tripData.total_trip_days}
-          />
-        </Box>
+        {canEdit ? toolbar : null}
       </Box>
-
-      <CityOverviewDetails
-        key={`${destination}-details`}
-        city={destination}
-        info={info}
-        open={overviewOpen}
-        controlsId={overviewId}
-      />
-
-      {canEdit ? (
-        toolbar
-      ) : viewerBanner ? (
-        <Box
-          role="status"
-          sx={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: 1.5,
-            px: 2,
-            py: 1.5,
-            borderRadius: 1.5,
-            border: '1px solid',
-            borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.3),
-            bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.06),
-          }}
-        >
-          <Box
-            component={Eye}
-            aria-hidden
-            sx={{ mt: 0.25, width: 16, height: 16, flexShrink: 0, color: 'primary.main' }}
-          />
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
-              You&apos;re viewing this trip
-            </Typography>
-            <Typography sx={{ mt: 0.25, fontSize: 13, color: 'text.secondary' }}>
-              Ask the owner for editor access to make changes.
-            </Typography>
-          </Box>
-          {onRequestEditAccess ? (
-            <Button size="sm" variant="secondary" onClick={onRequestEditAccess}>
-              See collaborators
-            </Button>
-          ) : null}
-        </Box>
-      ) : null}
 
       <Box
         sx={{
           display: 'grid',
           gap: 3,
+          mt: 1,
           gridTemplateColumns: {
             xs: 'minmax(0, 1fr)',
             md: 'minmax(0, 1fr) 400px',
@@ -380,61 +351,42 @@ export function EditableTripView({
         }}
       >
         <Box sx={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {canEdit ? (
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-                <DayTabs
-                  days={days}
-                  activeIndex={safeDayIndex}
-                  onSelect={setActiveDayIndex}
-                  counts={dayCounts}
-                  droppable
-                  onDeleteDay={days.length > 1 ? handleRequestDeleteDay : undefined}
-                />
-                {activeDay ? (
-                  <DragDropDay
-                    key={activeDay.day_number ?? safeDayIndex}
-                    day={activeDay}
-                    dayIndex={safeDayIndex}
-                    activities={getActivitiesForDay(safeDayIndex)}
-                    photoMap={photoMap}
-                    onDeleteActivity={mutations.deleteActivity}
-                    onDeleteDay={days.length > 1 ? handleRequestDeleteDay : undefined}
-                    onAutofillDay={mutations.autofillDay}
-                    onAddActivity={setPickerDayNumber}
-                    onActivityClick={setSelectedActivity}
-                    hoveredActivityId={hoveredActivityId}
-                    onActivityHover={setHoveredActivityId}
-                    onMoveDay={days.length > 1 ? handleMoveDay : undefined}
-                    canMoveEarlier={safeDayIndex > 0}
-                    canMoveLater={safeDayIndex < days.length - 1}
-                  />
-                ) : null}
-              </Box>
-            </DragDropContext>
-          ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-              <DayTabs
-                days={days}
-                activeIndex={safeDayIndex}
-                onSelect={setActiveDayIndex}
-                counts={dayCounts}
+          {activeDay ? (
+            canEdit ? (
+              <DragDropDay
+                key={activeDay.day_number ?? safeDayIndex}
+                day={activeDay}
+                dayIndex={safeDayIndex}
+                activities={getActivitiesForDay(safeDayIndex)}
+                photoMap={photoMap}
+                weather={dayWeather}
+                onDeleteActivity={mutations.deleteActivity}
+                onDeleteDay={days.length > 1 ? handleRequestDeleteDay : undefined}
+                onAutofillDay={mutations.autofillDay}
+                onSuggestAlternatives={setSuggestDay}
+                onAddActivity={setPickerDayNumber}
+                onActivityClick={setSelectedActivity}
+                hoveredActivityId={hoveredActivityId}
+                onActivityHover={setHoveredActivityId}
+                onMoveDay={days.length > 1 ? handleMoveDay : undefined}
+                canMoveEarlier={safeDayIndex > 0}
+                canMoveLater={safeDayIndex < days.length - 1}
               />
-              {activeDay ? (
-                <DragDropDay
-                  key={activeDay.day_number ?? safeDayIndex}
-                  day={activeDay}
-                  dayIndex={safeDayIndex}
-                  activities={getActivitiesForDay(safeDayIndex)}
-                  photoMap={photoMap}
-                  onActivityClick={setSelectedActivity}
-                  hoveredActivityId={hoveredActivityId}
-                  onActivityHover={setHoveredActivityId}
-                  readOnly
-                />
-              ) : null}
-            </Box>
-          )}
+            ) : (
+              <DragDropDay
+                key={activeDay.day_number ?? safeDayIndex}
+                day={activeDay}
+                dayIndex={safeDayIndex}
+                activities={getActivitiesForDay(safeDayIndex)}
+                photoMap={photoMap}
+                weather={dayWeather}
+                onActivityClick={setSelectedActivity}
+                hoveredActivityId={hoveredActivityId}
+                onActivityHover={setHoveredActivityId}
+                readOnly
+              />
+            )
+          ) : null}
 
           {canEdit ? (
             <Box>
@@ -468,38 +420,17 @@ export function EditableTripView({
                 <Box>
                   <Typography
                     component="h2"
-                    sx={{
-                      fontSize: { xs: 24, sm: 28 },
-                      fontWeight: 600,
-                      letterSpacing: '-0.01em',
-                      color: 'text.primary',
-                      m: 0,
-                    }}
+                    sx={{ ...DAY_TITLE_SX, color: 'text.primary', m: 0 }}
                   >
                     Dining picks
                   </Typography>
                   <Typography
-                    sx={{ mt: 0.25, fontSize: 14, color: 'text.secondary' }}
+                    sx={{ ...textScale.support, mt: 0.25, color: 'text.secondary' }}
                   >
                     {tripData.restaurants.length} hand-picked picks for your trip
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <Box
-                    component="span"
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: 40,
-                      width: 40,
-                      borderRadius: '50%',
-                      bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.12),
-                      color: 'primary.main',
-                    }}
-                  >
-                    <Utensils size={20} aria-hidden />
-                  </Box>
                   <Box
                     component="span"
                     sx={{
@@ -555,7 +486,7 @@ export function EditableTripView({
                 '&:hover': { textDecoration: 'underline' },
               }}
             >
-              Explore more in {destination} →
+              Explore more in {place.city} →
             </Box>
           </Typography>
 
@@ -579,9 +510,9 @@ export function EditableTripView({
             flexDirection: 'column',
             gap: 2,
             position: { md: 'sticky' },
-            top: { md: 124 },
+            top: { md: MAP_STICKY_TOP },
             alignSelf: { md: 'flex-start' },
-            height: { md: 'calc(100vh - 148px)' },
+            height: { md: `calc(100vh - ${MAP_STICKY_TOP + 16}px)` },
           }}
         >
           <TripMapPanel
@@ -589,7 +520,7 @@ export function EditableTripView({
             activityPool={activityPool}
             restaurants={tripData.restaurants}
             filter={mapFilter}
-            onFilterChange={setMapFilter}
+            onFilterChange={handleMapFilterChange}
             onActivityClick={(id) => {
               const a = activityPoolMap.get(id);
               if (a) setSelectedActivity(a);
@@ -599,6 +530,86 @@ export function EditableTripView({
           />
         </Box>
       </Box>
+    </>
+  );
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <DestinationHero
+        variant="compact"
+        city={destination}
+        info={info}
+        isLoading={infoLoading}
+        trailing={
+          <TripContextBand
+            startDate={tripData.start_date}
+            endDate={tripData.end_date}
+            durationDays={tripData.total_trip_days}
+            budget={tripData.budget}
+          />
+        }
+      />
+
+      {/* One flex child: the collapsed details must not add a stack gap. */}
+      <Box>
+        <TripAboutStrip
+          info={info}
+          isLoading={infoLoading}
+          open={overviewOpen}
+          onToggle={() => setOverviewOpen((v) => !v)}
+          controlsId={overviewId}
+          weather={weather}
+        />
+        <CityOverviewDetails
+          key={`${destination}-details`}
+          city={destination}
+          info={info}
+          open={overviewOpen}
+          controlsId={overviewId}
+        />
+      </Box>
+
+      {!canEdit && viewerBanner ? (
+        <Box
+          role="status"
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 1.5,
+            px: 2,
+            py: 1.5,
+            borderRadius: 1.5,
+            border: '1px solid',
+            borderColor: (t: Theme) => alpha(t.palette.primary.main, 0.3),
+            bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.06),
+          }}
+        >
+          <Box
+            component={Eye}
+            aria-hidden
+            sx={{ mt: 0.25, width: 16, height: 16, flexShrink: 0, color: 'primary.main' }}
+          />
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'text.primary' }}>
+              You&apos;re viewing this trip
+            </Typography>
+            <Typography sx={{ mt: 0.25, fontSize: 13, color: 'text.secondary' }}>
+              Ask the owner for editor access to make changes.
+            </Typography>
+          </Box>
+          {onRequestEditAccess ? (
+            <Button size="sm" variant="secondary" onClick={onRequestEditAccess}>
+              See collaborators
+            </Button>
+          ) : null}
+        </Box>
+      ) : null}
+
+      {canEdit ? (
+        <DragDropContext onDragEnd={handleDragEnd}>{workspace}</DragDropContext>
+      ) : (
+        workspace
+      )}
 
       <ActivityDetailDrawer
         activity={selectedActivity}
@@ -634,6 +645,38 @@ export function EditableTripView({
           </Button>
         }
       />
+
+      <Dialog
+        open={suggestDay != null}
+        onOpenChange={(open) => {
+          if (!open && !suggestRunning) setSuggestDay(null);
+        }}
+        title={
+          <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+            <Box component="span" sx={{ display: 'inline-flex', color: 'primary.main' }}>
+              <Sparkles size={16} aria-hidden />
+            </Box>
+            {`Suggest alternatives for Day ${suggestDay ?? ''}?`}
+          </Box>
+        }
+        description="AI swaps this day's stops for fresh suggestions. Costs 1 credit."
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setSuggestDay(null)} disabled={suggestRunning}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => void runSuggestAlternatives()}
+              loading={suggestRunning}
+              disabled={suggestRunning}
+            >
+              Confirm
+            </Button>
+          </>
+        }
+      >
+        <Box />
+      </Dialog>
 
       <Dialog
         open={dayPendingDelete != null}
