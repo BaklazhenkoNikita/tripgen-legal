@@ -26,8 +26,10 @@ export function MapSheet({ pins, activePinId, onPinHover, onPinClick }: Props) {
         sx={{
           pointerEvents: 'none',
           position: 'fixed',
-          bottom: 80,
-          right: 16,
+          // Phones: above the MobileDock. md+: no dock, but above the Ask
+          // Periplo launcher when it's shown.
+          bottom: { xs: 80, md: 'calc(24px + var(--tg-fab-clearance, 0px))' },
+          right: { xs: 16, md: 24 },
           zIndex: 20,
           display: { xs: 'block', lg: 'none' },
         }}

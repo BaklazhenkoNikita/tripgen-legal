@@ -202,9 +202,11 @@ export function FloatingMapShell({
       }
     : {
         right: DEFAULT_MARGIN,
-        bottom: DEFAULT_MARGIN,
+        // Lifted above the Ask Periplo launcher when it's shown.
+        bottom: `calc(${DEFAULT_MARGIN}px + var(--tg-fab-clearance, 0px))`,
         width: size.width,
         height: size.height,
+        maxHeight: `calc(100vh - ${DEFAULT_MARGIN + VIEWPORT_INSET}px - var(--tg-fab-clearance, 0px))`,
       };
 
   return (

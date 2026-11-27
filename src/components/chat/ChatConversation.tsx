@@ -45,7 +45,15 @@ const MAX_INPUT_LINES = 6;
  * sets the focus city and drops the prefill into the composer — never
  * auto-sends. Isolated so `useSearchParams` sits under its own Suspense.
  */
-function UrlPrefill({ onPrefill }: { onPrefill: (text: string) => void }) {
+function UrlPrefill({
+  onPrefill,
+  onEntity,
+}: {
+  onPrefill: (text: string) => void;
+  /** `?entity_id=&entity_type=&entity_name=` from the floating chat's
+   *  "Open full chat" — keeps the place chip on the full page. */
+  onEntity: (entity: Pick<ChatEntryContext, 'entity_id' | 'entity_type' | 'entity_name'>) => void;
+}) {
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -58,8 +66,19 @@ function UrlPrefill({ onPrefill }: { onPrefill: (text: string) => void }) {
     const prefill = params.get('prefill')?.trim();
     const daysRaw = Number(params.get('days'));
     const days = Number.isFinite(daysRaw) && daysRaw > 0 && daysRaw <= 30 ? Math.round(daysRaw) : null;
-    if (!qCity && !prefill) return;
+    const entityId = params.get('entity_id')?.trim().slice(0, 80);
+    const entityName = params.get('entity_name')?.trim().slice(0, 120);
+    const entityType = params.get('entity_type')?.trim();
+    if (!qCity && !prefill && !(entityId && entityName)) return;
     doneRef.current = true;
+
+    if (entityId && entityName) {
+      onEntity({
+        entity_id: entityId,
+        entity_name: entityName,
+        entity_type: entityType === 'restaurant' || entityType === 'live_event' ? entityType : 'activity',
+      });
+    }
 
     if (qCity && qCity !== city) setCity(qCity);
     let text = prefill ?? '';
@@ -69,10 +88,10 @@ function UrlPrefill({ onPrefill }: { onPrefill: (text: string) => void }) {
 
     // Drop the one-shot params (keep utm_* for analytics) so a refresh doesn't re-prefill.
     const next = new URLSearchParams(params.toString());
-    ['city', 'prefill', 'days'].forEach((k) => next.delete(k));
+    ['city', 'prefill', 'days', 'entity_id', 'entity_type', 'entity_name'].forEach((k) => next.delete(k));
     const qs = next.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
-  }, [params, city, setCity, onPrefill, router, pathname]);
+  }, [params, city, setCity, onPrefill, onEntity, router, pathname]);
 
   return null;
 }
@@ -130,7 +149,7 @@ function ContextChip({ icon: Icon, label, onRemove }: { icon: LucideIcon; label:
   );
 }
 
-export function ChatConversation({ chatId, embed = false, context: entryContext }: Props) {
+export function ChatConversation({ chatId, embed = false, context: propContext }: Props) {
   const { city } = useCity();
   const { activeTripId, activeTripSummary } = useActiveTrip();
   const { openHistory, isMobile, focusInputRequest } = useChatLayout();
@@ -141,7 +160,23 @@ export function ChatConversation({ chatId, embed = false, context: entryContext 
   }, [chatId, embed]);
 
   // ── Context chips ──────────────────────────────────────────────────
+  const [urlEntity, setUrlEntity] = useState<ChatEntryContext | null>(null);
+  const entryContext = useMemo<ChatEntryContext | undefined>(
+    () => (urlEntity ? { ...urlEntity, ...propContext } : propContext),
+    [urlEntity, propContext],
+  );
   const [dismissed, setDismissed] = useState<ReadonlySet<ChipKey>>(() => new Set());
+  // A different place (the user opened Ask on another one) brings its chip
+  // back even if the previous place's chip was removed.
+  const entityKey = entryContext?.entity_id ?? entryContext?.entity_name ?? '';
+  useEffect(() => {
+    setDismissed((prev) => {
+      if (!prev.has('entity')) return prev;
+      const next = new Set(prev);
+      next.delete('entity');
+      return next;
+    });
+  }, [entityKey]);
   const tripId = entryContext?.trip_id ?? activeTripId ?? undefined;
   const requestContext = useMemo<ChatRequestContext | undefined>(() => {
     const c: ChatRequestContext = {};
@@ -294,7 +329,7 @@ export function ChatConversation({ chatId, embed = false, context: entryContext 
     <ChatRenderProvider value={renderCtx}>
       {!embed ? (
         <Suspense fallback={null}>
-          <UrlPrefill onPrefill={onPrefill} />
+          <UrlPrefill onPrefill={onPrefill} onEntity={setUrlEntity} />
         </Suspense>
       ) : null}
       <Box

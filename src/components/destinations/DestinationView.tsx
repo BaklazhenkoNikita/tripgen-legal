@@ -375,7 +375,7 @@ export function DestinationView({ city }: Props) {
         <Box
           sx={{
             position: 'fixed',
-            bottom: 32,
+            bottom: 'calc(32px + var(--tg-fab-clearance, 0px))',
             right: 32,
             zIndex: 20,
             display: { xs: 'none', lg: 'block' },

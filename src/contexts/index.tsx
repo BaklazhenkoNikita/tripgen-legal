@@ -6,6 +6,7 @@ import { CityProvider } from './CityContext';
 import { ActiveTripProvider } from './ActiveTripContext';
 import { SubscriptionProvider } from './SubscriptionContext';
 import { AIContextProvider } from './AIContext';
+import { ChatDockProvider } from './ChatDockContext';
 import { SessionExpiredHost } from './SessionExpiredHost';
 import { AILimitPopupHost } from './AILimitPopupHost';
 import { useClerkTokenInit } from '@/lib/auth/clerk';
@@ -27,9 +28,11 @@ export function AppContextsRoot({ children }: { children: ReactNode }) {
         <ActiveTripProvider>
           <SubscriptionProvider>
             <AIContextProvider>
-              <SessionExpiredHost />
-              <AILimitPopupHost />
-              {children}
+              <ChatDockProvider>
+                <SessionExpiredHost />
+                <AILimitPopupHost />
+                {children}
+              </ChatDockProvider>
             </AIContextProvider>
           </SubscriptionProvider>
         </ActiveTripProvider>
@@ -42,4 +45,5 @@ export { useSnackbar } from './SnackbarContext';
 export { useCity, useCityOptional } from './CityContext';
 export { useActiveTrip, useActiveTripOptional } from './ActiveTripContext';
 export { useSubscription, useSubscriptionOptional } from './SubscriptionContext';
-export { useAIContext } from './AIContext';
+export { useAIContext, useReportAIFocus } from './AIContext';
+export { useChatDock, useChatDockOptional } from './ChatDockContext';
