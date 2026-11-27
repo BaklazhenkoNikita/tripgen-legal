@@ -8,12 +8,16 @@ import type { LucideIcon } from 'lucide-react';
 import { displayPlaceName } from '@/lib/cities/normalizeCity';
 import {
   Calendar,
+  Clock,
   Compass,
+  Lightbulb,
   List,
+  MapPin,
   Moon,
   Navigation,
   Plane,
   PlusCircle,
+  ScrollText,
   Sun,
   UtensilsCrossed,
 } from 'lucide-react';
@@ -44,3 +48,14 @@ export function getGeneralQuickActions(city: string): QuickAction[] {
   ];
 }
 
+/** One-tap questions about a single place ("Ask Periplo" on a place). */
+export function getPlaceQuickActions(placeName: string): QuickAction[] {
+  const name = placeName.trim() || 'this place';
+  return [
+    { label: "What's the story?", icon: ScrollText, prompt: `What's the story behind ${name}, and what makes it special?` },
+    { label: 'Hours & tickets', icon: Clock, prompt: `What are the opening hours and ticket prices for ${name}?` },
+    { label: 'Best time to go', icon: Sun, prompt: `When's the best time to visit ${name} to avoid crowds?` },
+    { label: 'Tips for visiting', icon: Lightbulb, prompt: `Any insider tips for visiting ${name}?` },
+    { label: "What's nearby?", icon: MapPin, prompt: `What else is worth doing near ${name}?` },
+  ];
+}

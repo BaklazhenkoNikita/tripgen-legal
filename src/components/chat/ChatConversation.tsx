@@ -20,6 +20,8 @@ import { ChatMessage, QueuedBubble } from './ChatMessage';
 import { ChatEmptyState } from './ChatEmptyState';
 import { ChatRenderProvider } from './ChatRenderContext';
 import { SuggestionChips } from './SuggestionChips';
+import { QuickActions } from './QuickActions';
+import { getPlaceQuickActions } from '@/lib/chat/quickActions';
 
 /** What the user is looking at when they open chat ("Ask AI" entry points). */
 export interface ChatEntryContext extends ChatRequestContext {
@@ -261,13 +263,19 @@ export function ChatConversation({ chatId, embed = false, context: propContext }
     [resizeInput],
   );
 
+  // Which place the user has already asked about since its chip appeared —
+  // the place starter chips above the composer hide after the first ask.
+  const [askedEntity, setAskedEntity] = useState<string | null>(null);
   const sendPrompt = useCallback(
-    (prompt: string) => {
+    (prompt: string, messageContext?: ChatRequestContext) => {
       if (!chatEnabled) return;
       stick();
-      void send(prompt);
+      const ctx = messageContext ?? requestContext;
+      const asked = ctx?.entity_id ?? ctx?.entity_name;
+      if (asked) setAskedEntity(asked);
+      void send(prompt, { context: messageContext });
     },
-    [chatEnabled, send, stick],
+    [chatEnabled, send, stick, requestContext],
   );
 
   const submit = () => {
@@ -317,6 +325,9 @@ export function ChatConversation({ chatId, embed = false, context: propContext }
   const renderCtx = useMemo(() => ({ city, sendPrompt, busy }), [city, sendPrompt, busy]);
 
   const hasTurns = turns.length > 0 || queue.length > 0;
+  const focusKey = requestContext?.entity_id ?? requestContext?.entity_name;
+  const placeChipsFor =
+    requestContext?.entity_name && focusKey !== askedEntity ? requestContext.entity_name : null;
   const showStop = busy && !input.trim();
   const sendDisabled = !chatEnabled || (!showStop && !input.trim());
 
@@ -401,6 +412,7 @@ export function ChatConversation({ chatId, embed = false, context: propContext }
                 <ChatEmptyState
                   tripId={requestContext?.trip_id}
                   city={city}
+                  place={requestContext?.entity_name}
                   onPick={sendPrompt}
                   disabled={!chatEnabled}
                 />
@@ -490,7 +502,14 @@ export function ChatConversation({ chatId, embed = false, context: propContext }
             </Box>
           ) : null}
 
-          {hasTurns && !busy ? (
+          {hasTurns && !busy && placeChipsFor ? (
+            <QuickActions
+              compact
+              actions={getPlaceQuickActions(placeChipsFor)}
+              onPick={sendPrompt}
+              disabled={!chatEnabled}
+            />
+          ) : hasTurns && !busy ? (
             <SuggestionChips
               city={city ?? undefined}
               activeTripId={requestContext?.trip_id}

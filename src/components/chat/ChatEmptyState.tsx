@@ -8,6 +8,8 @@ import { useTripDetail } from '@/hooks/useTripDetail';
 import { useTripInsights } from '@/hooks/useTripInsights';
 import { minTap, radii } from '@/theme/standards';
 import { QuickActions } from './QuickActions';
+import { AskPeriploIcon } from './AskPeriploIcon';
+import { getPlaceQuickActions } from '@/lib/chat/quickActions';
 import { Eyebrow } from './cards/CardShell';
 import { TripInsightsList } from './cards/TripInsightsCard';
 
@@ -29,6 +31,8 @@ const TRIP_CAPABILITIES: Capability[] = [
 interface Props {
   tripId?: string | null;
   city?: string | null;
+  /** Place the user opened chat about ("Ask Periplo" on a place). */
+  place?: string | null;
   onPick: (prompt: string) => void;
   disabled?: boolean;
 }
@@ -38,7 +42,7 @@ interface Props {
  * capability cards, and the model-free trip check-up with "Fix it". Without
  * one: a greeting plus city quick-starters.
  */
-export function ChatEmptyState({ tripId, city, onPick, disabled }: Props) {
+export function ChatEmptyState({ tripId, city, place, onPick, disabled }: Props) {
   const { activeTripSummary } = useActiveTrip();
   // The conversation resolves the trip (entry context → active trip) and
   // drops it when the user removes the trip chip.
@@ -54,6 +58,37 @@ export function ChatEmptyState({ tripId, city, onPick, disabled }: Props) {
     ? activeTripSummary!.plannedDayCount
     : (tripData?.travel_plan?.length ?? tripData?.total_trip_days);
   const topInsights = (insights.data ?? []).slice(0, 3);
+
+  if (place) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2.5, textAlign: 'center', width: '100%' }}>
+        <Box
+          component="span"
+          sx={(t) => ({
+            display: 'inline-flex',
+            width: 48,
+            height: 48,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 999,
+            bgcolor: alpha(t.palette.primary.main, 0.12),
+            color: t.palette.primary.main,
+          })}
+        >
+          <AskPeriploIcon size={24} aria-hidden />
+        </Box>
+        <Box>
+          <Box component="h2" sx={{ m: 0, fontSize: 22, fontWeight: 600, lineHeight: 1.25, color: 'text.primary' }}>
+            Ask about {place}
+          </Box>
+          <Box component="p" sx={{ m: 0, mt: 0.5, fontSize: 15, color: 'text.secondary' }}>
+            Pick a question or type your own.
+          </Box>
+        </Box>
+        <QuickActions actions={getPlaceQuickActions(place)} onPick={onPick} disabled={disabled} />
+      </Box>
+    );
+  }
 
   if (!effectiveTripId) {
     return (

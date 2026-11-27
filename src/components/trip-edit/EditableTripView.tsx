@@ -88,6 +88,13 @@ export function EditableTripView({
   const mutations = useTripMutations({ searchId, tripData, setTripData });
 
   const days = useMemo(() => tripData.travel_plan ?? [], [tripData.travel_plan]);
+  // Day the open activity sits on — scopes the drawer's "Ask Periplo".
+  const selectedDayNumber = useMemo(() => {
+    const ids = new Set([selectedActivity?.id, selectedActivity?.activity_id].filter(Boolean));
+    if (!ids.size) return undefined;
+    const idx = days.findIndex((d) => d.activities.some((a) => ids.has(a.id)));
+    return idx >= 0 ? (days[idx].day_number ?? idx + 1) : undefined;
+  }, [days, selectedActivity]);
   const activityPool = useMemo(() => tripData.activities ?? [], [tripData.activities]);
   const activityPoolMap = useMemo(() => {
     const map = new Map<string, TravelActivity>();
@@ -608,6 +615,8 @@ export function EditableTripView({
         activity={selectedActivity}
         photoMap={photoMap}
         destination={destination}
+        tripId={searchId || undefined}
+        dayNumber={selectedDayNumber}
         onClose={() => setSelectedActivity(null)}
       />
 
