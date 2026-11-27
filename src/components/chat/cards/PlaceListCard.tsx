@@ -2,17 +2,23 @@
 
 import Link from 'next/link';
 import Box from '@mui/material/Box';
+import { alpha } from '@mui/material/styles';
 import { MapPin, Star } from 'lucide-react';
 import { Photo } from '@/components/ui/Photo';
 import { entityHref } from '@/lib/chat/links';
 import type { PlaceItem } from '@/lib/chat/protocol';
 import { radii } from '@/theme/standards';
 import { Eyebrow } from './CardShell';
+import { AskPeriploIcon } from '../AskPeriploIcon';
+import { useChatRender } from '../ChatRenderContext';
 
 const CARD_W = 232;
 
 function PlaceTile({ item, city }: { item: PlaceItem; city?: string | null }) {
   const { href, external } = entityHref(item.entity_type, item.entity_id, item.name, item.city || city);
+  const { sendPrompt, busy } = useChatRender();
+  // "Ask" follows up on this one place in the same conversation, scoped to it.
+  const canAsk = Boolean(sendPrompt && item.entity_id);
   const meta = [
     item.price_label,
     typeof item.rating === 'number' && item.rating > 0 ? `${item.rating.toFixed(1)}★` : null,
@@ -21,8 +27,51 @@ function PlaceTile({ item, city }: { item: PlaceItem; city?: string | null }) {
   return (
     <Box
       component="li"
-      sx={{ flex: `0 0 ${CARD_W}px`, scrollSnapAlign: 'start', listStyle: 'none', display: 'flex' }}
+      sx={{ position: 'relative', flex: `0 0 ${CARD_W}px`, scrollSnapAlign: 'start', listStyle: 'none', display: 'flex' }}
     >
+      {canAsk ? (
+        <Box
+          component="button"
+          type="button"
+          disabled={busy}
+          onClick={() =>
+            sendPrompt?.(`Tell me more about ${item.name}`, {
+              entity_id: item.entity_id,
+              entity_type: item.entity_type,
+              entity_name: item.name,
+            })
+          }
+          aria-label={`Ask Periplo about ${item.name}`}
+          sx={(t) => ({
+            position: 'absolute',
+            top: 8,
+            right: 8,
+            zIndex: 1,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.5,
+            minHeight: 32,
+            px: 1.25,
+            border: 0,
+            borderRadius: 999,
+            bgcolor: alpha(t.palette.background.paper, 0.92),
+            color: 'primary.main',
+            boxShadow: t.shadows[2],
+            fontFamily: 'inherit',
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: 'pointer',
+            // 44px hit area around the 32px pill.
+            '&::after': { content: '""', position: 'absolute', inset: -6 },
+            '&:hover:not(:disabled)': { bgcolor: t.palette.background.paper },
+            '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+            '&:focus-visible': { outline: `2px solid ${t.palette.primary.main}`, outlineOffset: 2 },
+          })}
+        >
+          <AskPeriploIcon size={14} aria-hidden />
+          Ask
+        </Box>
+      ) : null}
       <Box
         component={external ? 'a' : Link}
         href={href}

@@ -1,5 +1,6 @@
 'use client';
 
+import { displayPlaceName } from '@/lib/cities/normalizeCity';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@clerk/nextjs';
@@ -247,7 +248,7 @@ export function TripDetailClient({ searchId, initialDestination }: Props) {
             My Trips
           </Box>
           <Box component="span" sx={{ mx: 1 }}>/</Box>
-          <Box component="span" sx={{ color: 'text.primary' }}>{destination}</Box>
+          <Box component="span" sx={{ color: 'text.primary' }}>{displayPlaceName(destination)}</Box>
         </Box>
       </Box>
 

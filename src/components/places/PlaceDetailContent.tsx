@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import {
   Calendar,
+  CalendarClock,
   Clock,
   ExternalLink,
   Heart,
@@ -13,9 +14,7 @@ import {
   Wallet,
 } from 'lucide-react';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { alpha, type SxProps, type Theme } from '@mui/material/styles';
 import type { FeedItem } from '@/hooks/useHomeFeed';
 import { useViatorSearch } from '@/hooks/useViatorFeed';
 import { useActivityContext } from '@/hooks/useActivityContext';
@@ -38,6 +37,15 @@ import { getMapsUrl } from '@/lib/map/openInMaps';
 import type { MapPinData } from '@/components/map/Map';
 import type { TravelActivity } from '@/types';
 import { PlaceGalleryMosaic } from '@/components/explore/PlaceGalleryMosaic';
+import { AskPeriploIcon } from '@/components/chat/AskPeriploIcon';
+import { DeeperContext } from './DeeperContext';
+import {
+  Callout,
+  CheckList,
+  SectionHeading,
+  dedupeStrings,
+  proseFontSize,
+} from './placeBlocks';
 
 export type PlaceDetailLayout = 'drawer' | 'page';
 
@@ -54,9 +62,12 @@ interface Props {
    *  'page' renders the wider fullscreen-page hero gallery + larger
    *  typography variant served at `/explore/[city]/[place]`. */
   layout?: PlaceDetailLayout;
+  /** "Ask Periplo about this place" — shown in the action bar and under the
+   *  Deeper context card when provided. */
+  onAsk?: () => void;
 }
 
-export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
+export function PlaceDetailContent({ detail, city, layout = 'drawer', onAsk }: Props) {
   const isPage = layout === 'page';
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -106,10 +117,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
     adaptedActivity,
     city,
   );
-  const deeperSections = context?.sections ?? [];
-  const moreHighlights = context?.highlights ?? [];
-  const hasDeeperContent =
-    deeperSections.length > 0 || moreHighlights.length > 0;
+  const didYouKnow = dedupeStrings(detail.interestingFacts, detail.highlights);
 
   const mapsHref = getMapsUrl({
     name: detail.title,
@@ -165,7 +173,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
         <Typography
           component={isPage ? 'h1' : 'h2'}
           sx={{
-            fontSize: isPage ? { xs: 32, md: 44 } : 30,
+            fontSize: isPage ? { xs: 32, md: 44 } : '1.875rem',
             fontWeight: 600,
             letterSpacing: '-0.02em',
             color: 'text.primary',
@@ -180,7 +188,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
           </Typography>
         ) : null}
 
-        <PlaceActionBar detail={detail} city={city} mapsHref={mapsHref} />
+        <PlaceActionBar detail={detail} city={city} mapsHref={mapsHref} onAsk={onAsk} />
 
         {detail.address ? (
           <Typography
@@ -191,6 +199,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
               gap: 0.75,
               fontSize: '0.875rem',
               color: 'text.secondary',
+              overflowWrap: 'anywhere',
             }}
           >
             <Box
@@ -232,7 +241,7 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
             <Chip icon={<Wallet size={14} />} label={detail.cost} />
           ) : null}
           {detail.workingHours ? (
-            <Chip icon={<Clock size={14} />} label={detail.workingHours} />
+            <Chip icon={<CalendarClock size={14} />} label={detail.workingHours} />
           ) : null}
           {detail.rating !== null ? (
             <Chip
@@ -247,19 +256,39 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
           <Typography
             sx={{
               mt: 2.5,
-              fontSize: isPage ? 16 : 15,
+              fontSize: proseFontSize(layout),
               lineHeight: 1.65,
               color: 'text.primary',
               maxWidth: isPage ? 760 : undefined,
+              overflowWrap: 'anywhere',
             }}
           >
             {detail.description}
           </Typography>
         ) : null}
 
-        <List title="Highlights" items={detail.highlights} />
-        <List title="Did you know" items={detail.interestingFacts} />
-        <List title="Insider tips" items={detail.insiderTips} />
+        <CheckList
+          title="Highlights"
+          items={detail.highlights}
+          layout={layout}
+          sx={{ mt: 3 }}
+        />
+        <Callout
+          tone="info"
+          title="Did you know"
+          items={didYouKnow}
+          sx={{ mt: 3, maxWidth: isPage ? 880 : undefined }}
+        />
+        {/* With a Deeper context card the tips merge into its amber callout;
+            Viator items (no context lookup) keep a standalone one. */}
+        {!adaptedActivity ? (
+          <Callout
+            tone="tip"
+            title="Insider tips"
+            items={detail.insiderTips}
+            sx={{ mt: 3, maxWidth: isPage ? 880 : undefined }}
+          />
+        ) : null}
 
         {(detail.isViator && detail.bookingUrl) ||
         (detail.websiteUrl && !detail.isViator) ? (
@@ -298,85 +327,21 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
         ) : null}
 
         {adaptedActivity ? (
-          <Box
-            sx={{
-              mt: 3,
-              borderTop: '1px solid',
-              borderColor: 'divider',
-              pt: 3,
-            }}
-          >
-            <SectionHeading variant="title">Deeper context</SectionHeading>
-            {contextLoading ? (
-              <Stack spacing={1} sx={{ mt: 1.5 }}>
-                <Skeleton variant="line" height={12} width="33%" />
-                <Skeleton variant="line" height={12} width="100%" />
-                <Skeleton variant="line" height={12} width="83%" />
-              </Stack>
-            ) : hasDeeperContent ? (
-              <Box
-                sx={{
-                  mt: 1.5,
-                  borderRadius: 2,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  // A distinct warm editorial panel — the old 2.5% tint was
-                  // effectively invisible against the page/paper surface.
-                  bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.05),
-                  p: { xs: 2, sm: 2.5 },
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {deeperSections.map((section, i) => (
-                  <Box
-                    key={`${section.title}-${i}`}
-                    sx={{
-                      pt: i === 0 ? 0 : 2,
-                      mt: i === 0 ? 0 : 2,
-                      borderTop: i === 0 ? 0 : '1px solid',
-                      borderColor: 'divider',
-                    }}
-                  >
-                    <SectionHeading>{section.title}</SectionHeading>
-                    <Typography
-                      sx={{
-                        mt: 1,
-                        whiteSpace: 'pre-line',
-                        fontSize: 14.5,
-                        lineHeight: 1.65,
-                        color: 'text.primary',
-                      }}
-                    >
-                      {section.content}
-                    </Typography>
-                  </Box>
-                ))}
-                {moreHighlights.length > 0 ? (
-                  <Box
-                    sx={{
-                      pt: deeperSections.length > 0 ? 2 : 0,
-                      mt: deeperSections.length > 0 ? 2 : 0,
-                      borderTop: deeperSections.length > 0 ? '1px solid' : 0,
-                      borderColor: 'divider',
-                    }}
-                  >
-                    <List title="More highlights" items={moreHighlights} dense />
-                  </Box>
-                ) : null}
-              </Box>
-            ) : (
-              <Typography
-                sx={{ mt: 1.5, fontSize: '0.875rem', color: 'text.disabled' }}
-              >
-                No additional context yet.
-              </Typography>
-            )}
-          </Box>
+          <DeeperContext
+            context={context}
+            isLoading={contextLoading}
+            layout={layout}
+            placeName={detail.title}
+            description={detail.description}
+            extraTips={detail.insiderTips}
+            shownElsewhere={[...detail.highlights, ...didYouKnow]}
+            onAsk={onAsk}
+          />
         ) : null}
 
         {!detail.isViator && city ? (
           <RelatedViator
+            layout={layout}
             isLoading={related.isLoading}
             items={related.data?.viator_activities ?? []}
           />
@@ -437,18 +402,26 @@ export function PlaceDetailContent({ detail, city, layout = 'drawer' }: Props) {
 }
 
 function RelatedViator({
+  layout,
   isLoading,
   items,
 }: {
+  layout: PlaceDetailLayout;
   isLoading: boolean;
   items: FeedItem[];
 }) {
   if (!isLoading && items.length === 0) return null;
+  // The drawer is ~620px wide whatever the window size, so window
+  // breakpoints would squeeze four ~150px cards in; keep it at two there.
+  const isDrawer = layout === 'drawer';
+  const columns = isDrawer
+    ? 'repeat(2, minmax(0, 1fr))'
+    : { xs: 'repeat(2, minmax(0, 1fr))', sm: 'repeat(4, minmax(0, 1fr))' };
   return (
     <Box sx={{ mt: 3 }}>
       <SectionHeading variant="title">Popular nearby</SectionHeading>
       <Typography
-        sx={{ mt: 0.25, mb: 1.25, fontSize: '0.75rem', color: 'text.disabled' }}
+        sx={{ mt: 0.5, mb: 1.5, fontSize: '0.75rem', color: 'text.secondary' }}
       >
         Bookable experiences related to this place
       </Typography>
@@ -457,7 +430,7 @@ function RelatedViator({
           sx={{
             display: 'grid',
             gap: 1.25,
-            gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' },
+            gridTemplateColumns: columns,
           }}
         >
           {[0, 1, 2, 3].map((i) => (
@@ -469,7 +442,7 @@ function RelatedViator({
           sx={{
             display: 'grid',
             gap: 1.25,
-            gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' },
+            gridTemplateColumns: columns,
           }}
         >
           {items.slice(0, 4).map((it) => {
@@ -497,7 +470,7 @@ function RelatedViator({
                   src={v.images}
                   alt={v.title}
                   aspect="3/2"
-                  sizes="160px"
+                  sizes={isDrawer ? '300px' : '200px'}
                   zoomOnHover
                 />
                 <Box
@@ -518,9 +491,9 @@ function RelatedViator({
                       WebkitLineClamp: 2,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
-                      fontSize: '0.6875rem',
+                      fontSize: isDrawer ? '0.8125rem' : '0.75rem',
                       fontWeight: 600,
-                      lineHeight: 1.25,
+                      lineHeight: 1.3,
                       color: 'text.primary',
                     }}
                   >
@@ -607,96 +580,6 @@ function Chip({
   );
 }
 
-function SectionHeading({
-  children,
-  variant = 'eyebrow',
-  sx,
-}: {
-  children: React.ReactNode;
-  /** 'eyebrow' — small tracked terracotta caps (nested sub-labels, list
-   *  labels). 'title' — a readable section title for top-level blocks, so the
-   *  page reads as a real two-level hierarchy instead of one flat overline. */
-  variant?: 'eyebrow' | 'title';
-  sx?: SxProps<Theme>;
-}) {
-  const base: SxProps<Theme> =
-    variant === 'title'
-      ? {
-          fontSize: '1rem',
-          fontWeight: 600,
-          lineHeight: 1.3,
-          letterSpacing: '-0.01em',
-          color: 'text.primary',
-          m: 0,
-        }
-      : {
-          fontSize: '0.6875rem',
-          fontWeight: 700,
-          textTransform: 'uppercase',
-          letterSpacing: '0.16em',
-          color: 'primary.dark',
-          m: 0,
-        };
-  return (
-    <Typography
-      component="h3"
-      sx={[base, ...(Array.isArray(sx) ? sx : sx ? [sx] : [])]}
-    >
-      {children}
-    </Typography>
-  );
-}
-
-function List({
-  title,
-  items,
-  dense,
-}: {
-  title: string;
-  items?: string[] | null;
-  dense?: boolean;
-}) {
-  if (!items || items.length === 0) return null;
-  return (
-    <Box sx={{ mt: dense ? 0 : 2.5 }}>
-      <SectionHeading>{title}</SectionHeading>
-      <Stack
-        component="ul"
-        spacing={0.75}
-        sx={{ mt: 1, listStyle: 'none', m: 0, p: 0 }}
-      >
-        {items.map((item, i) => (
-          <Box
-            component="li"
-            key={i}
-            sx={{
-              display: 'flex',
-              gap: 1,
-              fontSize: '0.875rem',
-              lineHeight: 1.6,
-              color: 'text.primary',
-            }}
-          >
-            <Box
-              component="span"
-              sx={{
-                mt: 1,
-                display: 'inline-block',
-                height: 4,
-                width: 4,
-                flexShrink: 0,
-                borderRadius: 999,
-                bgcolor: 'primary.main',
-              }}
-            />
-            <Box component="span">{item}</Box>
-          </Box>
-        ))}
-      </Stack>
-    </Box>
-  );
-}
-
 function formatEventDate(iso: string): string {
   try {
     return new Date(iso).toLocaleString(undefined, {
@@ -720,10 +603,12 @@ function PlaceActionBar({
   detail,
   city,
   mapsHref,
+  onAsk,
 }: {
   detail: NormalizedFeedDetail;
   city: string | null;
   mapsHref: string | null;
+  onAsk?: () => void;
 }) {
   const savedIds = useShortlistIds();
   const add = useShortlistAdd();
@@ -742,7 +627,7 @@ function PlaceActionBar({
     }
   };
 
-  if (!canSave && !mapsHref) return null;
+  if (!canSave && !mapsHref && !onAsk) return null;
 
   return (
     <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -763,6 +648,16 @@ function PlaceActionBar({
           <a href={mapsHref} target="_blank" rel="noopener noreferrer">
             Directions
           </a>
+        </Button>
+      ) : null}
+      {onAsk ? (
+        <Button
+          variant="secondary"
+          size="sm"
+          iconLeft={<AskPeriploIcon size={15} />}
+          onClick={onAsk}
+        >
+          Ask Periplo
         </Button>
       ) : null}
     </Box>

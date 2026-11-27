@@ -28,6 +28,7 @@ import { DestinationHero } from '../destinations/DestinationHero';
 import { CityOverviewIntro, CityOverviewDetails } from '../destinations/CityOverview';
 import { WeatherForecastStrip } from '../destinations/WeatherForecastStrip';
 import { destinationSlug } from '@/lib/destinationSlug';
+import { displayPlaceName } from '@/lib/cities/normalizeCity';
 
 interface Props {
   /** Required for edit mode; optional on read-only surfaces with no mutation backend. */
@@ -79,11 +80,21 @@ export function EditableTripView({
   const overviewId = useId();
 
   const destination = tripData.destination;
+  // Display label only — trips generated from typed input can store the
+  // destination lowercase ("taipei"). API calls keep the raw value.
+  const destinationLabel = displayPlaceName(destination);
   const { data: info, isLoading: infoLoading } = useDestinationInfo(destination || null);
 
   const mutations = useTripMutations({ searchId, tripData, setTripData });
 
   const days = useMemo(() => tripData.travel_plan ?? [], [tripData.travel_plan]);
+  // Day the open activity sits on — scopes the drawer's "Ask Periplo".
+  const selectedDayNumber = useMemo(() => {
+    const ids = new Set([selectedActivity?.id, selectedActivity?.activity_id].filter(Boolean));
+    if (!ids.size) return undefined;
+    const idx = days.findIndex((d) => d.activities.some((a) => ids.has(a.id)));
+    return idx >= 0 ? (days[idx].day_number ?? idx + 1) : undefined;
+  }, [days, selectedActivity]);
   const activityPool = useMemo(() => tripData.activities ?? [], [tripData.activities]);
   const activityPoolMap = useMemo(() => {
     const map = new Map<string, TravelActivity>();
@@ -266,7 +277,7 @@ export function EditableTripView({
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <Box sx={{ position: 'relative' }}>
         <DestinationHero
-          city={destination}
+          city={destinationLabel}
           info={info}
           isLoading={infoLoading}
         />
@@ -303,7 +314,7 @@ export function EditableTripView({
         <Box sx={{ minWidth: 0, display: 'flex', '& > *': { width: '100%' } }}>
           <CityOverviewIntro
             key={destination}
-            city={destination}
+            city={destinationLabel}
             info={info}
             open={overviewOpen}
             onToggle={() => setOverviewOpen((v) => !v)}
@@ -314,7 +325,7 @@ export function EditableTripView({
 
         <Box sx={{ minWidth: 0, display: 'flex', '& > *': { width: '100%' } }}>
           <WeatherForecastStrip
-            location={destination}
+            location={destinationLabel}
             startDate={tripData.start_date}
             numDays={tripData.total_trip_days}
           />
@@ -323,7 +334,7 @@ export function EditableTripView({
 
       <CityOverviewDetails
         key={`${destination}-details`}
-        city={destination}
+        city={destinationLabel}
         info={info}
         open={overviewOpen}
         controlsId={overviewId}
@@ -555,7 +566,7 @@ export function EditableTripView({
                 '&:hover': { textDecoration: 'underline' },
               }}
             >
-              Explore more in {destination} →
+              Explore more in {destinationLabel} →
             </Box>
           </Typography>
 
@@ -604,6 +615,8 @@ export function EditableTripView({
         activity={selectedActivity}
         photoMap={photoMap}
         destination={destination}
+        tripId={searchId || undefined}
+        dayNumber={selectedDayNumber}
         onClose={() => setSelectedActivity(null)}
       />
 

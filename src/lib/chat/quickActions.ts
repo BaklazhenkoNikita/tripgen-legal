@@ -5,14 +5,19 @@
  */
 
 import type { LucideIcon } from 'lucide-react';
+import { displayPlaceName } from '@/lib/cities/normalizeCity';
 import {
   Calendar,
+  Clock,
   Compass,
+  Lightbulb,
   List,
+  MapPin,
   Moon,
   Navigation,
   Plane,
   PlusCircle,
+  ScrollText,
   Sun,
   UtensilsCrossed,
 } from 'lucide-react';
@@ -33,7 +38,7 @@ export const TRIP_QUICK_ACTIONS: QuickAction[] = [
 ];
 
 export function getGeneralQuickActions(city: string): QuickAction[] {
-  const name = formatPlaceName(city) || 'your city';
+  const name = displayPlaceName(city) || 'your city';
   return [
     { label: "What's On?", icon: Calendar, prompt: `What events, exhibitions, and things are happening in ${name} today?` },
     { label: 'Plan a trip', icon: Plane, prompt: `I want to plan a trip to ${name}` },
@@ -43,12 +48,14 @@ export function getGeneralQuickActions(city: string): QuickAction[] {
   ];
 }
 
-function formatPlaceName(raw: string | null | undefined): string {
-  if (!raw) return '';
-  return raw
-    .trim()
-    .toLowerCase()
-    .split(/(\s+|-)/)
-    .map((part) => (part.length > 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part))
-    .join('');
+/** One-tap questions about a single place ("Ask Periplo" on a place). */
+export function getPlaceQuickActions(placeName: string): QuickAction[] {
+  const name = placeName.trim() || 'this place';
+  return [
+    { label: "What's the story?", icon: ScrollText, prompt: `What's the story behind ${name}, and what makes it special?` },
+    { label: 'Hours & tickets', icon: Clock, prompt: `What are the opening hours and ticket prices for ${name}?` },
+    { label: 'Best time to go', icon: Sun, prompt: `When's the best time to visit ${name} to avoid crowds?` },
+    { label: 'Tips for visiting', icon: Lightbulb, prompt: `Any insider tips for visiting ${name}?` },
+    { label: "What's nearby?", icon: MapPin, prompt: `What else is worth doing near ${name}?` },
+  ];
 }

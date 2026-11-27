@@ -1,4 +1,5 @@
 import { destinations } from '@/data/destinations';
+import { displayPlaceName } from '@/lib/cities/normalizeCity';
 
 /** Convert a destination string ("Barcelona", "New York") into the URL slug
  *  used by the explore route (`/explore/{slug}`). The route's [slug]/page.tsx
@@ -19,7 +20,11 @@ export function destinationSlug(destination: string | null | undefined): string 
 export function slugToCity(slug: string): string {
   const curated = destinations.find((d) => d.slug === slug);
   if (curated) return curated.city;
-  return decodeURIComponent(slug)
-    .replace(/-/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  let decoded = slug;
+  try {
+    decoded = decodeURIComponent(slug);
+  } catch {
+    // Malformed escape — humanise the raw slug instead of throwing.
+  }
+  return displayPlaceName(decoded.replace(/-/g, ' '));
 }

@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { ChevronLeft } from 'lucide-react';
-import { useCity } from '@/contexts';
+import { useChatDock, useCity, useReportAIFocus } from '@/contexts';
 import { destinationSlug } from '@/lib/destinationSlug';
 import { extractPlaceId } from '@/lib/placeSlug';
 import { useActivity } from '@/hooks/useActivity';
@@ -46,6 +46,22 @@ export function PlaceFullPageClient({ city, place }: Props) {
     [activity],
   );
 
+  // Tell the floating chat which place is on screen (attached as a chip),
+  // and let "Ask Periplo" open it scoped to this place.
+  const focus = useMemo(
+    () =>
+      detail && !detail.isViator
+        ? {
+            id: detail.id,
+            type: detail.saveEntityType === 'restaurant' ? ('restaurant' as const) : ('activity' as const),
+            name: detail.title,
+          }
+        : null,
+    [detail],
+  );
+  useReportAIFocus(focus);
+  const dock = useChatDock();
+
   const cityHref = `/explore/${destinationSlug(city)}`;
 
   return (
@@ -74,7 +90,19 @@ export function PlaceFullPageClient({ city, place }: Props) {
       ) : isError || !detail ? (
         <NotFoundLite city={city} cityHref={cityHref} />
       ) : (
-        <PlaceDetailContent detail={detail} city={city} layout="page" />
+        <PlaceDetailContent
+          detail={detail}
+          city={city}
+          layout="page"
+          onAsk={
+            focus
+              ? () =>
+                  dock.open({
+                    context: { entity_id: focus.id, entity_type: focus.type, entity_name: focus.name },
+                  })
+              : undefined
+          }
+        />
       )}
     </Box>
   );

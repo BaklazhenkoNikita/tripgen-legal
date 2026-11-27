@@ -7,6 +7,7 @@ import { QueryProvider } from '@/lib/query/provider';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { MuiProvider } from '@/theme/MuiProvider';
 import { ToastBridge } from '@/components/ui/ToastBridge';
+import { ChatDock } from '@/components/chat/dock/ChatDock';
 import { AppContextsRoot } from '@/contexts';
 import { ClerkAppearanceProvider } from '@/components/providers/ClerkAppearanceProvider';
 import { plusJakartaSans } from '@/theme/fonts';
@@ -115,6 +116,7 @@ export default function RootLayout({
                 <AppContextsRoot>
                   {children}
                   <ToastBridge />
+                  <ChatDock />
                 </AppContextsRoot>
               </QueryProvider>
             </ErrorBoundary>

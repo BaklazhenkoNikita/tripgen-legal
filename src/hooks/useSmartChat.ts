@@ -48,6 +48,9 @@ interface StreamOptions {
   visibleUserContent?: string;
   /** Reuse an idempotency key (retries). */
   clientMessageId?: string;
+  /** Per-message "what are we asking about" (e.g. Ask on a chat place
+   *  card); defaults to the conversation's context. */
+  context?: ChatRequestContext;
 }
 
 const HISTORY_TURNS = 12;
@@ -163,7 +166,7 @@ export function useSmartChat(opts: UseSmartChatOptions) {
         clientMessageId: sendOpts.clientMessageId ?? newId('m'),
         answersQuestionId: sendOpts.answersQuestionId,
         confirmAction: sendOpts.confirmAction,
-        context,
+        context: sendOpts.context ?? context,
       };
       const visible = (sendOpts.visibleUserContent ?? content).trim();
 
@@ -199,7 +202,7 @@ export function useSmartChat(opts: UseSmartChatOptions) {
       };
       if (activeTripId) body.active_trip_id = activeTripId;
       if (city) body.city = city;
-      if (context && Object.keys(context).length) body.context = context;
+      if (request.context && Object.keys(request.context).length) body.context = request.context;
       if (request.answersQuestionId) body.answers_question_id = request.answersQuestionId;
       if (request.confirmAction) {
         body.confirm_action = {
@@ -267,14 +270,14 @@ export function useSmartChat(opts: UseSmartChatOptions) {
 
   /** Send, or queue if a turn is still streaming (composer stays enabled). */
   const send = useCallback(
-    async (content: string) => {
+    async (content: string, opts: { context?: ChatRequestContext } = {}) => {
       const trimmed = content.trim();
       if (!trimmed) return;
       if (stateRef.current.activeTurnId) {
         dispatch({ type: 'enqueue', item: { id: newId('q'), content: trimmed } });
         return;
       }
-      await stream(trimmed);
+      await stream(trimmed, { context: opts.context });
     },
     [stream],
   );
@@ -307,6 +310,7 @@ export function useSmartChat(opts: UseSmartChatOptions) {
         answersQuestionId: req.answersQuestionId,
         confirmAction: req.confirmAction,
         clientMessageId: req.clientMessageId,
+        context: req.context,
       });
     },
     [stream],

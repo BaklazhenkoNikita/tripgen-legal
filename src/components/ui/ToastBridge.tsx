@@ -15,7 +15,8 @@ export function ToastBridge() {
       position="bottom-right"
       richColors
       closeButton
-      offset={20}
+      // Sits above the floating Ask Periplo launcher when it's shown.
+      offset={{ right: 20, bottom: 'calc(20px + var(--tg-fab-clearance, 0px))' }}
       toastOptions={{
         style: {
           background: theme.palette.background.paper,
