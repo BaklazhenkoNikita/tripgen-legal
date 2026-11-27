@@ -5,11 +5,32 @@ import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import { alpha, type Theme } from '@mui/material/styles';
-import { AlertTriangle, CalendarDays, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  ChevronDown,
+  MoreHorizontal,
+  Plus,
+  Sparkles,
+  Trash2,
+} from 'lucide-react';
 import { Droppable } from '@hello-pangea/dnd';
 import type { DayPlan, TravelActivity } from '@/types';
 import { ActivityDragItem } from './ActivityDragItem';
 import { Button } from '@/components/ui/Button';
+import {
+  DropdownContent,
+  DropdownItem,
+  DropdownMenu,
+  DropdownSeparator,
+  DropdownTrigger,
+} from '@/components/ui/DropdownMenu';
+import { Eyebrow } from '@/components/layout/Eyebrow';
+import { ConditionIcon } from '@/components/destinations/weatherIcon';
+import { formatDayDate } from '@/lib/date';
+import { formatTemps, type DayWeather } from '@/hooks/useTripWeather';
+import { textScale } from '@/theme/standards';
 import {
   bucketDayActivities,
   TIME_BUCKET_LABELS,
@@ -18,35 +39,28 @@ import {
 import { getLatLng } from '@/lib/geo/coords';
 import { estimateTransit } from '@/lib/geo/transitEstimate';
 
-/** Full-width section divider for a time-of-day group inside the day grid. */
-function SectionHeader({ bucket }: { bucket: TimeBucket }) {
+/** Full-width divider for a time-of-day group inside the day grid. */
+function BucketHeader({ bucket }: { bucket: TimeBucket }) {
   return (
-    <Box
-      sx={{
-        gridColumn: '1 / -1',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1.5,
-        mt: 0.5,
-      }}
-    >
-      <Typography
-        component="h3"
-        sx={{
-          fontSize: '0.75rem',
-          fontWeight: 700,
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-          color: 'text.secondary',
-          whiteSpace: 'nowrap',
-        }}
-      >
+    <Box sx={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: 1.5, mt: 1 }}>
+      <Eyebrow tone="neutral" component="h3" sx={{ whiteSpace: 'nowrap' }}>
         {TIME_BUCKET_LABELS[bucket]}
-      </Typography>
+      </Eyebrow>
       <Box sx={{ flex: 1, height: '1px', bgcolor: 'divider' }} />
     </Box>
   );
 }
+
+/** Day / Dining picks heading style (shared with EditableTripView). */
+export const DAY_TITLE_SX = {
+  fontSize: '1.5rem',
+  fontWeight: 700,
+  lineHeight: 1.25,
+  letterSpacing: '-0.01em',
+} as const;
+
+/** Stop cards size to the column, not the viewport: 2-up when there's room. */
+const STOP_GRID_COLUMNS = 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))';
 
 interface Props {
   day: DayPlan;
@@ -56,6 +70,10 @@ interface Props {
   onDeleteActivity?: (activityId: string, dayNumber: number) => void;
   onDeleteDay?: (dayNumber: number) => void;
   onAutofillDay?: (dayNumber: number) => void;
+  /** Opens the "Suggest alternatives" (1 credit) confirmation for this day. */
+  onSuggestAlternatives?: (dayNumber: number) => void;
+  /** This day's forecast, when the trip is inside the forecast window. */
+  weather?: DayWeather | null;
   onAddActivity?: (dayNumber: number) => void;
   onActivityClick?: (activity: TravelActivity) => void;
   /** Render as a static, non-draggable day (read-only trip surfaces). */
@@ -78,6 +96,8 @@ export function DragDropDay({
   onDeleteActivity,
   onDeleteDay,
   onAutofillDay,
+  onSuggestAlternatives,
+  weather = null,
   onAddActivity,
   onActivityClick,
   readOnly = false,
@@ -89,7 +109,10 @@ export function DragDropDay({
 }: Props) {
   const dayNumber = day.day_number ?? dayIndex + 1;
   const droppableId = `day-${dayNumber}`;
-  const subtitleParts = [day.date, day.city].filter(Boolean);
+  const subtitleParts = [day.date ? formatDayDate(day.date) : null, day.city].filter(Boolean);
+  const temps = weather ? formatTemps(weather.hi, weather.lo) : null;
+  const hasAiActions = Boolean(onAutofillDay || onSuggestAlternatives);
+  const hasDayMenu = Boolean(onMoveDay || onDeleteDay);
   const bucketed = bucketDayActivities(activities);
 
   // Straight-line travel estimate from each stop to the next (same day, in
@@ -114,17 +137,12 @@ export function DragDropDay({
     warnings.push(`Heavy travel — about ${totalTravelMin} min between stops. Try "Optimize route".`);
   }
 
-  const gridColumns = {
-    xs: '1fr',
-    sm: 'repeat(2, minmax(0, 1fr))',
-  } as const;
-
   return (
     <Box component="section">
       <Box
         component="header"
         sx={{
-          mb: 2,
+          mb: 1.5,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -132,86 +150,101 @@ export function DragDropDay({
         }}
       >
         <Box sx={{ minWidth: 0 }}>
-          <Typography
-            component="h2"
-            sx={{
-              fontSize: { xs: 24, sm: 28 },
-              fontWeight: 600,
-              letterSpacing: '-0.01em',
-              color: 'text.primary',
-              m: 0,
-            }}
-          >
+          <Typography component="h2" sx={{ ...DAY_TITLE_SX, color: 'text.primary', m: 0 }}>
             Day {dayNumber}
           </Typography>
-          {subtitleParts.length > 0 && (
-            <Typography sx={{ mt: 0.25, fontSize: 14, color: 'text.secondary' }}>
-              {subtitleParts.join(' · ')}
+          {subtitleParts.length > 0 || temps ? (
+            <Typography
+              component="div"
+              sx={{
+                ...textScale.support,
+                mt: 0.25,
+                display: 'flex',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                columnGap: 1,
+                color: 'text.secondary',
+              }}
+            >
+              {subtitleParts.length > 0 ? <span>{subtitleParts.join(' · ')}</span> : null}
+              {temps ? (
+                <Box
+                  component="span"
+                  title={weather?.conditionText}
+                  sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+                >
+                  {subtitleParts.length > 0 ? <span aria-hidden>·</span> : null}
+                  <ConditionIcon code={weather?.conditionText} size={15} />
+                  {temps}
+                </Box>
+              ) : null}
             </Typography>
-          )}
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {onMoveDay ? (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                onClick={() => onMoveDay(dayNumber, -1)}
-                disabled={!canMoveEarlier}
-                title="Move day earlier"
-                aria-label={`Move day ${dayNumber} earlier`}
-              >
-                <ChevronLeft size={16} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                onClick={() => onMoveDay(dayNumber, 1)}
-                disabled={!canMoveLater}
-                title="Move day later"
-                aria-label={`Move day ${dayNumber} later`}
-              >
-                <ChevronRight size={16} />
-              </Button>
-            </Box>
           ) : null}
-          {onAutofillDay && (
-            <Button
-              variant="subtle"
-              size="xs"
-              onClick={() => onAutofillDay(dayNumber)}
-              title="Let AI fill this day's open time with nearby picks"
-            >
-              Fill open time
-            </Button>
-          )}
-          {onDeleteDay && (
-            <Button
-              variant="ghost"
-              size="xs"
-              onClick={() => onDeleteDay(dayNumber)}
-              title="Delete day"
-            >
-              Delete
-            </Button>
-          )}
-          <Box
-            component="span"
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 40,
-              width: 40,
-              borderRadius: '50%',
-              bgcolor: (t: Theme) => alpha(t.palette.primary.main, 0.12),
-              color: 'primary.main',
-              flexShrink: 0,
-            }}
-          >
-            <CalendarDays size={20} aria-hidden />
-          </Box>
         </Box>
+
+        {hasAiActions || hasDayMenu ? (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
+            {hasAiActions ? (
+              <DropdownMenu>
+                <DropdownTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="md"
+                    iconLeft={<Sparkles size={16} />}
+                    iconRight={<ChevronDown size={14} />}
+                  >
+                    AI
+                  </Button>
+                </DropdownTrigger>
+                <DropdownContent>
+                  {onAutofillDay ? (
+                    <DropdownItem onSelect={() => onAutofillDay(dayNumber)}>
+                      <MenuItemText
+                        title="Fill open time"
+                        caption="Add nearby picks to this day's gaps"
+                      />
+                    </DropdownItem>
+                  ) : null}
+                  {onSuggestAlternatives ? (
+                    <DropdownItem onSelect={() => onSuggestAlternatives(dayNumber)}>
+                      <MenuItemText
+                        title="Suggest alternatives"
+                        caption="Swap this day's stops for fresh picks · 1 credit"
+                      />
+                    </DropdownItem>
+                  ) : null}
+                </DropdownContent>
+              </DropdownMenu>
+            ) : null}
+            {hasDayMenu ? (
+              <DropdownMenu>
+                <DropdownTrigger asChild>
+                  <Button variant="outline" size="icon" aria-label={`Day ${dayNumber} options`} title="Day options">
+                    <MoreHorizontal size={18} aria-hidden />
+                  </Button>
+                </DropdownTrigger>
+                <DropdownContent>
+                  {onMoveDay ? (
+                    <DropdownItem disabled={!canMoveEarlier} onSelect={() => onMoveDay(dayNumber, -1)}>
+                      <ArrowLeft size={16} aria-hidden /> Move day earlier
+                    </DropdownItem>
+                  ) : null}
+                  {onMoveDay ? (
+                    <DropdownItem disabled={!canMoveLater} onSelect={() => onMoveDay(dayNumber, 1)}>
+                      <ArrowRight size={16} aria-hidden /> Move day later
+                    </DropdownItem>
+                  ) : null}
+                  {onMoveDay && onDeleteDay ? <DropdownSeparator /> : null}
+                  {onDeleteDay ? (
+                    <DropdownItem onSelect={() => onDeleteDay(dayNumber)} sx={{ color: 'error.main' }}>
+                      <Trash2 size={16} aria-hidden /> Delete day
+                    </DropdownItem>
+                  ) : null}
+                </DropdownContent>
+              </DropdownMenu>
+            ) : null}
+          </Box>
+        ) : null}
       </Box>
 
       {warnings.length > 0 ? (
@@ -238,7 +271,7 @@ export function DragDropDay({
               >
                 <AlertTriangle size={15} aria-hidden />
               </Box>
-              <Typography sx={{ fontSize: 13, color: 'text.primary' }}>{w}</Typography>
+              <Typography sx={{ ...textScale.label, fontWeight: 500, color: 'text.primary' }}>{w}</Typography>
             </Box>
           ))}
         </Box>
@@ -249,14 +282,14 @@ export function DragDropDay({
           sx={{
             display: 'grid',
             gap: 2,
-            gridTemplateColumns: gridColumns,
+            gridTemplateColumns: STOP_GRID_COLUMNS,
             minHeight: 80,
           }}
         >
           {activities.length > 0 ? (
             bucketed.map(({ activity, index, bucket, startsBucket }) => (
               <Fragment key={activity.id}>
-                {startsBucket ? <SectionHeader bucket={bucket} /> : null}
+                {startsBucket ? <BucketHeader bucket={bucket} /> : null}
                 <ActivityDragItem
                   activity={activity}
                   index={index}
@@ -296,10 +329,7 @@ export function DragDropDay({
             sx={{
               display: 'grid',
               gap: 2,
-              gridTemplateColumns: {
-                xs: '1fr',
-                sm: 'repeat(2, minmax(0, 1fr))',
-              },
+              gridTemplateColumns: STOP_GRID_COLUMNS,
               minHeight: 80,
               borderRadius: 2,
               p: snapshot.isDraggingOver ? 1 : 0,
@@ -313,7 +343,7 @@ export function DragDropDay({
           >
             {bucketed.map(({ activity, index, bucket, startsBucket }) => (
               <Fragment key={activity.id}>
-                {startsBucket ? <SectionHeader bucket={bucket} /> : null}
+                {startsBucket ? <BucketHeader bucket={bucket} /> : null}
                 <ActivityDragItem
                   activity={activity}
                   index={index}
@@ -397,6 +427,19 @@ export function DragDropDay({
         )}
       </Droppable>
       )}
+    </Box>
+  );
+}
+
+function MenuItemText({ title, caption }: { title: string; caption: string }) {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 220 }}>
+      <Box component="span" sx={{ fontWeight: 500 }}>
+        {title}
+      </Box>
+      <Box component="span" sx={{ ...textScale.meta, color: 'text.secondary' }}>
+        {caption}
+      </Box>
     </Box>
   );
 }

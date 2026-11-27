@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import { ChevronLeft } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { useWeather } from '@/hooks/useWeather';
+import { parseIsoDateLocal } from '@/lib/date';
 import { ConditionIcon, conditionTone, toneColor } from './weatherIcon';
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
   numDays?: number;
 }
 
-interface DailyReading {
+export interface DailyReading {
   key: string;
   date: Date;
   conditionText: string;
@@ -400,16 +401,18 @@ function formatFullDayLabel(date: Date): string {
   return `${weekday} · ${dateText}`;
 }
 
-function isoDateKey(date: Date): string {
+export function isoDateKey(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-function extractDaily(raw: Array<Record<string, unknown>> | undefined): DailyReading[] {
+export function extractDaily(raw: Array<Record<string, unknown>> | undefined): DailyReading[] {
   if (!Array.isArray(raw)) return [];
   return raw
     .map((d, i): DailyReading | null => {
       const dateStr = pickString(d, ['date', 'day', 'observedAt']);
-      const date = dateStr ? new Date(dateStr) : null;
+      // Daily forecasts are calendar dates: read "YYYY-MM-DD…" as a local date
+      // (new Date('2026-12-28') is UTC midnight → the previous day west of UTC).
+      const date = dateStr ? parseIsoDateLocal(dateStr) ?? new Date(dateStr) : null;
       if (!date || Number.isNaN(date.getTime())) return null;
       const conditionText = pickString(d, ['conditionText', 'description', 'conditions']) ?? '—';
       const hi = pickNumber(d, ['temperatureMaxC', 'temp_max_c', 'tempMaxC', 'high', 'high_c']);
@@ -433,7 +436,7 @@ function extractDaily(raw: Array<Record<string, unknown>> | undefined): DailyRea
     .filter((d): d is DailyReading => d !== null);
 }
 
-function alignToTrip(
+export function alignToTrip(
   daily: DailyReading[],
   startDate: string | undefined,
   numDays: number | undefined,
@@ -442,8 +445,7 @@ function alignToTrip(
     return { readings: [], outsideForecastWindow: false };
   }
 
-  const start = startDate ? new Date(startDate) : null;
-  const validStart = start && !Number.isNaN(start.getTime()) ? start : null;
+  const validStart = parseIsoDateLocal(startDate);
 
   if (!validStart || !numDays || numDays < 1) {
     return { readings: daily.slice(0, VISIBLE_DAYS), outsideForecastWindow: false };
@@ -569,7 +571,7 @@ function pickString(obj: Record<string, unknown>, keys: string[]): string | null
   return null;
 }
 
-function pickStringFrom(
+export function pickStringFrom(
   obj: Record<string, unknown> | null | undefined,
   keys: string[],
 ): string | null {
